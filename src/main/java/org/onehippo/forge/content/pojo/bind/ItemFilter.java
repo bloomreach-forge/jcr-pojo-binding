@@ -13,23 +13,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.forge.content.pojo.bind.hippo;
+package org.onehippo.forge.content.pojo.bind;
 
-import javax.jcr.Property;
-import javax.jcr.RepositoryException;
+public interface ItemFilter<T> {
 
-public class JcrContentUtils {
+    boolean accept(T item) throws ContentNodeHandlingException;
 
-    private JcrContentUtils() {
-    }
-
-    public static boolean isProtected(final Property prop) throws RepositoryException {
-        try {
-            return prop.getDefinition().isProtected();
-        } catch (UnsupportedOperationException e) {
-            // Ignore if org.onehippo.repository.mock.MockItemDefinition#isProtected() is unsupported.
-        }
-
-        return false;
-    }
 }

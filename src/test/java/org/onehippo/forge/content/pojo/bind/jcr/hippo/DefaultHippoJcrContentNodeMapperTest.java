@@ -13,13 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.forge.content.pojo.bind.hippo;
+package org.onehippo.forge.content.pojo.bind.jcr.hippo;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -29,6 +30,7 @@ import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.forge.content.pojo.bind.ItemFilter;
 import org.onehippo.forge.content.pojo.model.ContentNode;
 import org.onehippo.forge.content.pojo.model.ContentProperty;
 import org.onehippo.forge.content.pojo.model.DocumentContentHandle;
@@ -40,20 +42,7 @@ public class DefaultHippoJcrContentNodeMapperTest extends BaseHippoJcrContentNod
     private static Logger log = LoggerFactory.getLogger(DefaultHippoJcrContentNodeMapperTest.class);
 
     private DefaultHippoJcrContentNodeMapper mapper;
-    private DefaultHippoJcrContentNodeMapper previewOnlyIncludingMapper = new DefaultHippoJcrContentNodeMapper() {
-        @Override
-        public boolean isMappableNode(final Node node) throws RepositoryException {
-            if (isDocumentVariantNode(node)) {
-                if (isPreviewDocumentVariantNode(node)) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return true;
-            }
-        }
-    };
+    private ItemFilter<Item> nonLiveVariantNodeFilter = new SpecificVariantAndNonVariantNodeFilter(HippoStdNodeType.UNPUBLISHED);
 
     @Before
     public void setUp() throws Exception {
@@ -102,7 +91,7 @@ public class DefaultHippoJcrContentNodeMapperTest extends BaseHippoJcrContentNod
     public void testMapDocumentHandleWithPreviewOnly() throws Exception {
         Node handleNode = getRootNode().getNode(StringUtils.removeStart(NEWS1_DOC_HANDLE_PATH, "/"));
 
-        DocumentContentHandle contentHandle = (DocumentContentHandle) previewOnlyIncludingMapper.map(handleNode);
+        DocumentContentHandle contentHandle = (DocumentContentHandle) mapper.map(handleNode, nonLiveVariantNodeFilter);
         assertEquals(HippoNodeType.NT_HANDLE, contentHandle.getPrimaryType());
 
         assertEquals(1, contentHandle.getDocuments().size());

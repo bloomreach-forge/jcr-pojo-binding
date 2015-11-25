@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.forge.content.pojo.bind.hippo;
+package org.onehippo.forge.content.pojo.bind.jcr.hippo;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
@@ -31,6 +31,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.forge.content.pojo.bind.ContentNodeBinder;
 import org.onehippo.forge.content.pojo.bind.ContentNodeBindingException;
+import org.onehippo.forge.content.pojo.bind.jcr.JcrContentUtils;
 import org.onehippo.forge.content.pojo.model.ContentNode;
 import org.onehippo.forge.content.pojo.model.ContentProperty;
 

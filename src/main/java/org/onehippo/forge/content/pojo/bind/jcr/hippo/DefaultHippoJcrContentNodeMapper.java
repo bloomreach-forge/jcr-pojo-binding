@@ -13,8 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.forge.content.pojo.bind.hippo;
+package org.onehippo.forge.content.pojo.bind.jcr.hippo;
 
+import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
@@ -24,19 +25,20 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.nodetype.NodeType;
 
-import org.apache.jackrabbit.util.ISO8601;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.forge.content.pojo.bind.ContentNodeBindingException;
 import org.onehippo.forge.content.pojo.bind.ContentNodeMapper;
 import org.onehippo.forge.content.pojo.bind.ContentNodeMappingException;
+import org.onehippo.forge.content.pojo.bind.ItemFilter;
+import org.onehippo.forge.content.pojo.bind.jcr.JcrContentUtils;
 import org.onehippo.forge.content.pojo.model.ContentNode;
 import org.onehippo.forge.content.pojo.model.ContentProperty;
 import org.onehippo.forge.content.pojo.model.ContentPropertyType;
 import org.onehippo.forge.content.pojo.model.DocumentContent;
 import org.onehippo.forge.content.pojo.model.DocumentContentHandle;
 
-public class DefaultHippoJcrContentNodeMapper extends BaseHippoJcrContentNodeHandler implements ContentNodeMapper<Node> {
+public class DefaultHippoJcrContentNodeMapper extends BaseHippoJcrContentNodeHandler implements ContentNodeMapper<Node, Item> {
 
     private static final long serialVersionUID = 1L;
 
@@ -46,6 +48,11 @@ public class DefaultHippoJcrContentNodeMapper extends BaseHippoJcrContentNodeHan
 
     @Override
     public ContentNode map(Node jcrDataNode) throws ContentNodeMappingException {
+        return map(jcrDataNode, new DefaultHippoJcrItemFilter());
+    }
+
+    @Override
+    public ContentNode map(Node jcrDataNode, ItemFilter<Item> itemFilter) throws ContentNodeMappingException {
         ContentNode contentNode = null;
 
         try {
@@ -57,7 +64,7 @@ public class DefaultHippoJcrContentNodeMapper extends BaseHippoJcrContentNodeHan
             for (PropertyIterator propIt = jcrDataNode.getProperties(); propIt.hasNext(); ) {
                 prop = propIt.nextProperty();
 
-                if (!isMappableProperty(prop)) {
+                if (itemFilter != null && !itemFilter.accept(prop)) {
                     continue;
                 }
 
@@ -68,17 +75,17 @@ public class DefaultHippoJcrContentNodeMapper extends BaseHippoJcrContentNodeHan
             Node childJcrNode;
             ContentNode childContentNode;
 
-            if (isDocumentHandleNode(jcrDataNode)) {
+            if (HippoDocumentUtils.isDocumentHandleNode(jcrDataNode)) {
                 String state;
 
                 for (NodeIterator nodeIt = jcrDataNode.getNodes(jcrDataNode.getName()); nodeIt.hasNext(); ) {
                     childJcrNode = nodeIt.nextNode();
 
-                    if (!isMappableNode(childJcrNode)) {
+                    if (itemFilter != null && !itemFilter.accept(childJcrNode)) {
                         continue;
                     }
 
-                    if (isDocumentVariantNode(childJcrNode)) {
+                    if (HippoDocumentUtils.isDocumentVariantNode(childJcrNode)) {
                         state = childJcrNode.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
 
                         if (HippoStdNodeType.PUBLISHED.equals(state) || HippoStdNodeType.UNPUBLISHED.equals(state)) {
@@ -91,7 +98,7 @@ public class DefaultHippoJcrContentNodeMapper extends BaseHippoJcrContentNodeHan
                 for (NodeIterator nodeIt = jcrDataNode.getNodes(HippoNodeType.HIPPO_TRANSLATION); nodeIt.hasNext();) {
                     childJcrNode = nodeIt.nextNode();
 
-                    if (!isMappableNode(childJcrNode)) {
+                    if (itemFilter != null && !itemFilter.accept(childJcrNode)) {
                         continue;
                     }
 
@@ -104,7 +111,7 @@ public class DefaultHippoJcrContentNodeMapper extends BaseHippoJcrContentNodeHan
                 for (NodeIterator nodeIt = jcrDataNode.getNodes(); nodeIt.hasNext(); ) {
                     childJcrNode = nodeIt.nextNode();
 
-                    if (!isMappableNode(childJcrNode)) {
+                    if (itemFilter != null && !itemFilter.accept(childJcrNode)) {
                         continue;
                     }
 
@@ -117,22 +124,6 @@ public class DefaultHippoJcrContentNodeMapper extends BaseHippoJcrContentNodeHan
         }
 
         return contentNode;
-    }
-
-    protected boolean isMappableNode(final Node node) throws RepositoryException {
-        return true;
-    }
-
-    protected boolean isMappableProperty(final Property property) throws RepositoryException {
-        if (HippoNodeType.HIPPO_PATH.equals(property.getName())) {
-            return false;
-        }
-
-        if (JcrContentUtils.isProtected(property)) {
-            return false;
-        }
-
-        return true;
     }
 
     protected ContentProperty createContentPropertyFromJcrProperty(final Property jcrProp) throws RepositoryException {
@@ -193,71 +184,21 @@ public class DefaultHippoJcrContentNodeMapper extends BaseHippoJcrContentNodeHan
 
         if (jcrProp.isMultiple()) {
             for (Value jcrValue : jcrProp.getValues()) {
-                contentProp.addValue(jcrValueToString(jcrValue));
+                contentProp.addValue(JcrContentUtils.jcrValueToString(jcrValue));
             }
         } else {
-            contentProp.addValue(jcrValueToString(jcrProp.getValue()));
+            contentProp.addValue(JcrContentUtils.jcrValueToString(jcrProp.getValue()));
         }
 
         return contentProp;
     }
 
-    private String jcrValueToString(final Value value) throws RepositoryException {
-        String stringifiedValue = null;
-
-        switch (value.getType()) {
-        case PropertyType.STRING:
-        {
-            stringifiedValue = value.getString();
-            break;
-        }
-        case PropertyType.BINARY:
-        {
-            // TODO: NOT SUPPORTED YET
-            // Just ignore for now...
-            break;
-        }
-        case PropertyType.LONG:
-        {
-            stringifiedValue = Long.toString(value.getLong());
-            break;
-        }
-        case PropertyType.DOUBLE:
-        {
-            stringifiedValue = Double.toString(value.getDouble());
-            break;
-        }
-        case PropertyType.DATE:
-        {
-            stringifiedValue = ISO8601.format(value.getDate());
-            break;
-        }
-        case PropertyType.BOOLEAN:
-        {
-            stringifiedValue = Boolean.toString(value.getBoolean());
-            break;
-        }
-        case PropertyType.NAME:
-        case PropertyType.PATH:
-        case PropertyType.URI:
-        {
-            stringifiedValue = value.getString();
-            break;
-        }
-        case PropertyType.DECIMAL:
-            stringifiedValue = value.getDecimal().toString();
-            break;
-        }
-
-        return stringifiedValue;
-    }
-
     private ContentNode createContentNodeByJcrNodeTypes(final Node jcrNode) throws RepositoryException {
         ContentNode contentNode = null;
 
-        if (isDocumentVariantNode(jcrNode)) {
+        if (HippoDocumentUtils.isDocumentVariantNode(jcrNode)) {
             contentNode = new DocumentContent();
-        } else if (isDocumentHandleNode(jcrNode)) {
+        } else if (HippoDocumentUtils.isDocumentHandleNode(jcrNode)) {
             contentNode = new DocumentContentHandle();
         } else {
             contentNode = new ContentNode();
@@ -273,47 +214,4 @@ public class DefaultHippoJcrContentNodeMapper extends BaseHippoJcrContentNodeHan
         return contentNode;
     }
 
-    protected boolean isDocumentVariantNode(final Node jcrNode) throws RepositoryException {
-        if (jcrNode.isNodeType(HippoNodeType.NT_DOCUMENT)
-                && jcrNode.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)
-                && jcrNode.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    protected boolean isLiveDocumentVariantNode(final Node jcrNode) throws RepositoryException {
-        if (isDocumentVariantNode(jcrNode) && jcrNode.hasProperty(HippoStdNodeType.HIPPOSTD_STATE)) {
-            if (HippoStdNodeType.PUBLISHED.equals(jcrNode.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString())) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    protected boolean isPreviewDocumentVariantNode(final Node jcrNode) throws RepositoryException {
-        if (isDocumentVariantNode(jcrNode) && jcrNode.hasProperty(HippoStdNodeType.HIPPOSTD_STATE)) {
-            if (HippoStdNodeType.UNPUBLISHED.equals(jcrNode.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString())) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    protected boolean isDocumentHandleNode(final Node jcrNode) throws RepositoryException {
-        if (jcrNode.isNodeType(HippoNodeType.NT_HANDLE)
-                && jcrNode.hasNode(jcrNode.getName())) {
-            final Node variantNode = jcrNode.getNode(jcrNode.getName());
-
-            if (variantNode.isNodeType(HippoNodeType.NT_DOCUMENT)
-                    && variantNode.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 }
