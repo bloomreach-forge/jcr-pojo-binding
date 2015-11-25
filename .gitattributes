@@ -1,5 +1,20 @@
 * text=auto !eol
 /pom.xml -text
+src/main/java/org/onehippo/forge/content/pojo/bind/ContentNodeBinder.java -text svneol=unset#text/plain
+src/main/java/org/onehippo/forge/content/pojo/bind/ContentNodeBindingException.java -text svneol=unset#text/plain
+src/main/java/org/onehippo/forge/content/pojo/bind/ContentNodeHandlingException.java -text svneol=unset#text/plain
+src/main/java/org/onehippo/forge/content/pojo/bind/ContentNodeMapper.java -text svneol=unset#text/plain
+src/main/java/org/onehippo/forge/content/pojo/bind/ContentNodeMappingException.java -text svneol=unset#text/plain
+src/main/java/org/onehippo/forge/content/pojo/bind/hippo/BaseHippoJcrContentNodeHandler.java -text svneol=unset#text/plain
+src/main/java/org/onehippo/forge/content/pojo/bind/hippo/DefaultHippoJcrContentNodeBinder.java -text svneol=unset#text/plain
+src/main/java/org/onehippo/forge/content/pojo/bind/hippo/DefaultHippoJcrContentNodeMapper.java -text svneol=unset#text/plain
+src/main/java/org/onehippo/forge/content/pojo/bind/hippo/JcrContentUtils.java -text svneol=unset#text/plain
+src/main/java/org/onehippo/forge/content/pojo/model/ContentItem.java -text svneol=unset#text/plain
+src/main/java/org/onehippo/forge/content/pojo/model/ContentNode.java -text svneol=unset#text/plain
+src/main/java/org/onehippo/forge/content/pojo/model/ContentProperty.java -text svneol=unset#text/plain
+src/main/java/org/onehippo/forge/content/pojo/model/ContentPropertyType.java -text svneol=unset#text/plain
+src/main/java/org/onehippo/forge/content/pojo/model/DocumentContent.java -text svneol=unset#text/plain
+src/main/java/org/onehippo/forge/content/pojo/model/DocumentContentHandle.java -text svneol=unset#text/plain
 src/site/resources/highlight-source-elements.js -text
 src/site/resources/jquery-1.7.2.min.js -text
 src/site/resources/sh/scripts/shAutoloader.js -text
@@ -52,3 +67,6 @@ src/site/xdoc/build-from-source.xml -text svneol=unset#text/plain
 src/site/xdoc/index.xml -text svneol=unset#text/plain
 src/site/xdoc/install.xml -text svneol=unset#text/plain
 src/site/xdoc/release-notes.xml -text svneol=unset#text/plain
+src/test/java/org/onehippo/forge/content/pojo/bind/hippo/BaseHippoJcrContentNodeTest.java -text svneol=unset#text/plain
+src/test/java/org/onehippo/forge/content/pojo/bind/hippo/DefaultHippoJcrContentNodeMapperTest.java -text svneol=unset#text/plain
+src/test/resources/log4j.xml -text svneol=unset#text/plain
