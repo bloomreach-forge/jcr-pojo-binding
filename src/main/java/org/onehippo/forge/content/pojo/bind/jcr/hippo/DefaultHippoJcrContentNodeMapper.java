@@ -89,7 +89,7 @@ public class DefaultHippoJcrContentNodeMapper extends BaseHippoJcrContentNodeHan
                         state = childJcrNode.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
 
                         if (HippoStdNodeType.PUBLISHED.equals(state) || HippoStdNodeType.UNPUBLISHED.equals(state)) {
-                            childContentNode = map(childJcrNode);
+                            childContentNode = map(childJcrNode, itemFilter);
                             ((DocumentContentHandle) contentNode).putDocument(state, (DocumentContent) childContentNode);
                         }
                     }
@@ -103,7 +103,7 @@ public class DefaultHippoJcrContentNodeMapper extends BaseHippoJcrContentNodeHan
                     }
 
                     if (childJcrNode.isNodeType(HippoNodeType.NT_TRANSLATION)) {
-                        childContentNode = map(childJcrNode);
+                        childContentNode = map(childJcrNode, itemFilter);
                         contentNode.addNode(childContentNode);
                     }
                 }
@@ -115,7 +115,7 @@ public class DefaultHippoJcrContentNodeMapper extends BaseHippoJcrContentNodeHan
                         continue;
                     }
 
-                    childContentNode = map(childJcrNode);
+                    childContentNode = map(childJcrNode, itemFilter);
                     contentNode.addNode(childContentNode);
                 }
             }

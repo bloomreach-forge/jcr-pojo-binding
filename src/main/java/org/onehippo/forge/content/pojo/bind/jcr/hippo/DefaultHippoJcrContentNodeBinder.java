@@ -46,6 +46,7 @@ public class DefaultHippoJcrContentNodeBinder extends BaseHippoJcrContentNodeHan
 
     @Override
     public void bind(Node jcrDataNode, ContentNode contentNode) throws ContentNodeBindingException {
+        bind(jcrDataNode, contentNode, null);
     }
 
     @Override
@@ -101,7 +102,7 @@ public class DefaultHippoJcrContentNodeBinder extends BaseHippoJcrContentNodeHan
 
                 childJcrNode = jcrDataNode.addNode(childContentNode.getName(), childContentNode.getPrimaryType());
 
-                bind(childJcrNode, childContentNode);
+                bind(childJcrNode, childContentNode, itemFilter);
             }
         } catch (RepositoryException e) {
             throw new ContentNodeBindingException(e.toString(), e);

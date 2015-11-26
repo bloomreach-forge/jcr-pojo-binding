@@ -13,6 +13,9 @@ src/main/java/org/onehippo/forge/content/pojo/bind/jcr/hippo/DefaultHippoJcrCont
 src/main/java/org/onehippo/forge/content/pojo/bind/jcr/hippo/DefaultHippoJcrItemFilter.java -text svneol=unset#text/plain
 src/main/java/org/onehippo/forge/content/pojo/bind/jcr/hippo/HippoDocumentUtils.java -text svneol=unset#text/plain
 src/main/java/org/onehippo/forge/content/pojo/bind/jcr/hippo/SpecificVariantAndNonVariantNodeFilter.java -text svneol=unset#text/plain
+src/main/java/org/onehippo/forge/content/pojo/bind/json/jackson/BaseJacksonJsonContentNodeHandler.java -text svneol=unset#text/plain
+src/main/java/org/onehippo/forge/content/pojo/bind/json/jackson/DefaultJacksonJsonContentNodeBinder.java -text svneol=unset#text/plain
+src/main/java/org/onehippo/forge/content/pojo/bind/json/jackson/DefaultJacksonJsonContentNodeMapper.java -text svneol=unset#text/plain
 src/main/java/org/onehippo/forge/content/pojo/model/ContentItem.java -text svneol=unset#text/plain
 src/main/java/org/onehippo/forge/content/pojo/model/ContentNode.java -text svneol=unset#text/plain
 src/main/java/org/onehippo/forge/content/pojo/model/ContentProperty.java -text svneol=unset#text/plain

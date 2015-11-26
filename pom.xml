@@ -32,6 +32,7 @@
     <javax.jcr.version>2.0</javax.jcr.version>
     <jackrabbit.version>2.10.1</jackrabbit.version>
     <hippo.repository.version>3.1.0</hippo.repository.version>
+    <jackson2.version>2.4.5</jackson2.version>
 
     <lib.junit.version>4.8.2</lib.junit.version>
     <lib.easymock.version>3.0</lib.easymock.version>
@@ -143,6 +144,13 @@
       <artifactId>hippo-repository-builtin</artifactId>
       <version>${hippo.repository.version}</version>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson2.version}</version>
+      <optional>true</optional>
     </dependency>
 
     <dependency>
