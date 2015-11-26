@@ -19,10 +19,10 @@ import java.io.Serializable;
 
 import org.onehippo.forge.content.pojo.model.ContentNode;
 
-public interface ContentNodeMapper<T, D> extends Serializable {
+public interface ContentNodeMapper<D, I> extends Serializable {
 
-    public ContentNode map(T dataNode) throws ContentNodeMappingException;
+    public ContentNode map(D dataNode) throws ContentNodeMappingException;
 
-    public ContentNode map(T dataNode, ItemFilter<D> itemFilter) throws ContentNodeMappingException;
+    public ContentNode map(D dataNode, ItemFilter<I> itemFilter) throws ContentNodeMappingException;
 
 }

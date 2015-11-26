@@ -19,8 +19,10 @@ import java.io.Serializable;
 
 import org.onehippo.forge.content.pojo.model.ContentNode;
 
-public interface ContentNodeBinder<T> extends Serializable {
+public interface ContentNodeBinder<D, I> extends Serializable {
 
-    public void bind(T dataNode, ContentNode source) throws ContentNodeBindingException;
+    public void bind(D dataNode, ContentNode source) throws ContentNodeBindingException;
+
+    public void bind(D dataNode, ContentNode source, ItemFilter<I> itemFilter) throws ContentNodeBindingException;
 
 }

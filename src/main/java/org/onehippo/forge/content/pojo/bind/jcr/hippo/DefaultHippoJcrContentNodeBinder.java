@@ -28,14 +28,15 @@ import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.forge.content.pojo.bind.ContentNodeBinder;
 import org.onehippo.forge.content.pojo.bind.ContentNodeBindingException;
+import org.onehippo.forge.content.pojo.bind.ItemFilter;
 import org.onehippo.forge.content.pojo.bind.jcr.JcrContentUtils;
+import org.onehippo.forge.content.pojo.model.ContentItem;
 import org.onehippo.forge.content.pojo.model.ContentNode;
 import org.onehippo.forge.content.pojo.model.ContentProperty;
 
-public class DefaultHippoJcrContentNodeBinder extends BaseHippoJcrContentNodeHandler implements ContentNodeBinder<Node> {
+public class DefaultHippoJcrContentNodeBinder extends BaseHippoJcrContentNodeHandler implements ContentNodeBinder<Node, ContentItem> {
 
     private static final long serialVersionUID = 1L;
 
@@ -45,6 +46,10 @@ public class DefaultHippoJcrContentNodeBinder extends BaseHippoJcrContentNodeHan
 
     @Override
     public void bind(Node jcrDataNode, ContentNode contentNode) throws ContentNodeBindingException {
+    }
+
+    @Override
+    public void bind(Node jcrDataNode, ContentNode contentNode, ItemFilter<ContentItem> itemFilter) throws ContentNodeBindingException {
         try {
             if (StringUtils.isNotBlank(contentNode.getPrimaryType())
                     && !jcrDataNode.getPrimaryNodeType().getName().equals(contentNode.getPrimaryType())) {
@@ -61,7 +66,7 @@ public class DefaultHippoJcrContentNodeBinder extends BaseHippoJcrContentNodeHan
             Property existingJcrProp;
 
             for (ContentProperty contentProp : contentNode.getProperties()) {
-                if (!isBindableContentProperty(contentProp)) {
+                if (itemFilter != null && !itemFilter.accept(contentProp)) {
                     continue;
                 }
 
@@ -86,7 +91,7 @@ public class DefaultHippoJcrContentNodeBinder extends BaseHippoJcrContentNodeHan
             Node childJcrNode;
 
             for (ContentNode childContentNode : contentNode.getNodes()) {
-                if (!isBindableContentNode(childContentNode)) {
+                if (itemFilter != null && !itemFilter.accept(childContentNode)) {
                     continue;
                 }
 
@@ -101,18 +106,6 @@ public class DefaultHippoJcrContentNodeBinder extends BaseHippoJcrContentNodeHan
         } catch (RepositoryException e) {
             throw new ContentNodeBindingException(e.toString(), e);
         }
-    }
-
-    protected boolean isBindableContentNode(final ContentNode contentNode) throws RepositoryException {
-        return true;
-    }
-
-    protected boolean isBindableContentProperty(final ContentProperty contentProperty) throws RepositoryException {
-        if (HippoNodeType.HIPPO_PATH.equals(contentProperty.getName())) {
-            return false;
-        }
-
-        return true;
     }
 
     private Value[] createJcrValuesFromContentProperty(final Node jcrNode, final ContentProperty contentProp)

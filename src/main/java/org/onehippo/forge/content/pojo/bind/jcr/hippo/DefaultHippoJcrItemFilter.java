@@ -18,9 +18,12 @@ package org.onehippo.forge.content.pojo.bind.jcr.hippo;
 import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.Property;
+import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.forge.content.pojo.bind.ContentNodeHandlingException;
 import org.onehippo.forge.content.pojo.bind.ItemFilter;
+import org.onehippo.forge.content.pojo.bind.jcr.JcrContentUtils;
 
 public class DefaultHippoJcrItemFilter implements ItemFilter<Item> {
 
@@ -41,6 +44,18 @@ public class DefaultHippoJcrItemFilter implements ItemFilter<Item> {
     }
 
     protected boolean acceptProperty(Property property) throws ContentNodeHandlingException {
+        try {
+            if (HippoNodeType.HIPPO_PATH.equals(property.getName())) {
+                return false;
+            }
+
+            if (JcrContentUtils.isProtected(property)) {
+                return false;
+            }
+        } catch (RepositoryException e) {
+            throw new ContentNodeHandlingException(e.toString(), e);
+        }
+
         return true;
     }
 }
