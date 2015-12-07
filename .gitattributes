@@ -16,8 +16,7 @@ src/main/java/org/onehippo/forge/content/pojo/model/ContentItem.java -text svneo
 src/main/java/org/onehippo/forge/content/pojo/model/ContentNode.java -text svneol=unset#text/plain
 src/main/java/org/onehippo/forge/content/pojo/model/ContentProperty.java -text svneol=unset#text/plain
 src/main/java/org/onehippo/forge/content/pojo/model/ContentPropertyType.java -text svneol=unset#text/plain
-src/main/java/org/onehippo/forge/content/pojo/model/DocumentContent.java -text svneol=unset#text/plain
-src/main/java/org/onehippo/forge/content/pojo/model/DocumentContentHandle.java -text svneol=unset#text/plain
+src/main/java/org/onehippo/forge/content/pojo/model/HandleContentNode.java -text svneol=unset#text/plain
 src/site/resources/highlight-source-elements.js -text
 src/site/resources/jquery-1.7.2.min.js -text
 src/site/resources/sh/scripts/shAutoloader.js -text
@@ -72,4 +71,5 @@ src/site/xdoc/install.xml -text svneol=unset#text/plain
 src/site/xdoc/release-notes.xml -text svneol=unset#text/plain
 src/test/java/org/onehippo/forge/content/pojo/common/jcr/hippo/BaseHippoJcrContentNodeTest.java -text svneol=unset#text/plain
 src/test/java/org/onehippo/forge/content/pojo/mapper/jcr/hippo/DefaultHippoJcrContentNodeMapperTest.java -text svneol=unset#text/plain
+src/test/java/org/onehippo/forge/content/pojo/model/SerializeContentNodeTest.java -text svneol=unset#text/plain
 src/test/resources/log4j.xml -text svneol=unset#text/plain

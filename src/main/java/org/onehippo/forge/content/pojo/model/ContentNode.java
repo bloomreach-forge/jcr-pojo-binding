@@ -21,6 +21,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections.ListUtils;
+import org.apache.commons.collections.SetUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 public class ContentNode extends ContentItem {
 
     private static final long serialVersionUID = 1L;
@@ -151,5 +157,78 @@ public class ContentNode extends ContentItem {
         }
 
         nodes.add(node);
+    }
+
+    @Override
+    public Object clone() {
+        ContentNode clone = new ContentNode();
+        clone.setName(getName());
+        clone.setPrimaryType(primaryType);
+        clone.setMixinTypes(mixinTypes == null ? null : new LinkedHashSet<>(mixinTypes));
+
+        if (properties == null) {
+            clone.setProperties(null);
+        } else {
+            Set<ContentProperty> propClones = new LinkedHashSet<>();
+
+            for (ContentProperty prop : properties) {
+                propClones.add((ContentProperty) prop.clone());
+            }
+
+            clone.setProperties(propClones);
+        }
+
+        if (nodes == null) {
+            clone.setNodes(null);
+        } else {
+            List<ContentNode> nodeClones = new LinkedList<>();
+
+            for (ContentNode node : nodes) {
+                nodeClones.add((ContentNode) node.clone());
+            }
+
+            clone.setNodes(nodeClones);
+        }
+
+        return clone;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(primaryType).append(mixinTypes).append(properties).append(nodes)
+                .toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof ContentNode)) {
+            return false;
+        }
+
+        ContentNode that = (ContentNode) o;
+
+        if (!StringUtils.equals(primaryType, that.primaryType)) {
+            return false;
+        }
+
+        if (!SetUtils.isEqualSet(mixinTypes, that.mixinTypes)) {
+            return false;
+        }
+
+        if (!SetUtils.isEqualSet(properties, that.properties)) {
+            return false;
+        }
+
+        if (!ListUtils.isEqualList(nodes, that.nodes)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("primaryType", primaryType).append("mixinTypes", mixinTypes)
+                .append("properties", properties).append("nodes", nodes).toString();
     }
 }

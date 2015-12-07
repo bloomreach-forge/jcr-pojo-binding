@@ -17,7 +17,7 @@ package org.onehippo.forge.content.pojo.model;
 
 import java.io.Serializable;
 
-public class ContentItem implements Serializable {
+abstract public class ContentItem implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1L;
 

@@ -28,7 +28,7 @@
     </layout>
   </appender>
 
-  <category additivity="false" name="org.onehippo.forge.content.pojo.bind">
+  <category additivity="false" name="org.onehippo.forge.content.pojo">
     <level value="debug"/>
     <appender-ref ref="console"/>
   </category>

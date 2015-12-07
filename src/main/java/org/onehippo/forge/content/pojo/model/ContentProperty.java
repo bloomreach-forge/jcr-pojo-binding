@@ -19,7 +19,12 @@ import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.collections.ListUtils;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.jackrabbit.util.ISO8601;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class ContentProperty extends ContentItem {
 
@@ -40,6 +45,10 @@ public class ContentProperty extends ContentItem {
     }
 
     public void setType(ContentPropertyType type) {
+        if (type == null) {
+            throw new IllegalArgumentException("type must be non-null.");
+        }
+
         this.type = type;
     }
 
@@ -55,6 +64,7 @@ public class ContentProperty extends ContentItem {
         return values;
     }
 
+    @JsonIgnore
     public String getFirstValue() {
         if (values != null && !values.isEmpty()) {
             return values.get(0);
@@ -75,10 +85,12 @@ public class ContentProperty extends ContentItem {
         values.add(value);
     }
 
+    @JsonIgnore
     public int getValueCount() {
         return values == null ? 0 : values.size();
     }
 
+    @JsonIgnore
     public List<Object> getObjectValues() {
         List<Object> objectValues = new LinkedList<>();
         int valueCount = getValueCount();
@@ -90,6 +102,7 @@ public class ContentProperty extends ContentItem {
         return objectValues;
     }
 
+    @JsonIgnore
     public Object getFirstObjectValue() {
         if (values != null && !values.isEmpty()) {
             return getObjectValueAt(0);
@@ -135,6 +148,46 @@ public class ContentProperty extends ContentItem {
         }
 
         return objectValue;
+    }
+
+    @Override
+    public Object clone() {
+        ContentProperty clone = new ContentProperty();
+        clone.setName(getName());
+        clone.setType(type);
+        clone.setMultiple(multiple);
+        clone.setValues(values == null ? null : new LinkedList<>(values));
+        return clone;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(type).append(multiple).append(values).toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof ContentProperty)) {
+            return false;
+        }
+
+        ContentProperty that = (ContentProperty) o;
+
+        if (!type.equals(that.type)) {
+            return false;
+        }
+
+        if (multiple != that.multiple) {
+            return false;
+        }
+
+        return ListUtils.isEqualList(values, that.values);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("type", type).append("multiple", multiple).append("values", values)
+                .toString();
     }
 
 }

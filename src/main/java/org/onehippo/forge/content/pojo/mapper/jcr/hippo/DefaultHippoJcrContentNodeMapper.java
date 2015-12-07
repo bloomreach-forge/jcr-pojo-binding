@@ -35,8 +35,7 @@ import org.onehippo.forge.content.pojo.mapper.ContentNodeMappingItemFilter;
 import org.onehippo.forge.content.pojo.model.ContentNode;
 import org.onehippo.forge.content.pojo.model.ContentProperty;
 import org.onehippo.forge.content.pojo.model.ContentPropertyType;
-import org.onehippo.forge.content.pojo.model.DocumentContent;
-import org.onehippo.forge.content.pojo.model.DocumentContentHandle;
+import org.onehippo.forge.content.pojo.model.HandleContentNode;
 
 public class DefaultHippoJcrContentNodeMapper implements ContentNodeMapper<Node, Item> {
 
@@ -90,7 +89,7 @@ public class DefaultHippoJcrContentNodeMapper implements ContentNodeMapper<Node,
 
                         if (HippoStdNodeType.PUBLISHED.equals(state) || HippoStdNodeType.UNPUBLISHED.equals(state)) {
                             childContentNode = map(childJcrNode, itemFilter);
-                            ((DocumentContentHandle) contentNode).putDocument(state, (DocumentContent) childContentNode);
+                            ((HandleContentNode) contentNode).putRendition(state, childContentNode);
                         }
                     }
                 }
@@ -196,10 +195,8 @@ public class DefaultHippoJcrContentNodeMapper implements ContentNodeMapper<Node,
     private ContentNode createContentNodeByJcrNodeTypes(final Node jcrNode) throws RepositoryException {
         ContentNode contentNode = null;
 
-        if (HippoDocumentUtils.isDocumentVariantNode(jcrNode)) {
-            contentNode = new DocumentContent();
-        } else if (HippoDocumentUtils.isDocumentHandleNode(jcrNode)) {
-            contentNode = new DocumentContentHandle();
+        if (HippoDocumentUtils.isDocumentHandleNode(jcrNode)) {
+            contentNode = new HandleContentNode();
         } else {
             contentNode = new ContentNode();
         }
