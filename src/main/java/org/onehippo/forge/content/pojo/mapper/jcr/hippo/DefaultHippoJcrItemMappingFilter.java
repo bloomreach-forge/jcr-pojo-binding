@@ -27,7 +27,17 @@ import org.onehippo.forge.content.pojo.mapper.ContentNodeMappingItemFilter;
 
 public class DefaultHippoJcrItemMappingFilter implements ContentNodeMappingItemFilter<Item> {
 
+    private boolean protectedPropertyIncluded;
+
     public DefaultHippoJcrItemMappingFilter() {
+    }
+
+    public boolean isProtectedPropertyIncluded() {
+        return protectedPropertyIncluded;
+    }
+
+    public void setProtectedPropertyIncluded(boolean protectedPropertyIncluded) {
+        this.protectedPropertyIncluded = protectedPropertyIncluded;
     }
 
     @Override
@@ -45,11 +55,11 @@ public class DefaultHippoJcrItemMappingFilter implements ContentNodeMappingItemF
 
     protected boolean acceptProperty(Property property) throws ContentNodeMappingException {
         try {
-            if (HippoNodeType.HIPPO_PATH.equals(property.getName())) {
+            if (!isProtectedPropertyIncluded() && JcrContentUtils.isProtected(property)) {
                 return false;
             }
 
-            if (JcrContentUtils.isProtected(property)) {
+            if (HippoNodeType.HIPPO_PATH.equals(property.getName())) {
                 return false;
             }
         } catch (RepositoryException e) {
