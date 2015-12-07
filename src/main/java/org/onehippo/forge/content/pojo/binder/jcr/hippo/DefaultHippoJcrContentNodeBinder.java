@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.forge.content.pojo.bind.jcr.hippo;
+package org.onehippo.forge.content.pojo.binder.jcr.hippo;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
@@ -28,15 +28,15 @@ import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 
 import org.apache.commons.lang.StringUtils;
-import org.onehippo.forge.content.pojo.bind.ContentNodeBinder;
-import org.onehippo.forge.content.pojo.bind.ContentNodeBindingException;
-import org.onehippo.forge.content.pojo.bind.ItemFilter;
-import org.onehippo.forge.content.pojo.bind.jcr.JcrContentUtils;
+import org.onehippo.forge.content.pojo.binder.ContentNodeBinder;
+import org.onehippo.forge.content.pojo.binder.ContentNodeBindingException;
+import org.onehippo.forge.content.pojo.binder.ContentNodeBindingItemFilter;
+import org.onehippo.forge.content.pojo.common.jcr.JcrContentUtils;
 import org.onehippo.forge.content.pojo.model.ContentItem;
 import org.onehippo.forge.content.pojo.model.ContentNode;
 import org.onehippo.forge.content.pojo.model.ContentProperty;
 
-public class DefaultHippoJcrContentNodeBinder extends BaseHippoJcrContentNodeHandler implements ContentNodeBinder<Node, ContentItem> {
+public class DefaultHippoJcrContentNodeBinder implements ContentNodeBinder<Node, ContentItem> {
 
     private static final long serialVersionUID = 1L;
 
@@ -50,7 +50,7 @@ public class DefaultHippoJcrContentNodeBinder extends BaseHippoJcrContentNodeHan
     }
 
     @Override
-    public void bind(Node jcrDataNode, ContentNode contentNode, ItemFilter<ContentItem> itemFilter) throws ContentNodeBindingException {
+    public void bind(Node jcrDataNode, ContentNode contentNode, ContentNodeBindingItemFilter<ContentItem> itemFilter) throws ContentNodeBindingException {
         try {
             if (StringUtils.isNotBlank(contentNode.getPrimaryType())
                     && !jcrDataNode.getPrimaryNodeType().getName().equals(contentNode.getPrimaryType())) {

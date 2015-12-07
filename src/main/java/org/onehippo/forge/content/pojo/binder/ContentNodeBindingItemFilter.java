@@ -13,16 +13,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.forge.content.pojo.bind;
+package org.onehippo.forge.content.pojo.binder;
 
-import java.io.Serializable;
+public interface ContentNodeBindingItemFilter<T> {
 
-import org.onehippo.forge.content.pojo.model.ContentNode;
-
-public interface ContentNodeMapper<D, I> extends Serializable {
-
-    public ContentNode map(D dataNode) throws ContentNodeMappingException;
-
-    public ContentNode map(D dataNode, ItemFilter<I> itemFilter) throws ContentNodeMappingException;
+    boolean accept(T item) throws ContentNodeBindingException;
 
 }

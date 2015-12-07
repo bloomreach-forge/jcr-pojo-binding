@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.forge.content.pojo.bind.jcr.hippo;
+package org.onehippo.forge.content.pojo.mapper.jcr.hippo;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -30,7 +30,10 @@ import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.forge.content.pojo.bind.ItemFilter;
+import org.onehippo.forge.content.pojo.common.jcr.hippo.BaseHippoJcrContentNodeTest;
+import org.onehippo.forge.content.pojo.mapper.ContentNodeMappingItemFilter;
+import org.onehippo.forge.content.pojo.mapper.jcr.hippo.DefaultHippoJcrContentNodeMapper;
+import org.onehippo.forge.content.pojo.mapper.jcr.hippo.SpecificVariantAndNonVariantNodeMappingFilter;
 import org.onehippo.forge.content.pojo.model.ContentNode;
 import org.onehippo.forge.content.pojo.model.ContentProperty;
 import org.onehippo.forge.content.pojo.model.DocumentContentHandle;
@@ -42,7 +45,7 @@ public class DefaultHippoJcrContentNodeMapperTest extends BaseHippoJcrContentNod
     private static Logger log = LoggerFactory.getLogger(DefaultHippoJcrContentNodeMapperTest.class);
 
     private DefaultHippoJcrContentNodeMapper mapper;
-    private ItemFilter<Item> nonLiveVariantNodeFilter = new SpecificVariantAndNonVariantNodeFilter(HippoStdNodeType.UNPUBLISHED);
+    private ContentNodeMappingItemFilter<Item> nonLiveVariantNodeFilter = new SpecificVariantAndNonVariantNodeMappingFilter(HippoStdNodeType.UNPUBLISHED);
 
     @Before
     public void setUp() throws Exception {

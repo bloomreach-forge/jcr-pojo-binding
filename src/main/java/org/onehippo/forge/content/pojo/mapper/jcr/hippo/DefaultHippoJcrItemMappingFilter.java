@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.forge.content.pojo.bind.jcr.hippo;
+package org.onehippo.forge.content.pojo.mapper.jcr.hippo;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
@@ -21,17 +21,17 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
-import org.onehippo.forge.content.pojo.bind.ContentNodeHandlingException;
-import org.onehippo.forge.content.pojo.bind.ItemFilter;
-import org.onehippo.forge.content.pojo.bind.jcr.JcrContentUtils;
+import org.onehippo.forge.content.pojo.common.jcr.JcrContentUtils;
+import org.onehippo.forge.content.pojo.mapper.ContentNodeMappingException;
+import org.onehippo.forge.content.pojo.mapper.ContentNodeMappingItemFilter;
 
-public class DefaultHippoJcrItemFilter implements ItemFilter<Item> {
+public class DefaultHippoJcrItemMappingFilter implements ContentNodeMappingItemFilter<Item> {
 
-    public DefaultHippoJcrItemFilter() {
+    public DefaultHippoJcrItemMappingFilter() {
     }
 
     @Override
-    public boolean accept(Item item) throws ContentNodeHandlingException {
+    public boolean accept(Item item) throws ContentNodeMappingException {
         if (item.isNode()) {
             return acceptNode((Node) item);
         } else {
@@ -39,11 +39,11 @@ public class DefaultHippoJcrItemFilter implements ItemFilter<Item> {
         }
     }
 
-    protected boolean acceptNode(Node node) throws ContentNodeHandlingException {
+    protected boolean acceptNode(Node node) throws ContentNodeMappingException {
         return true;
     }
 
-    protected boolean acceptProperty(Property property) throws ContentNodeHandlingException {
+    protected boolean acceptProperty(Property property) throws ContentNodeMappingException {
         try {
             if (HippoNodeType.HIPPO_PATH.equals(property.getName())) {
                 return false;
@@ -53,7 +53,7 @@ public class DefaultHippoJcrItemFilter implements ItemFilter<Item> {
                 return false;
             }
         } catch (RepositoryException e) {
-            throw new ContentNodeHandlingException(e.toString(), e);
+            throw new ContentNodeMappingException(e.toString(), e);
         }
 
         return true;

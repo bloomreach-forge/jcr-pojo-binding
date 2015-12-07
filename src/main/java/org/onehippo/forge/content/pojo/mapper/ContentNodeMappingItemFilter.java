@@ -13,10 +13,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.forge.content.pojo.bind;
+package org.onehippo.forge.content.pojo.mapper;
 
-public interface ItemFilter<T> {
+public interface ContentNodeMappingItemFilter<T> {
 
-    boolean accept(T item) throws ContentNodeHandlingException;
+    boolean accept(T item) throws ContentNodeMappingException;
 
 }

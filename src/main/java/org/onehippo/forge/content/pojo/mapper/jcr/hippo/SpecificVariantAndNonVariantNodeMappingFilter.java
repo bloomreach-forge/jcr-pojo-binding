@@ -12,25 +12,26 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- */package org.onehippo.forge.content.pojo.bind.jcr.hippo;
+ */package org.onehippo.forge.content.pojo.mapper.jcr.hippo;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.HippoStdNodeType;
-import org.onehippo.forge.content.pojo.bind.ContentNodeHandlingException;
+import org.onehippo.forge.content.pojo.common.jcr.hippo.HippoDocumentUtils;
+import org.onehippo.forge.content.pojo.mapper.ContentNodeMappingException;
 
-public class SpecificVariantAndNonVariantNodeFilter extends DefaultHippoJcrItemFilter {
+public class SpecificVariantAndNonVariantNodeMappingFilter extends DefaultHippoJcrItemMappingFilter {
 
     private String expectedState;
 
-    public SpecificVariantAndNonVariantNodeFilter(String expectedState) {
+    public SpecificVariantAndNonVariantNodeMappingFilter(String expectedState) {
         super();
         this.expectedState = expectedState;
     }
 
     @Override
-    protected boolean acceptNode(Node node) throws ContentNodeHandlingException {
+    protected boolean acceptNode(Node node) throws ContentNodeMappingException {
         if (!super.acceptNode(node)) {
             return false;
         }
@@ -46,7 +47,7 @@ public class SpecificVariantAndNonVariantNodeFilter extends DefaultHippoJcrItemF
                 return true;
             }
         } catch (RepositoryException e) {
-            throw new ContentNodeHandlingException(e.toString(), e);
+            throw new ContentNodeMappingException(e.toString(), e);
         }
     }
 

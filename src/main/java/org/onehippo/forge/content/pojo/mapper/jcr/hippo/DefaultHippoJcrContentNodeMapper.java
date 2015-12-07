@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.forge.content.pojo.bind.jcr.hippo;
+package org.onehippo.forge.content.pojo.mapper.jcr.hippo;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
@@ -27,18 +27,18 @@ import javax.jcr.nodetype.NodeType;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.onehippo.forge.content.pojo.bind.ContentNodeBindingException;
-import org.onehippo.forge.content.pojo.bind.ContentNodeMapper;
-import org.onehippo.forge.content.pojo.bind.ContentNodeMappingException;
-import org.onehippo.forge.content.pojo.bind.ItemFilter;
-import org.onehippo.forge.content.pojo.bind.jcr.JcrContentUtils;
+import org.onehippo.forge.content.pojo.common.jcr.JcrContentUtils;
+import org.onehippo.forge.content.pojo.common.jcr.hippo.HippoDocumentUtils;
+import org.onehippo.forge.content.pojo.mapper.ContentNodeMapper;
+import org.onehippo.forge.content.pojo.mapper.ContentNodeMappingException;
+import org.onehippo.forge.content.pojo.mapper.ContentNodeMappingItemFilter;
 import org.onehippo.forge.content.pojo.model.ContentNode;
 import org.onehippo.forge.content.pojo.model.ContentProperty;
 import org.onehippo.forge.content.pojo.model.ContentPropertyType;
 import org.onehippo.forge.content.pojo.model.DocumentContent;
 import org.onehippo.forge.content.pojo.model.DocumentContentHandle;
 
-public class DefaultHippoJcrContentNodeMapper extends BaseHippoJcrContentNodeHandler implements ContentNodeMapper<Node, Item> {
+public class DefaultHippoJcrContentNodeMapper implements ContentNodeMapper<Node, Item> {
 
     private static final long serialVersionUID = 1L;
 
@@ -48,11 +48,11 @@ public class DefaultHippoJcrContentNodeMapper extends BaseHippoJcrContentNodeHan
 
     @Override
     public ContentNode map(Node jcrDataNode) throws ContentNodeMappingException {
-        return map(jcrDataNode, new DefaultHippoJcrItemFilter());
+        return map(jcrDataNode, new DefaultHippoJcrItemMappingFilter());
     }
 
     @Override
-    public ContentNode map(Node jcrDataNode, ItemFilter<Item> itemFilter) throws ContentNodeMappingException {
+    public ContentNode map(Node jcrDataNode, ContentNodeMappingItemFilter<Item> itemFilter) throws ContentNodeMappingException {
         ContentNode contentNode = null;
 
         try {
@@ -120,7 +120,7 @@ public class DefaultHippoJcrContentNodeMapper extends BaseHippoJcrContentNodeHan
                 }
             }
         } catch (RepositoryException e) {
-            throw new ContentNodeBindingException(e.toString(), e);
+            throw new ContentNodeMappingException(e.toString(), e);
         }
 
         return contentNode;

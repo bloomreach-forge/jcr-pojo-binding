@@ -13,25 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.forge.content.pojo.bind;
+package org.onehippo.forge.content.pojo.mapper;
 
-public class ContentNodeMappingException extends ContentNodeHandlingException {
+import java.io.Serializable;
 
-    private static final long serialVersionUID = 1L;
+import org.onehippo.forge.content.pojo.model.ContentNode;
 
-    public ContentNodeMappingException() {
-        super();
-    }
+public interface ContentNodeMapper<D, I> extends Serializable {
 
-    public ContentNodeMappingException(String message) {
-        super(message);
-    }
+    public ContentNode map(D dataNode) throws ContentNodeMappingException;
 
-    public ContentNodeMappingException(Throwable nested) {
-        super(nested);
-    }
+    public ContentNode map(D dataNode, ContentNodeMappingItemFilter<I> itemFilter) throws ContentNodeMappingException;
 
-    public ContentNodeMappingException(String msg, Throwable nested) {
-        super(msg, nested);
-    }
 }

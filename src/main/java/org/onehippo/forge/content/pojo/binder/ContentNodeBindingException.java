@@ -13,25 +13,25 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.forge.content.pojo.bind;
+package org.onehippo.forge.content.pojo.binder;
 
-public class ContentNodeHandlingException extends RuntimeException {
+public class ContentNodeBindingException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
-    public ContentNodeHandlingException() {
+    public ContentNodeBindingException() {
         super();
     }
 
-    public ContentNodeHandlingException(String message) {
+    public ContentNodeBindingException(String message) {
         super(message);
     }
 
-    public ContentNodeHandlingException(Throwable nested) {
+    public ContentNodeBindingException(Throwable nested) {
         super(nested);
     }
 
-    public ContentNodeHandlingException(String msg, Throwable nested) {
+    public ContentNodeBindingException(String msg, Throwable nested) {
         super(msg, nested);
     }
 }

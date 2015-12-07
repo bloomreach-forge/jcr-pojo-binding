@@ -13,15 +13,25 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.forge.content.pojo.bind.jcr.hippo;
+package org.onehippo.forge.content.pojo.mapper;
 
-import java.io.Serializable;
-
-public class BaseHippoJcrContentNodeHandler implements Serializable {
+public class ContentNodeMappingException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
-    public BaseHippoJcrContentNodeHandler() {
+    public ContentNodeMappingException() {
+        super();
     }
 
+    public ContentNodeMappingException(String message) {
+        super(message);
+    }
+
+    public ContentNodeMappingException(Throwable nested) {
+        super(nested);
+    }
+
+    public ContentNodeMappingException(String msg, Throwable nested) {
+        super(msg, nested);
+    }
 }
