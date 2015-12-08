@@ -82,7 +82,7 @@ public class ContentNodeTest {
     }
 
     @Test
-    public void testQueryByJxpath() throws Exception {
+    public void testQueryByXPath() throws Exception {
         assertEquals(liveNews1, handleNode.queryObjectByXPath("nodes[@primaryType='myhippoproject:news'][1]"));
         assertEquals(liveNews1, handleNode.queryObjectByXPath("nodes[@mixinTypes='myhippoproject:taggable'][1]"));
         assertEquals(liveNews1, handleNode.queryObjectByXPath("nodes[@mixinTypes='myhippoproject:classifiable'][1]"));
