@@ -21,8 +21,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.collections.ListUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemException;
+import org.apache.commons.vfs2.FileSystemManager;
+import org.apache.commons.vfs2.VFS;
 import org.apache.jackrabbit.util.ISO8601;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -122,7 +127,7 @@ public class ContentProperty extends ContentItem {
     }
 
     @JsonIgnore
-    public Object getFirstObjectValue() {
+    public Object getObjectValue() {
         if (values != null && !values.isEmpty()) {
             return getObjectValueAt(0);
         }
@@ -130,7 +135,7 @@ public class ContentProperty extends ContentItem {
         return null;
     }
 
-    public Object getObjectValueAt(final int index) {
+    private Object getObjectValueAt(final int index) {
         Object objectValue = null;
 
         final String stringifiedValue = values.get(index);
@@ -160,6 +165,10 @@ public class ContentProperty extends ContentItem {
             objectValue = new BigDecimal(stringifiedValue);
             break;
         }
+        case BINARY: {
+            objectValue = createBinaryValue(stringifiedValue);
+            break;
+        }
         default: {
             throw new UnsupportedOperationException(
                     "Unsupported type, " + type + ". Only primitive number/string values are currently supported.");
@@ -167,6 +176,24 @@ public class ContentProperty extends ContentItem {
         }
 
         return objectValue;
+    }
+
+    private BinaryValue createBinaryValue(String stringifiedValue) {
+        BinaryValue binaryValue = null;
+
+        if (StringUtils.startsWith(stringifiedValue, "data:")) {
+            binaryValue = BinaryValue.fromDataURI(stringifiedValue);
+        } else {
+            try {
+                FileSystemManager fsManager = VFS.getManager();
+                FileObject fileObject = fsManager.resolveFile(stringifiedValue);
+                binaryValue = new BinaryValue(fileObject);
+            } catch (FileSystemException e) {
+                throw new IllegalArgumentException("Unresolvable VFS url.");
+            }
+        }
+
+        return binaryValue;
     }
 
     @Override

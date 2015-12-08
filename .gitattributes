@@ -12,6 +12,7 @@ src/main/java/org/onehippo/forge/content/pojo/mapper/ContentNodeMappingItemFilte
 src/main/java/org/onehippo/forge/content/pojo/mapper/jcr/hippo/DefaultHippoJcrContentNodeMapper.java -text svneol=unset#text/plain
 src/main/java/org/onehippo/forge/content/pojo/mapper/jcr/hippo/DefaultHippoJcrItemMappingFilter.java -text svneol=unset#text/plain
 src/main/java/org/onehippo/forge/content/pojo/mapper/jcr/hippo/SpecificVariantAndNonVariantNodeMappingFilter.java -text svneol=unset#text/plain
+src/main/java/org/onehippo/forge/content/pojo/model/BinaryValue.java -text svneol=unset#text/plain
 src/main/java/org/onehippo/forge/content/pojo/model/ContentItem.java -text svneol=unset#text/plain
 src/main/java/org/onehippo/forge/content/pojo/model/ContentNode.java -text svneol=unset#text/plain
 src/main/java/org/onehippo/forge/content/pojo/model/ContentProperty.java -text svneol=unset#text/plain
@@ -70,5 +71,6 @@ src/site/xdoc/install.xml -text svneol=unset#text/plain
 src/site/xdoc/release-notes.xml -text svneol=unset#text/plain
 src/test/java/org/onehippo/forge/content/pojo/common/jcr/hippo/BaseHippoJcrContentNodeTest.java -text svneol=unset#text/plain
 src/test/java/org/onehippo/forge/content/pojo/mapper/jcr/hippo/DefaultHippoJcrContentNodeMapperTest.java -text svneol=unset#text/plain
+src/test/java/org/onehippo/forge/content/pojo/model/BinaryValueTest.java -text svneol=unset#text/plain
 src/test/java/org/onehippo/forge/content/pojo/model/ContentNodeTest.java -text svneol=unset#text/plain
 src/test/resources/log4j.xml -text svneol=unset#text/plain
