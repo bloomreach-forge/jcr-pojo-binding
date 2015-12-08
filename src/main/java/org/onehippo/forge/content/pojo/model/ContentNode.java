@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections.SetUtils;
+import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -35,7 +36,7 @@ public class ContentNode extends ContentItem {
 
     private Set<String> mixinTypes;
 
-    private Set<ContentProperty> properties;
+    private List<ContentProperty> properties;
 
     private List<ContentNode> nodes;
 
@@ -43,12 +44,13 @@ public class ContentNode extends ContentItem {
         super();
     }
 
-    public String getPrimaryType() {
-        return primaryType;
+    public ContentNode(String name, String primaryType) {
+        super(name);
+        this.primaryType = primaryType;
     }
 
-    public void setPrimaryType(String primaryType) {
-        this.primaryType = primaryType;
+    public String getPrimaryType() {
+        return primaryType;
     }
 
     public Set<String> getMixinTypes() {
@@ -56,11 +58,7 @@ public class ContentNode extends ContentItem {
             return Collections.emptySet();
         }
 
-        return mixinTypes;
-    }
-
-    public void setMixinTypes(Set<String> mixinTypes) {
-        this.mixinTypes = mixinTypes;
+        return Collections.unmodifiableSet(mixinTypes);
     }
 
     public void addMixinType(String mixinType) {
@@ -71,35 +69,49 @@ public class ContentNode extends ContentItem {
         mixinTypes.add(mixinType);
     }
 
-    public Set<ContentProperty> getProperties() {
+    public void removeMixinType(String mixinType) {
+        if (mixinTypes != null && !mixinTypes.isEmpty()) {
+            mixinTypes.remove(mixinType);
+        }
+    }
+
+    public List<ContentProperty> getProperties() {
         if (properties == null) {
-            return Collections.emptySet();
+            return Collections.emptyList();
         }
 
-        return properties;
+        return Collections.unmodifiableList(properties);
     }
 
     public ContentProperty getProperty(String name) {
-        if (properties == null) {
-            return null;
-        }
-
-        for (ContentProperty prop : properties) {
-            if (prop.getName().equals(name)) {
-                return prop;
+        if (properties != null) {
+            for (ContentProperty contentProp : properties) {
+                if (contentProp.getName().equals(name)) {
+                    return contentProp;
+                }
             }
         }
 
         return null;
     }
 
-    public void setProperties(Set<ContentProperty> properties) {
-        this.properties = properties;
-    }
-
-    public void addProperty(ContentProperty property) {
+    public void setProperty(ContentProperty property) {
         if (properties == null) {
-            properties = new LinkedHashSet<>();
+            properties = new LinkedList<>();
+        }
+
+        if (!properties.isEmpty()) {
+            int size = properties.size();
+            ContentProperty contentProp;
+
+            for (int i = 0; i < size; i++) {
+                contentProp = properties.get(i);
+
+                if (contentProp.getName().equals(property.getName())) {
+                    properties.set(i, property);
+                    return;
+                }
+            }
         }
 
         properties.add(property);
@@ -110,7 +122,7 @@ public class ContentNode extends ContentItem {
             return Collections.emptyList();
         }
 
-        return nodes;
+        return Collections.unmodifiableList(nodes);
     }
 
     public ContentNode getNode(String name) {
@@ -125,32 +137,6 @@ public class ContentNode extends ContentItem {
         return null;
     }
 
-    public List<ContentNode> getNodes(String name) {
-        List<ContentNode> filteredNodes = null;
-
-        if (nodes != null) {
-            for (ContentNode node : nodes) {
-                if (node.getName().equals(name)) {
-                    if (filteredNodes == null) {
-                        filteredNodes = new LinkedList<>();
-                    }
-
-                    filteredNodes.add(node);
-                }
-            }
-        }
-
-        if (filteredNodes == null) {
-            return Collections.emptyList();
-        }
-
-        return filteredNodes;
-    }
-
-    public void setNodes(List<ContentNode> nodes) {
-        this.nodes = nodes;
-    }
-
     public void addNode(ContentNode node) {
         if (nodes == null) {
             nodes = new LinkedList<>();
@@ -159,35 +145,40 @@ public class ContentNode extends ContentItem {
         nodes.add(node);
     }
 
+    public Object queryObjectByXPath(String xpath) {
+        return createJXPathContext().getValue(xpath);
+    }
+
+    public List<Object> queryObjectsByXPath(String xpath) {
+        return createJXPathContext().selectNodes(xpath);
+    }
+
+    private JXPathContext createJXPathContext() {
+        JXPathContext jxpathCtx = JXPathContext.newContext(this);
+        jxpathCtx.setLenient(true);
+        return jxpathCtx;
+    }
+
     @Override
     public Object clone() {
-        ContentNode clone = new ContentNode();
-        clone.setName(getName());
-        clone.setPrimaryType(primaryType);
-        clone.setMixinTypes(mixinTypes == null ? null : new LinkedHashSet<>(mixinTypes));
+        ContentNode clone = new ContentNode(getName(), primaryType);
 
-        if (properties == null) {
-            clone.setProperties(null);
-        } else {
-            Set<ContentProperty> propClones = new LinkedHashSet<>();
-
-            for (ContentProperty prop : properties) {
-                propClones.add((ContentProperty) prop.clone());
+        if (mixinTypes != null) {
+            for (String mixinType : mixinTypes) {
+                clone.addMixinType(mixinType);
             }
-
-            clone.setProperties(propClones);
         }
 
-        if (nodes == null) {
-            clone.setNodes(null);
-        } else {
-            List<ContentNode> nodeClones = new LinkedList<>();
-
-            for (ContentNode node : nodes) {
-                nodeClones.add((ContentNode) node.clone());
+        if (properties != null) {
+            for (ContentProperty contentProp : properties) {
+                clone.setProperty((ContentProperty) contentProp.clone());
             }
+        }
 
-            clone.setNodes(nodeClones);
+        if (nodes != null) {
+            for (ContentNode node : nodes) {
+                clone.addNode((ContentNode) node.clone());
+            }
         }
 
         return clone;
@@ -215,8 +206,14 @@ public class ContentNode extends ContentItem {
             return false;
         }
 
-        if (!SetUtils.isEqualSet(properties, that.properties)) {
-            return false;
+        if (properties == null) {
+            if (that.properties != null) {
+                return false;
+            }
+        } else {
+            if (!properties.equals(that.properties)) {
+                return false;
+            }
         }
 
         if (!ListUtils.isEqualList(nodes, that.nodes)) {

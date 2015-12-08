@@ -16,6 +16,7 @@
 package org.onehippo.forge.content.pojo.model;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,32 +41,34 @@ public class ContentProperty extends ContentItem {
         super();
     }
 
-    public ContentPropertyType getType() {
-        return type;
+    public ContentProperty(String name, ContentPropertyType type) {
+        this(name, type, false);
     }
 
-    public void setType(ContentPropertyType type) {
-        if (type == null) {
-            throw new IllegalArgumentException("type must be non-null.");
-        }
-
+    public ContentProperty(String name, ContentPropertyType type, boolean multiple) {
+        super(name);
         this.type = type;
+        this.multiple = multiple;
+    }
+
+    public ContentPropertyType getType() {
+        return type;
     }
 
     public boolean isMultiple() {
         return multiple;
     }
 
-    public void setMultiple(boolean multiple) {
-        this.multiple = multiple;
-    }
-
     public List<String> getValues() {
-        return values;
+        if (values == null) {
+            return Collections.emptyList();
+        }
+
+        return Collections.unmodifiableList(values);
     }
 
     @JsonIgnore
-    public String getFirstValue() {
+    public String getValue() {
         if (values != null && !values.isEmpty()) {
             return values.get(0);
         }
@@ -73,8 +76,18 @@ public class ContentProperty extends ContentItem {
         return null;
     }
 
-    public void setValues(List<String> values) {
-        this.values = values;
+    public void setValue(String value) {
+        if (values == null) {
+            values = new LinkedList<>();
+        }
+
+        if (!values.isEmpty()) {
+            values.clear();
+        }
+
+        if (value != null) {
+            values.add(value);
+        }
     }
 
     public void addValue(String value) {
@@ -83,6 +96,12 @@ public class ContentProperty extends ContentItem {
         }
 
         values.add(value);
+    }
+
+    public void removeValues() {
+        if (values != null) {
+            values.clear();
+        }
     }
 
     @JsonIgnore
@@ -152,11 +171,14 @@ public class ContentProperty extends ContentItem {
 
     @Override
     public Object clone() {
-        ContentProperty clone = new ContentProperty();
-        clone.setName(getName());
-        clone.setType(type);
-        clone.setMultiple(multiple);
-        clone.setValues(values == null ? null : new LinkedList<>(values));
+        ContentProperty clone = new ContentProperty(getName(), type, multiple);
+
+        if (values != null) {
+            for (String value : values) {
+                clone.addValue(value);
+            }
+        }
+
         return clone;
     }
 

@@ -66,13 +66,17 @@ public class DefaultHippoJcrContentNodeBinder implements ContentNodeBinder<Node,
             Value[] jcrValues;
             Property existingJcrProp;
 
+            String propName;
+
             for (ContentProperty contentProp : contentNode.getProperties()) {
+                propName = contentProp.getName();
+
                 if (itemFilter != null && !itemFilter.accept(contentProp)) {
                     continue;
                 }
 
-                existingJcrProp = jcrDataNode.hasProperty(contentProp.getName())
-                        ? jcrDataNode.getProperty(contentProp.getName()) : null;
+                existingJcrProp = jcrDataNode.hasProperty(propName)
+                        ? jcrDataNode.getProperty(propName) : null;
 
                 if (existingJcrProp != null && JcrContentUtils.isProtected(existingJcrProp)) {
                     continue;
@@ -82,9 +86,9 @@ public class DefaultHippoJcrContentNodeBinder implements ContentNodeBinder<Node,
 
                 if (jcrValues != null && jcrValues.length > 0) {
                     if (!contentProp.isMultiple()) {
-                        jcrDataNode.setProperty(contentProp.getName(), jcrValues[0]);
+                        jcrDataNode.setProperty(propName, jcrValues[0]);
                     } else {
-                        jcrDataNode.setProperty(contentProp.getName(), jcrValues);
+                        jcrDataNode.setProperty(propName, jcrValues);
                     }
                 }
             }

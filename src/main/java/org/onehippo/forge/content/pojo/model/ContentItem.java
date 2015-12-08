@@ -17,6 +17,8 @@ package org.onehippo.forge.content.pojo.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 abstract public class ContentItem implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1L;
@@ -26,11 +28,17 @@ abstract public class ContentItem implements Serializable, Cloneable {
     public ContentItem() {
     }
 
+    public ContentItem(String name) {
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    @JsonIgnore
+    public String getItemName() {
+        return getName();
     }
+
 }

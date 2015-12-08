@@ -20,6 +20,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
 import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -32,11 +34,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.forge.content.pojo.common.jcr.hippo.BaseHippoJcrContentNodeTest;
 import org.onehippo.forge.content.pojo.mapper.ContentNodeMappingItemFilter;
-import org.onehippo.forge.content.pojo.mapper.jcr.hippo.DefaultHippoJcrContentNodeMapper;
-import org.onehippo.forge.content.pojo.mapper.jcr.hippo.SpecificVariantAndNonVariantNodeMappingFilter;
 import org.onehippo.forge.content.pojo.model.ContentNode;
 import org.onehippo.forge.content.pojo.model.ContentProperty;
-import org.onehippo.forge.content.pojo.model.HandleContentNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,21 +70,28 @@ public class DefaultHippoJcrContentNodeMapperTest extends BaseHippoJcrContentNod
     public void testMapDocumentHandle() throws Exception {
         Node handleNode = getRootNode().getNode(StringUtils.removeStart(NEWS1_DOC_HANDLE_PATH, "/"));
 
-        HandleContentNode handleContentNode = (HandleContentNode) mapper.map(handleNode);
+        ContentNode handleContentNode = mapper.map(handleNode);
         assertEquals(HippoNodeType.NT_HANDLE, handleContentNode.getPrimaryType());
 
         ContentNode translationContentNode = handleContentNode.getNode(HippoNodeType.HIPPO_TRANSLATION);
         assertEquals(HippoNodeType.NT_TRANSLATION, translationContentNode.getPrimaryType());
-        assertEquals("en", translationContentNode.getProperty(HippoNodeType.HIPPO_LANGUAGE).getFirstValue());
-        assertEquals("News 1", translationContentNode.getProperty(HippoNodeType.HIPPO_MESSAGE).getFirstValue());
+        assertEquals("en", translationContentNode.getProperty(HippoNodeType.HIPPO_LANGUAGE).getValue());
+        assertEquals("News 1", translationContentNode.getProperty(HippoNodeType.HIPPO_MESSAGE).getValue());
 
-        assertEquals(2, handleContentNode.getRenditions().size());
+        assertEquals(translationContentNode,
+                handleContentNode.queryObjectByXPath("nodes[@primaryType='" + HippoNodeType.NT_TRANSLATION + "']"));
 
-        ContentNode liveContentNode = handleContentNode.getRenditions().get(HippoStdNodeType.PUBLISHED);
+        List<Object> variantNodeObjects = handleContentNode
+                .queryObjectsByXPath("nodes[properties[@itemName='hippostd:state']]");
+        assertEquals(2, variantNodeObjects.size());
+
+        ContentNode liveContentNode = (ContentNode) handleContentNode
+                .queryObjectByXPath("nodes[properties[@itemName='hippostd:state']/value='published']");
         assertNotNull(liveContentNode);
         assertDocumentVariantContentNode(liveContentNode, HippoStdNodeType.PUBLISHED);
 
-        ContentNode previewContentNode = handleContentNode.getRenditions().get(HippoStdNodeType.UNPUBLISHED);
+        ContentNode previewContentNode = (ContentNode) handleContentNode
+                .queryObjectByXPath("nodes[properties[@itemName='hippostd:state']/value='unpublished']");
         assertNotNull(previewContentNode);
         assertDocumentVariantContentNode(previewContentNode, HippoStdNodeType.UNPUBLISHED);
     }
@@ -94,13 +100,15 @@ public class DefaultHippoJcrContentNodeMapperTest extends BaseHippoJcrContentNod
     public void testMapDocumentHandleWithPreviewOnly() throws Exception {
         Node handleNode = getRootNode().getNode(StringUtils.removeStart(NEWS1_DOC_HANDLE_PATH, "/"));
 
-        HandleContentNode handleContentNode = (HandleContentNode) mapper.map(handleNode, nonLiveVariantNodeFilter);
+        ContentNode handleContentNode = mapper.map(handleNode, nonLiveVariantNodeFilter);
         assertEquals(HippoNodeType.NT_HANDLE, handleContentNode.getPrimaryType());
 
-        assertEquals(1, handleContentNode.getRenditions().size());
+        List<Object> variantNodeObjects = handleContentNode
+                .queryObjectsByXPath("nodes[properties[@itemName='hippostd:state']]");
+        assertEquals(1, variantNodeObjects.size());
 
-        ContentNode previewContentNode = handleContentNode.getRenditions().get(HippoStdNodeType.UNPUBLISHED);
-        assertNotNull("documents key set: " + handleContentNode.getRenditions().keySet(), previewContentNode);
+        ContentNode previewContentNode = (ContentNode) handleContentNode
+                .queryObjectByXPath("nodes[properties[@itemName='hippostd:state']/value='unpublished']");
         assertDocumentVariantContentNode(previewContentNode, HippoStdNodeType.UNPUBLISHED);
     }
 
@@ -116,24 +124,28 @@ public class DefaultHippoJcrContentNodeMapperTest extends BaseHippoJcrContentNod
 
         ContentNode translationContentNode = folderContentNode.getNode(HippoNodeType.HIPPO_TRANSLATION);
         assertEquals(HippoNodeType.NT_TRANSLATION, translationContentNode.getPrimaryType());
-        assertEquals("en", translationContentNode.getProperty(HippoNodeType.HIPPO_LANGUAGE).getFirstValue());
-        assertEquals("2015", translationContentNode.getProperty(HippoNodeType.HIPPO_MESSAGE).getFirstValue());
+        assertEquals("en", translationContentNode.getProperty(HippoNodeType.HIPPO_LANGUAGE).getValue());
+        assertEquals("2015", translationContentNode.getProperty(HippoNodeType.HIPPO_MESSAGE).getValue());
 
-        HandleContentNode handleContentNode = (HandleContentNode) folderContentNode.getNode("news1");
+        ContentNode handleContentNode = folderContentNode.getNode("news1");
         assertEquals(HippoNodeType.NT_HANDLE, handleContentNode.getPrimaryType());
 
         translationContentNode = handleContentNode.getNode(HippoNodeType.HIPPO_TRANSLATION);
         assertEquals(HippoNodeType.NT_TRANSLATION, translationContentNode.getPrimaryType());
-        assertEquals("en", translationContentNode.getProperty(HippoNodeType.HIPPO_LANGUAGE).getFirstValue());
-        assertEquals("News 1", translationContentNode.getProperty(HippoNodeType.HIPPO_MESSAGE).getFirstValue());
+        assertEquals("en", translationContentNode.getProperty(HippoNodeType.HIPPO_LANGUAGE).getValue());
+        assertEquals("News 1", translationContentNode.getProperty(HippoNodeType.HIPPO_MESSAGE).getValue());
 
-        assertEquals(2, handleContentNode.getRenditions().size());
+        List<Object> variantNodeObjects = handleContentNode
+                .queryObjectsByXPath("nodes[properties[@itemName='hippostd:state']]");
+        assertEquals(2, variantNodeObjects.size());
 
-        ContentNode liveContentNode = handleContentNode.getRenditions().get(HippoStdNodeType.PUBLISHED);
+        ContentNode liveContentNode = (ContentNode) handleContentNode
+                .queryObjectByXPath("nodes[properties[@itemName='hippostd:state']/value='published']");
         assertNotNull(liveContentNode);
         assertDocumentVariantContentNode(liveContentNode, HippoStdNodeType.PUBLISHED);
 
-        ContentNode previewContentNode = handleContentNode.getRenditions().get(HippoStdNodeType.UNPUBLISHED);
+        ContentNode previewContentNode = (ContentNode) handleContentNode
+                .queryObjectByXPath("nodes[properties[@itemName='hippostd:state']/value='unpublished']");
         assertNotNull(previewContentNode);
         assertDocumentVariantContentNode(previewContentNode, HippoStdNodeType.UNPUBLISHED);
     }
@@ -147,33 +159,33 @@ public class DefaultHippoJcrContentNodeMapperTest extends BaseHippoJcrContentNod
 
         if (HippoStdNodeType.PUBLISHED.equals(state)) {
             assertEquals(HippoStdNodeType.PUBLISHED,
-                    varContentNode.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getFirstValue());
+                    varContentNode.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getValue());
             assertTrue(varContentNode.getProperty(HippoNodeType.HIPPO_AVAILABILITY).getValues().contains("live"));
             assertTrue(varContentNode.getProperty(HippoNodeType.HIPPO_AVAILABILITY).getValues().contains("preview"));
             assertEquals("live",
-                    varContentNode.getProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY).getFirstValue());
+                    varContentNode.getProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY).getValue());
         } else if (HippoStdNodeType.UNPUBLISHED.equals(state)) {
             assertEquals(HippoStdNodeType.UNPUBLISHED,
-                    varContentNode.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getFirstValue());
+                    varContentNode.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getValue());
             assertFalse(varContentNode.getProperty(HippoNodeType.HIPPO_AVAILABILITY).getValues().contains("live"));
             assertTrue(varContentNode.getProperty(HippoNodeType.HIPPO_AVAILABILITY).getValues().contains("preview"));
             assertEquals("changed",
-                    varContentNode.getProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY).getFirstValue());
+                    varContentNode.getProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY).getValue());
         }
 
         assertEquals(NEWS_NODE_TYPE, varContentNode.getPrimaryType());
         assertEquals(DOC_VARIANT_NODE_MIXIN_TYPES, varContentNode.getMixinTypes());
 
-        assertEquals(NEWS_TITLE_PROP_VALUE, varContentNode.getProperty(NEWS_TITLE_PROP_NAME).getFirstValue());
-        assertEquals(NEWS_DATE_PROP_STRING_VALUE, varContentNode.getProperty(NEWS_DATE_PROP_NAME).getFirstValue());
-        assertEquals(NEWS_SUMMARY_PROP_VALUE, varContentNode.getProperty(NEWS_SUMMARY_PROP_NAME).getFirstValue());
+        assertEquals(NEWS_TITLE_PROP_VALUE, varContentNode.getProperty(NEWS_TITLE_PROP_NAME).getValue());
+        assertEquals(NEWS_DATE_PROP_STRING_VALUE, varContentNode.getProperty(NEWS_DATE_PROP_NAME).getValue());
+        assertEquals(NEWS_SUMMARY_PROP_VALUE, varContentNode.getProperty(NEWS_SUMMARY_PROP_NAME).getValue());
 
         ContentNode bodyContentNode = varContentNode.getNode(NEWS_BODY_NODE_NAME);
         assertNotNull(bodyContentNode);
         log.debug("bodyContentNode: {}", ReflectionToStringBuilder.toString(bodyContentNode));
 
         assertEquals("hippostd:html", bodyContentNode.getPrimaryType());
-        assertEquals(NEWS_BODY_CONTENT_VALUE, bodyContentNode.getProperty(HippoStdNodeType.HIPPOSTD_CONTENT).getFirstValue());
+        assertEquals(NEWS_BODY_CONTENT_VALUE, bodyContentNode.getProperty(HippoStdNodeType.HIPPOSTD_CONTENT).getValue());
 
         ContentNode imageLinkContentNode = varContentNode.getNode(NEWS_IMAGE_LINK_NODE_NAME);
         assertNotNull(imageLinkContentNode);
@@ -181,7 +193,7 @@ public class DefaultHippoJcrContentNodeMapperTest extends BaseHippoJcrContentNod
 
         assertEquals("hippogallerypicker:imagelink", imageLinkContentNode.getPrimaryType());
         Node newsImageSetHandleNode = getRootNode().getNode(StringUtils.removeStart(NEWS1_IMAGE_SET_HANDLE_PATH, "/"));
-        assertEquals(newsImageSetHandleNode.getIdentifier(), imageLinkContentNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getFirstValue());
+        assertEquals(newsImageSetHandleNode.getIdentifier(), imageLinkContentNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getValue());
     }
 
 }

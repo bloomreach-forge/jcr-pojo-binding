@@ -25,17 +25,13 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.nodetype.NodeType;
 
-import org.hippoecm.repository.HippoStdNodeType;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.forge.content.pojo.common.jcr.JcrContentUtils;
-import org.onehippo.forge.content.pojo.common.jcr.hippo.HippoDocumentUtils;
 import org.onehippo.forge.content.pojo.mapper.ContentNodeMapper;
 import org.onehippo.forge.content.pojo.mapper.ContentNodeMappingException;
 import org.onehippo.forge.content.pojo.mapper.ContentNodeMappingItemFilter;
 import org.onehippo.forge.content.pojo.model.ContentNode;
 import org.onehippo.forge.content.pojo.model.ContentProperty;
 import org.onehippo.forge.content.pojo.model.ContentPropertyType;
-import org.onehippo.forge.content.pojo.model.HandleContentNode;
 
 public class DefaultHippoJcrContentNodeMapper implements ContentNodeMapper<Node, Item> {
 
@@ -68,55 +64,21 @@ public class DefaultHippoJcrContentNodeMapper implements ContentNodeMapper<Node,
                 }
 
                 contentProp = createContentPropertyFromJcrProperty(prop);
-                contentNode.addProperty(contentProp);
+                contentNode.setProperty(contentProp);
             }
 
             Node childJcrNode;
             ContentNode childContentNode;
 
-            if (HippoDocumentUtils.isDocumentHandleNode(jcrDataNode)) {
-                String state;
+            for (NodeIterator nodeIt = jcrDataNode.getNodes(); nodeIt.hasNext(); ) {
+                childJcrNode = nodeIt.nextNode();
 
-                for (NodeIterator nodeIt = jcrDataNode.getNodes(jcrDataNode.getName()); nodeIt.hasNext(); ) {
-                    childJcrNode = nodeIt.nextNode();
-
-                    if (itemFilter != null && !itemFilter.accept(childJcrNode)) {
-                        continue;
-                    }
-
-                    if (HippoDocumentUtils.isDocumentVariantNode(childJcrNode)) {
-                        state = childJcrNode.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
-
-                        if (HippoStdNodeType.PUBLISHED.equals(state) || HippoStdNodeType.UNPUBLISHED.equals(state)) {
-                            childContentNode = map(childJcrNode, itemFilter);
-                            ((HandleContentNode) contentNode).putRendition(state, childContentNode);
-                        }
-                    }
+                if (itemFilter != null && !itemFilter.accept(childJcrNode)) {
+                    continue;
                 }
 
-                for (NodeIterator nodeIt = jcrDataNode.getNodes(HippoNodeType.HIPPO_TRANSLATION); nodeIt.hasNext();) {
-                    childJcrNode = nodeIt.nextNode();
-
-                    if (itemFilter != null && !itemFilter.accept(childJcrNode)) {
-                        continue;
-                    }
-
-                    if (childJcrNode.isNodeType(HippoNodeType.NT_TRANSLATION)) {
-                        childContentNode = map(childJcrNode, itemFilter);
-                        contentNode.addNode(childContentNode);
-                    }
-                }
-            } else {
-                for (NodeIterator nodeIt = jcrDataNode.getNodes(); nodeIt.hasNext(); ) {
-                    childJcrNode = nodeIt.nextNode();
-
-                    if (itemFilter != null && !itemFilter.accept(childJcrNode)) {
-                        continue;
-                    }
-
-                    childContentNode = map(childJcrNode, itemFilter);
-                    contentNode.addNode(childContentNode);
-                }
+                childContentNode = map(childJcrNode, itemFilter);
+                contentNode.addNode(childContentNode);
             }
         } catch (RepositoryException e) {
             throw new ContentNodeMappingException(e.toString(), e);
@@ -126,9 +88,7 @@ public class DefaultHippoJcrContentNodeMapper implements ContentNodeMapper<Node,
     }
 
     protected ContentProperty createContentPropertyFromJcrProperty(final Property jcrProp) throws RepositoryException {
-        final ContentProperty contentProp = new ContentProperty();
-
-        contentProp.setName(jcrProp.getName());
+        ContentProperty contentProp = null;
 
         ContentPropertyType type = ContentPropertyType.UNDEFINED;
 
@@ -177,9 +137,7 @@ public class DefaultHippoJcrContentNodeMapper implements ContentNodeMapper<Node,
         }
         }
 
-        contentProp.setType(type);
-
-        contentProp.setMultiple(jcrProp.isMultiple());
+        contentProp = new ContentProperty(jcrProp.getName(), type, jcrProp.isMultiple());
 
         if (jcrProp.isMultiple()) {
             for (Value jcrValue : jcrProp.getValues()) {
@@ -193,16 +151,7 @@ public class DefaultHippoJcrContentNodeMapper implements ContentNodeMapper<Node,
     }
 
     private ContentNode createContentNodeByJcrNodeTypes(final Node jcrNode) throws RepositoryException {
-        ContentNode contentNode = null;
-
-        if (HippoDocumentUtils.isDocumentHandleNode(jcrNode)) {
-            contentNode = new HandleContentNode();
-        } else {
-            contentNode = new ContentNode();
-        }
-
-        contentNode.setPrimaryType(jcrNode.getPrimaryNodeType().getName());
-        contentNode.setName(jcrNode.getName());
+        ContentNode contentNode = new ContentNode(jcrNode.getName(), jcrNode.getPrimaryNodeType().getName());
 
         for (NodeType mixinType: jcrNode.getMixinNodeTypes()) {
             contentNode.addMixinType(mixinType.getName());
