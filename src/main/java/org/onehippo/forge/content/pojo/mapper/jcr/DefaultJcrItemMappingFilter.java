@@ -17,7 +17,9 @@ package org.onehippo.forge.content.pojo.mapper.jcr;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,15 +37,17 @@ public class DefaultJcrItemMappingFilter implements ContentNodeMappingItemFilter
 
     private boolean protectedPropertyExcluded;
 
-    private List<String> propertyIncludes;
-    private List<String> propertyExcludes;
-    private List<String> nodeIncludes;
-    private List<String> nodeExcludes;
+    private Set<Integer> propertyTypeIncludes;
+    private Set<Integer> propertyTypeExcludes;
+    private List<String> propertyPathIncludes;
+    private List<String> propertyPathExcludes;
+    private List<String> nodePathIncludes;
+    private List<String> nodePathExcludes;
 
-    private List<Pattern> propertyIncludePatterns;
-    private List<Pattern> propertyExcludePatterns;
-    private List<Pattern> nodeIncludePatterns;
-    private List<Pattern> nodeExcludePatterns;
+    private List<Pattern> propertyPathIncludePatterns;
+    private List<Pattern> propertyPathExcludePatterns;
+    private List<Pattern> nodePathIncludePatterns;
+    private List<Pattern> nodePathExcludePatterns;
 
     public DefaultJcrItemMappingFilter() {
     }
@@ -56,68 +60,100 @@ public class DefaultJcrItemMappingFilter implements ContentNodeMappingItemFilter
         this.protectedPropertyExcluded = protectedPropertyExcluded;
     }
 
-    public List<String> getPropertyIncludes() {
-        return propertyIncludes;
+    public Set<Integer> getPropertyTypeIncludes() {
+        return propertyTypeIncludes;
     }
 
-    public void setPropertyIncludes(List<String> propertyIncludes) {
-        this.propertyIncludes = propertyIncludes;
+    public void setPropertyTypeIncludes(Set<Integer> propertyTypeIncludes) {
+        this.propertyTypeIncludes = propertyTypeIncludes;
     }
 
-    public void addPropertyInclude(String propertyInclude) {
-        if (propertyIncludes == null) {
-            propertyIncludes = new ArrayList<>();
+    public void addPropertyTypeInclude(Integer propertyType) {
+        if (propertyTypeIncludes == null) {
+            propertyTypeIncludes = new HashSet<>();
         }
 
-        propertyIncludes.add(propertyInclude);
+        propertyTypeIncludes.add(propertyType);
     }
 
-    public List<String> getPropertyExcludes() {
-        return propertyExcludes;
+    public Set<Integer> getPropertyTypeExcludes() {
+        return propertyTypeExcludes;
     }
 
-    public void setPropertyExcludes(List<String> propertyExcludes) {
-        this.propertyExcludes = propertyExcludes;
+    public void setPropertyTypeExcludes(Set<Integer> propertyTypeExcludes) {
+        this.propertyTypeExcludes = propertyTypeExcludes;
     }
 
-    public void addPropertyExclude(String propertyExclude) {
-        if (propertyExcludes == null) {
-            propertyExcludes = new ArrayList<>();
+    public void addPropertyTypeExclude(Integer propertyType) {
+        if (propertyTypeExcludes == null) {
+            propertyTypeExcludes = new HashSet<>();
         }
 
-        propertyExcludes.add(propertyExclude);
+        propertyTypeExcludes.add(propertyType);
     }
 
-    public List<String> getNodeIncludes() {
-        return nodeIncludes;
+    public List<String> getPropertyPathIncludes() {
+        return propertyPathIncludes;
     }
 
-    public void setNodeIncludes(List<String> nodeIncludes) {
-        this.nodeIncludes = nodeIncludes;
+    public void setPropertyPathIncludes(List<String> propertyPathIncludes) {
+        this.propertyPathIncludes = propertyPathIncludes;
     }
 
-    public void addNodeInclude(String nodeInclude) {
-        if (nodeIncludes == null) {
-            nodeIncludes = new ArrayList<>();
+    public void addPropertyPathInclude(String propertyPathInclude) {
+        if (propertyPathIncludes == null) {
+            propertyPathIncludes = new ArrayList<>();
         }
 
-        nodeIncludes.add(nodeInclude);
+        propertyPathIncludes.add(propertyPathInclude);
     }
 
-    public List<String> getNodeExcludes() {
-        return nodeExcludes;
+    public List<String> getPropertyPathExcludes() {
+        return propertyPathExcludes;
     }
 
-    public void setNodeExcludes(List<String> nodeExcludes) {
-        this.nodeExcludes = nodeExcludes;
+    public void setPropertyPathExcludes(List<String> propertyPathExcludes) {
+        this.propertyPathExcludes = propertyPathExcludes;
     }
 
-    public void addNodeExclude(String nodeExclude) {
-        if (nodeExcludes == null) {
-            nodeExcludes = new ArrayList<>();
+    public void addPropertyPathExclude(String propertyPathExclude) {
+        if (propertyPathExcludes == null) {
+            propertyPathExcludes = new ArrayList<>();
         }
 
-        nodeExcludes.add(nodeExclude);
+        propertyPathExcludes.add(propertyPathExclude);
+    }
+
+    public List<String> getNodePathIncludes() {
+        return nodePathIncludes;
+    }
+
+    public void setNodePathIncludes(List<String> nodePathIncludes) {
+        this.nodePathIncludes = nodePathIncludes;
+    }
+
+    public void addNodePathInclude(String nodePathInclude) {
+        if (nodePathIncludes == null) {
+            nodePathIncludes = new ArrayList<>();
+        }
+
+        nodePathIncludes.add(nodePathInclude);
+    }
+
+    public List<String> getNodePathExcludes() {
+        return nodePathExcludes;
+    }
+
+    public void setNodePathExcludes(List<String> nodePathExcludes) {
+        this.nodePathExcludes = nodePathExcludes;
+    }
+
+    public void addNodePathExclude(String nodePathExclude) {
+        if (nodePathExcludes == null) {
+            nodePathExcludes = new ArrayList<>();
+        }
+
+        nodePathExcludes.add(nodePathExclude);
     }
 
     @Override
@@ -143,6 +179,10 @@ public class DefaultJcrItemMappingFilter implements ContentNodeMappingItemFilter
 
     protected boolean acceptProperty(Property property) throws ContentNodeMappingException {
         try {
+            if (!isPropertyIncludableByType(property)) {
+                return false;
+            }
+
             if (!isPathIncludable(property.getName(), getPropertyIncludePatterns(), getPropertyExcludePatterns())) {
                 return false;
             }
@@ -150,11 +190,29 @@ public class DefaultJcrItemMappingFilter implements ContentNodeMappingItemFilter
             if (isProtectedPropertyExcluded() && JcrContentUtils.isProtected(property)) {
                 return false;
             }
+
+            return true;
         } catch (RepositoryException e) {
             throw new ContentNodeMappingException(e.toString(), e);
         }
+    }
 
-        return true;
+    private boolean isPropertyIncludableByType(final Property property) {
+        try {
+            final int type = property.getType();
+
+            if (propertyTypeExcludes != null && propertyTypeExcludes.contains(type)) {
+                return false;
+            }
+
+            if (propertyTypeIncludes != null && !propertyTypeIncludes.isEmpty()) {
+                return propertyTypeIncludes.contains(type);
+            }
+
+            return true;
+        } catch (RepositoryException e) {
+            throw new ContentNodeMappingException(e.toString(), e);
+        }
     }
 
     private boolean isPathIncludable(final String path, final Collection<Pattern> includePatterns,
@@ -188,55 +246,55 @@ public class DefaultJcrItemMappingFilter implements ContentNodeMappingItemFilter
     }
 
     private List<Pattern> getPropertyIncludePatterns() {
-        if (mismatchPatternsFromSources(propertyIncludePatterns, propertyIncludes)) {
-            propertyIncludePatterns = new ArrayList<>();
+        if (mismatchPatternsFromSources(propertyPathIncludePatterns, propertyPathIncludes)) {
+            propertyPathIncludePatterns = new ArrayList<>();
             GlobPattern glob = new GlobPattern();
 
-            for (String include : propertyIncludes) {
-                propertyIncludePatterns.add(glob.compile(include));
+            for (String include : propertyPathIncludes) {
+                propertyPathIncludePatterns.add(glob.compile(include));
             }
         }
 
-        return propertyIncludePatterns;
+        return propertyPathIncludePatterns;
     }
 
     private List<Pattern> getPropertyExcludePatterns() {
-        if (mismatchPatternsFromSources(propertyExcludePatterns, propertyExcludes)) {
-            propertyExcludePatterns = new ArrayList<>();
+        if (mismatchPatternsFromSources(propertyPathExcludePatterns, propertyPathExcludes)) {
+            propertyPathExcludePatterns = new ArrayList<>();
             GlobPattern glob = new GlobPattern();
 
-            for (String include : propertyExcludes) {
-                propertyExcludePatterns.add(glob.compile(include));
+            for (String include : propertyPathExcludes) {
+                propertyPathExcludePatterns.add(glob.compile(include));
             }
         }
 
-        return propertyExcludePatterns;
+        return propertyPathExcludePatterns;
     }
 
     private List<Pattern> getNodeIncludePatterns() {
-        if (mismatchPatternsFromSources(nodeIncludePatterns, nodeIncludes)) {
-            nodeIncludePatterns = new ArrayList<>();
+        if (mismatchPatternsFromSources(nodePathIncludePatterns, nodePathIncludes)) {
+            nodePathIncludePatterns = new ArrayList<>();
             GlobPattern glob = new GlobPattern();
 
-            for (String include : nodeIncludes) {
-                nodeIncludePatterns.add(glob.compile(include));
+            for (String include : nodePathIncludes) {
+                nodePathIncludePatterns.add(glob.compile(include));
             }
         }
 
-        return nodeIncludePatterns;
+        return nodePathIncludePatterns;
     }
 
     private List<Pattern> getNodeExcludePatterns() {
-        if (mismatchPatternsFromSources(nodeExcludePatterns, nodeExcludes)) {
-            nodeExcludePatterns = new ArrayList<>();
+        if (mismatchPatternsFromSources(nodePathExcludePatterns, nodePathExcludes)) {
+            nodePathExcludePatterns = new ArrayList<>();
             GlobPattern glob = new GlobPattern();
 
-            for (String include : nodeExcludes) {
-                nodeExcludePatterns.add(glob.compile(include));
+            for (String include : nodePathExcludes) {
+                nodePathExcludePatterns.add(glob.compile(include));
             }
         }
 
-        return nodeExcludePatterns;
+        return nodePathExcludePatterns;
     }
 
     private boolean mismatchPatternsFromSources(List<Pattern> patterns, List<String> patternSources) {

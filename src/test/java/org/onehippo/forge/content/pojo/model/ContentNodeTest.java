@@ -56,7 +56,7 @@ public class ContentNodeTest {
         liveNews1.setProperty(contentProp);
 
         ContentNode bodyNode = new ContentNode("myhippoproject:body", "hippostd:html");
-        contentProp = new ContentProperty("hippo:content", ContentPropertyType.STRING);
+        contentProp = new ContentProperty("hippostd:content", ContentPropertyType.STRING);
         contentProp.addValue("<p>Hello, World!</p>");
         bodyNode.setProperty(contentProp);
         liveNews1.addNode(bodyNode);
@@ -107,10 +107,10 @@ public class ContentNodeTest {
         assertEquals(liveNews1.queryObjectByXPath("nodes[1]"), liveNews1.queryObjectByXPath("nodes[@primaryType='hippostd:html']"));
         assertEquals(liveNews1.queryObjectByXPath("nodes[1]"), liveNews1.queryObjectByXPath("nodes[@itemName='myhippoproject:body']"));
 
-        contentProp = (ContentProperty) liveNews1.queryObjectByXPath("nodes[1]/properties[@itemName='hippo:content']");
+        contentProp = (ContentProperty) liveNews1.queryObjectByXPath("nodes[1]/properties[@itemName='hippostd:content']");
         assertEquals("<p>Hello, World!</p>", contentProp.getValue());
 
-        String content = (String) liveNews1.queryObjectByXPath("nodes[1]/properties[@itemName='hippo:content']/value");
+        String content = (String) liveNews1.queryObjectByXPath("nodes[1]/properties[@itemName='hippostd:content']/value");
         assertEquals("<p>Hello, World!</p>", content);
 
         contentNode = (ContentNode) liveNews1.queryObjectByXPath("nodes[2]");

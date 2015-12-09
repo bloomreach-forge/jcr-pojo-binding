@@ -15,6 +15,8 @@
  */
 package org.onehippo.forge.content.pojo.mapper.jcr.hippo;
 
+import javax.jcr.PropertyType;
+
 import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.forge.content.pojo.mapper.jcr.DefaultJcrItemMappingFilter;
 
@@ -24,7 +26,11 @@ public class DefaultHippoJcrItemMappingFilter extends DefaultJcrItemMappingFilte
         super();
 
         setProtectedPropertyExcluded(true);
-        addPropertyExclude(HippoNodeType.HIPPO_PATH);
+
+        addPropertyTypeExclude(PropertyType.REFERENCE);
+        addPropertyTypeExclude(PropertyType.WEAKREFERENCE);
+
+        addPropertyPathExclude(HippoNodeType.HIPPO_PATHS);
     }
 
 }
