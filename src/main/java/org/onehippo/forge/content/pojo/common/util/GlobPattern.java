@@ -25,7 +25,8 @@ import java.util.regex.Pattern;
  * </P>
  * <P>
  * This compiler supports the following glob syntax:
- * <TABLE border="1">
+ * </P>
+ * <TABLE border="1" summary="glob syntax">
  * <TR>
  * <TH>Task</TH>
  * <TH>Example</TH>
@@ -57,7 +58,6 @@ import java.util.regex.Pattern;
  * <TR>
  * </TABLE>
  * <EM>Note: This compiler escapes all the meta characters such as '*', '.', etc. from the expression input automatically.</EM>
- * </P>
  * <P>
  * Refer to <a href="http://en.wikipedia.org/wiki/Glob_%28programming%29">http://en.wikipedia.org/wiki/Glob_%28programming%29</a>
  * for general information on glob expression.
@@ -73,7 +73,7 @@ public class GlobPattern {
     /**
      * Returns the flag whether this compiler creates a pattern matching zero unknown character by '?' expression.
      * If true, it matches with zero unknown character by '?'. Otherwise, it matches only with one unknown character by '?'.
-     * @return
+     * @return flag whether this compiler creates a pattern matching zero unknown character by '?' expression
      */
     public boolean isQuestionMatchesZero() {
         return questionMatchesZero;
@@ -82,7 +82,7 @@ public class GlobPattern {
     /**
      * Sets the flag whether this compiler creates a pattern matching zero character by '?' expression.
      * If set to true, it matches with zero unknown character by '?'. Otherwise, it matches only with one unknown character by '?'.
-     * @param questionMatchesZero
+     * @param questionMatchesZero questionMatchesZero
      */
     public void setQuestionMatchesZero(boolean questionMatchesZero) {
         this.questionMatchesZero = questionMatchesZero;
@@ -90,8 +90,8 @@ public class GlobPattern {
 
     /**
      * Compiles the glob expression and returns a {@link Pattern} object.
-     * @param globExpr
-     * @return
+     * @param globExpr globExpr
+     * @return pattern
      */
     public Pattern compile(String globExpr) {
         return compile(globExpr, 0);
@@ -99,9 +99,9 @@ public class GlobPattern {
 
     /**
      * Compiles the glob expression and returns a {@link Pattern} object with the Java reglar expresson compile option.
-     * @param globExpr
+     * @param globExpr globExpr
      * @param options The Java regular expression compile option such as {@link Pattern#CASE_INSENSITIVE}.
-     * @return
+     * @return pattern
      */
     public Pattern compile(String globExpr, int options) {
         char [] pattern = globExpr.toCharArray();
