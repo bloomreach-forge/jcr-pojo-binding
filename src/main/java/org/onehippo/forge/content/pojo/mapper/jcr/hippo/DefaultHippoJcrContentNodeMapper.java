@@ -29,6 +29,7 @@ import org.onehippo.forge.content.pojo.common.jcr.JcrContentUtils;
 import org.onehippo.forge.content.pojo.mapper.ContentNodeMapper;
 import org.onehippo.forge.content.pojo.mapper.ContentNodeMappingException;
 import org.onehippo.forge.content.pojo.mapper.ContentNodeMappingItemFilter;
+import org.onehippo.forge.content.pojo.mapper.jcr.DefaultJcrItemMappingFilter;
 import org.onehippo.forge.content.pojo.model.ContentNode;
 import org.onehippo.forge.content.pojo.model.ContentProperty;
 import org.onehippo.forge.content.pojo.model.ContentPropertyType;

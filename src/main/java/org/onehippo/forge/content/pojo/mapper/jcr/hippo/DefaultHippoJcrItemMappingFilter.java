@@ -15,57 +15,16 @@
  */
 package org.onehippo.forge.content.pojo.mapper.jcr.hippo;
 
-import javax.jcr.Item;
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.RepositoryException;
-
 import org.hippoecm.repository.api.HippoNodeType;
-import org.onehippo.forge.content.pojo.common.jcr.JcrContentUtils;
-import org.onehippo.forge.content.pojo.mapper.ContentNodeMappingException;
-import org.onehippo.forge.content.pojo.mapper.ContentNodeMappingItemFilter;
+import org.onehippo.forge.content.pojo.mapper.jcr.DefaultJcrItemMappingFilter;
 
-public class DefaultHippoJcrItemMappingFilter implements ContentNodeMappingItemFilter<Item> {
-
-    private boolean protectedPropertyIncluded;
+public class DefaultHippoJcrItemMappingFilter extends DefaultJcrItemMappingFilter {
 
     public DefaultHippoJcrItemMappingFilter() {
+        super();
+
+        setProtectedPropertyExcluded(true);
+        addPropertyExclude(HippoNodeType.HIPPO_PATH);
     }
 
-    public boolean isProtectedPropertyIncluded() {
-        return protectedPropertyIncluded;
-    }
-
-    public void setProtectedPropertyIncluded(boolean protectedPropertyIncluded) {
-        this.protectedPropertyIncluded = protectedPropertyIncluded;
-    }
-
-    @Override
-    public boolean accept(Item item) throws ContentNodeMappingException {
-        if (item.isNode()) {
-            return acceptNode((Node) item);
-        } else {
-            return acceptProperty((Property) item);
-        }
-    }
-
-    protected boolean acceptNode(Node node) throws ContentNodeMappingException {
-        return true;
-    }
-
-    protected boolean acceptProperty(Property property) throws ContentNodeMappingException {
-        try {
-            if (!isProtectedPropertyIncluded() && JcrContentUtils.isProtected(property)) {
-                return false;
-            }
-
-            if (HippoNodeType.HIPPO_PATH.equals(property.getName())) {
-                return false;
-            }
-        } catch (RepositoryException e) {
-            throw new ContentNodeMappingException(e.toString(), e);
-        }
-
-        return true;
-    }
 }

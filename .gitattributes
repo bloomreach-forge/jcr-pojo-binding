@@ -6,9 +6,11 @@ src/main/java/org/onehippo/forge/content/pojo/binder/ContentNodeBindingItemFilte
 src/main/java/org/onehippo/forge/content/pojo/binder/jcr/hippo/DefaultHippoJcrContentNodeBinder.java -text svneol=unset#text/plain
 src/main/java/org/onehippo/forge/content/pojo/common/jcr/JcrContentUtils.java -text svneol=unset#text/plain
 src/main/java/org/onehippo/forge/content/pojo/common/jcr/hippo/HippoDocumentUtils.java -text svneol=unset#text/plain
+src/main/java/org/onehippo/forge/content/pojo/common/util/GlobPattern.java -text svneol=unset#text/plain
 src/main/java/org/onehippo/forge/content/pojo/mapper/ContentNodeMapper.java -text svneol=unset#text/plain
 src/main/java/org/onehippo/forge/content/pojo/mapper/ContentNodeMappingException.java -text svneol=unset#text/plain
 src/main/java/org/onehippo/forge/content/pojo/mapper/ContentNodeMappingItemFilter.java -text svneol=unset#text/plain
+src/main/java/org/onehippo/forge/content/pojo/mapper/jcr/DefaultJcrItemMappingFilter.java -text svneol=unset#text/plain
 src/main/java/org/onehippo/forge/content/pojo/mapper/jcr/hippo/DefaultHippoJcrContentNodeMapper.java -text svneol=unset#text/plain
 src/main/java/org/onehippo/forge/content/pojo/mapper/jcr/hippo/DefaultHippoJcrItemMappingFilter.java -text svneol=unset#text/plain
 src/main/java/org/onehippo/forge/content/pojo/mapper/jcr/hippo/SpecificVariantAndNonVariantNodeMappingFilter.java -text svneol=unset#text/plain
