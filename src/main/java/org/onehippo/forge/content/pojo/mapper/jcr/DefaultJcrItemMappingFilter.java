@@ -28,7 +28,6 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
-import org.onehippo.forge.content.pojo.common.jcr.JcrContentUtils;
 import org.onehippo.forge.content.pojo.common.util.GlobPattern;
 import org.onehippo.forge.content.pojo.mapper.ContentNodeMappingException;
 import org.onehippo.forge.content.pojo.mapper.ContentNodeMappingItemFilter;
@@ -187,7 +186,7 @@ public class DefaultJcrItemMappingFilter implements ContentNodeMappingItemFilter
                 return false;
             }
 
-            if (isProtectedPropertyExcluded() && JcrContentUtils.isProtected(property)) {
+            if (isProtectedPropertyExcluded() && isProtectedProperty(property)) {
                 return false;
             }
 
@@ -306,6 +305,15 @@ public class DefaultJcrItemMappingFilter implements ContentNodeMappingItemFilter
             if (patterns.size() != patternSources.size()) {
                 return true;
             }
+        }
+
+        return false;
+    }
+
+    private boolean isProtectedProperty(final Property property) throws RepositoryException {
+        try {
+            return property.getDefinition().isProtected();
+        } catch (UnsupportedOperationException ignore) {
         }
 
         return false;

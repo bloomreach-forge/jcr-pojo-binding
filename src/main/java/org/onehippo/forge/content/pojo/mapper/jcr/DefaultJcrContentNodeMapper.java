@@ -25,7 +25,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.nodetype.NodeType;
 
-import org.onehippo.forge.content.pojo.common.jcr.JcrContentUtils;
+import org.onehippo.forge.content.pojo.common.ContentValueConverter;
+import org.onehippo.forge.content.pojo.common.jcr.DefaultJcrContentValueConverter;
 import org.onehippo.forge.content.pojo.mapper.ContentNodeMapper;
 import org.onehippo.forge.content.pojo.mapper.ContentNodeMappingException;
 import org.onehippo.forge.content.pojo.mapper.ContentNodeMappingItemFilter;
@@ -34,7 +35,7 @@ import org.onehippo.forge.content.pojo.model.ContentNode;
 import org.onehippo.forge.content.pojo.model.ContentProperty;
 import org.onehippo.forge.content.pojo.model.ContentPropertyType;
 
-public class DefaultJcrContentNodeMapper implements ContentNodeMapper<Node, Item> {
+public class DefaultJcrContentNodeMapper implements ContentNodeMapper<Node, Item, Value> {
 
     private static final long serialVersionUID = 1L;
 
@@ -44,34 +45,49 @@ public class DefaultJcrContentNodeMapper implements ContentNodeMapper<Node, Item
 
     @Override
     public ContentNode map(Node jcrDataNode) throws ContentNodeMappingException {
-        return map(jcrDataNode, new DefaultHippoJcrItemMappingFilter());
+        return map(jcrDataNode, null);
     }
 
     @Override
-    public ContentNode map(Node jcrDataNode, ContentNodeMappingItemFilter<Item> itemFilter) throws ContentNodeMappingException {
+    public ContentNode map(Node jcrDataNode, ContentNodeMappingItemFilter<Item> itemFilter)
+            throws ContentNodeMappingException {
+        return map(jcrDataNode, itemFilter, null);
+    }
+
+    @Override
+    public ContentNode map(Node jcrDataNode, ContentNodeMappingItemFilter<Item> itemFilter,
+            ContentValueConverter<Value> valueConverter) throws ContentNodeMappingException {
         ContentNode contentNode = null;
 
         try {
+            if (itemFilter == null) {
+                itemFilter = new DefaultHippoJcrItemMappingFilter();
+            }
+
+            if (valueConverter == null) {
+                valueConverter = new DefaultJcrContentValueConverter();
+            }
+
             contentNode = createContentNodeByJcrNodeTypes(jcrDataNode);
 
             Property prop;
             ContentProperty contentProp;
 
-            for (PropertyIterator propIt = jcrDataNode.getProperties(); propIt.hasNext(); ) {
+            for (PropertyIterator propIt = jcrDataNode.getProperties(); propIt.hasNext();) {
                 prop = propIt.nextProperty();
 
                 if (itemFilter != null && !itemFilter.accept(prop)) {
                     continue;
                 }
 
-                contentProp = createContentPropertyFromJcrProperty(prop);
+                contentProp = createContentPropertyFromJcrProperty(prop, valueConverter);
                 contentNode.setProperty(contentProp);
             }
 
             Node childJcrNode;
             ContentNode childContentNode;
 
-            for (NodeIterator nodeIt = jcrDataNode.getNodes(); nodeIt.hasNext(); ) {
+            for (NodeIterator nodeIt = jcrDataNode.getNodes(); nodeIt.hasNext();) {
                 childJcrNode = nodeIt.nextNode();
 
                 if (itemFilter != null && !itemFilter.accept(childJcrNode)) {
@@ -88,51 +104,43 @@ public class DefaultJcrContentNodeMapper implements ContentNodeMapper<Node, Item
         return contentNode;
     }
 
-    protected ContentProperty createContentPropertyFromJcrProperty(final Property jcrProp) throws RepositoryException {
+    protected ContentProperty createContentPropertyFromJcrProperty(final Property jcrProp, final ContentValueConverter<Value> valueConverter) throws RepositoryException {
         ContentProperty contentProp = null;
 
         ContentPropertyType type = ContentPropertyType.UNDEFINED;
 
         switch (jcrProp.getType()) {
-        case PropertyType.STRING:
-        {
+        case PropertyType.STRING: {
             type = ContentPropertyType.STRING;
             break;
         }
-        case PropertyType.BINARY:
-        {
+        case PropertyType.BINARY: {
             type = ContentPropertyType.BINARY;
             break;
         }
-        case PropertyType.LONG:
-        {
+        case PropertyType.LONG: {
             type = ContentPropertyType.LONG;
             break;
         }
-        case PropertyType.DOUBLE:
-        {
+        case PropertyType.DOUBLE: {
             type = ContentPropertyType.DOUBLE;
             break;
         }
-        case PropertyType.DATE:
-        {
+        case PropertyType.DATE: {
             type = ContentPropertyType.DATE;
             break;
         }
-        case PropertyType.BOOLEAN:
-        {
+        case PropertyType.BOOLEAN: {
             type = ContentPropertyType.BOOLEAN;
             break;
         }
         case PropertyType.NAME:
         case PropertyType.PATH:
-        case PropertyType.URI:
-        {
+        case PropertyType.URI: {
             type = ContentPropertyType.STRING;
             break;
         }
-        case PropertyType.DECIMAL:
-        {
+        case PropertyType.DECIMAL: {
             type = ContentPropertyType.STRING;
             break;
         }
@@ -142,10 +150,10 @@ public class DefaultJcrContentNodeMapper implements ContentNodeMapper<Node, Item
 
         if (jcrProp.isMultiple()) {
             for (Value jcrValue : jcrProp.getValues()) {
-                contentProp.addValue(JcrContentUtils.jcrValueToString(jcrValue));
+                contentProp.addValue(valueConverter.toString(jcrValue));
             }
         } else {
-            contentProp.addValue(JcrContentUtils.jcrValueToString(jcrProp.getValue()));
+            contentProp.addValue(valueConverter.toString(jcrProp.getValue()));
         }
 
         return contentProp;
@@ -154,7 +162,7 @@ public class DefaultJcrContentNodeMapper implements ContentNodeMapper<Node, Item
     private ContentNode createContentNodeByJcrNodeTypes(final Node jcrNode) throws RepositoryException {
         ContentNode contentNode = new ContentNode(jcrNode.getName(), jcrNode.getPrimaryNodeType().getName());
 
-        for (NodeType mixinType: jcrNode.getMixinNodeTypes()) {
+        for (NodeType mixinType : jcrNode.getMixinNodeTypes()) {
             contentNode.addMixinType(mixinType.getName());
         }
 

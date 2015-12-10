@@ -17,12 +17,15 @@ package org.onehippo.forge.content.pojo.mapper;
 
 import java.io.Serializable;
 
+import org.onehippo.forge.content.pojo.common.ContentValueConverter;
 import org.onehippo.forge.content.pojo.model.ContentNode;
 
-public interface ContentNodeMapper<D, I> extends Serializable {
+public interface ContentNodeMapper<D, I, V> extends Serializable {
 
     public ContentNode map(D dataNode) throws ContentNodeMappingException;
 
     public ContentNode map(D dataNode, ContentNodeMappingItemFilter<I> itemFilter) throws ContentNodeMappingException;
+
+    public ContentNode map(D dataNode, ContentNodeMappingItemFilter<I> itemFilter, ContentValueConverter<V> valueConverter) throws ContentNodeMappingException;
 
 }

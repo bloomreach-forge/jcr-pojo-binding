@@ -31,7 +31,6 @@ import org.apache.commons.lang.StringUtils;
 import org.onehippo.forge.content.pojo.binder.ContentNodeBinder;
 import org.onehippo.forge.content.pojo.binder.ContentNodeBindingException;
 import org.onehippo.forge.content.pojo.binder.ContentNodeBindingItemFilter;
-import org.onehippo.forge.content.pojo.common.jcr.JcrContentUtils;
 import org.onehippo.forge.content.pojo.model.ContentItem;
 import org.onehippo.forge.content.pojo.model.ContentNode;
 import org.onehippo.forge.content.pojo.model.ContentProperty;
@@ -78,7 +77,7 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
                 existingJcrProp = jcrDataNode.hasProperty(propName)
                         ? jcrDataNode.getProperty(propName) : null;
 
-                if (existingJcrProp != null && JcrContentUtils.isProtected(existingJcrProp)) {
+                if (existingJcrProp != null && isProtectedProperty(existingJcrProp)) {
                     continue;
                 }
 
@@ -167,5 +166,14 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
         }
 
         return childNodes;
+    }
+
+    private boolean isProtectedProperty(final Property property) throws RepositoryException {
+        try {
+            return property.getDefinition().isProtected();
+        } catch (UnsupportedOperationException ignore) {
+        }
+
+        return false;
     }
 }

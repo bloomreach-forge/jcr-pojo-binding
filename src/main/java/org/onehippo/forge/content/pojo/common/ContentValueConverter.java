@@ -13,27 +13,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.forge.content.pojo.binder;
+package org.onehippo.forge.content.pojo.common;
 
-import org.onehippo.forge.content.pojo.common.ContentNodeException;
+public interface ContentValueConverter<V> {
 
-public class ContentNodeBindingException extends ContentNodeException {
+    String toString(V value) throws ContentNodeException;
 
-    private static final long serialVersionUID = 1L;
+    V toValue(String stringValue) throws ContentNodeException;
 
-    public ContentNodeBindingException() {
-        super();
-    }
-
-    public ContentNodeBindingException(String message) {
-        super(message);
-    }
-
-    public ContentNodeBindingException(Throwable nested) {
-        super(nested);
-    }
-
-    public ContentNodeBindingException(String msg, Throwable nested) {
-        super(msg, nested);
-    }
 }

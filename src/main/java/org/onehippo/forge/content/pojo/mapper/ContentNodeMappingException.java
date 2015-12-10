@@ -15,7 +15,9 @@
  */
 package org.onehippo.forge.content.pojo.mapper;
 
-public class ContentNodeMappingException extends RuntimeException {
+import org.onehippo.forge.content.pojo.common.ContentNodeException;
+
+public class ContentNodeMappingException extends ContentNodeException {
 
     private static final long serialVersionUID = 1L;
 
