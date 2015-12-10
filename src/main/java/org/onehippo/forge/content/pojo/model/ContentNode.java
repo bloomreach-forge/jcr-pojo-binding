@@ -83,6 +83,10 @@ public class ContentNode extends ContentItem {
         return Collections.unmodifiableList(properties);
     }
 
+    public boolean hasProperty(String name) {
+        return getProperty(name) != null;
+    }
+
     public ContentProperty getProperty(String name) {
         if (properties != null) {
             for (ContentProperty contentProp : properties) {
@@ -117,12 +121,42 @@ public class ContentNode extends ContentItem {
         properties.add(property);
     }
 
+    public void setProperty(String name, String value) {
+        setProperty(name, ContentPropertyType.STRING, value);
+    }
+
+    public void setProperty(String name, ContentPropertyType type, String value) {
+        ContentProperty prop = new ContentProperty(name, type);
+        prop.setValue(value);
+        setProperty(prop);
+    }
+
+    public void setProperty(String name, String [] values) {
+        setProperty(name, ContentPropertyType.STRING, values);
+    }
+
+    public void setProperty(String name, ContentPropertyType type, String [] values) {
+        ContentProperty prop = new ContentProperty(name, type, true);
+
+        if (values != null) {
+            for (String value : values) {
+                prop.addValue(value);
+            }
+        }
+
+        setProperty(prop);
+    }
+
     public List<ContentNode> getNodes() {
         if (nodes == null) {
             return Collections.emptyList();
         }
 
         return Collections.unmodifiableList(nodes);
+    }
+
+    public boolean hasNode(String name) {
+        return getNode(name) != null;
     }
 
     public ContentNode getNode(String name) {
@@ -145,11 +179,27 @@ public class ContentNode extends ContentItem {
         nodes.add(node);
     }
 
+    public ContentNode queryNodeByXPath(String xpath) {
+        return (ContentNode) queryObjectByXPath(xpath);
+    }
+
+    public ContentProperty queryPropertyByXPath(String xpath) {
+        return (ContentProperty) queryObjectByXPath(xpath);
+    }
+
+    public List<ContentNode> queryNodesByXPath(String xpath) {
+        return (List<ContentNode>) queryObjectsByXPath(xpath);
+    }
+
+    public List<ContentProperty> queryPropertiesByXPath(String xpath) {
+        return (List<ContentProperty>) queryObjectsByXPath(xpath);
+    }
+
     public Object queryObjectByXPath(String xpath) {
         return createJXPathContext().getValue(xpath);
     }
 
-    public List<Object> queryObjectsByXPath(String xpath) {
+    public List<?> queryObjectsByXPath(String xpath) {
         return createJXPathContext().selectNodes(xpath);
     }
 

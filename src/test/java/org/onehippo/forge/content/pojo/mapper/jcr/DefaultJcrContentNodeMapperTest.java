@@ -34,7 +34,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.forge.content.pojo.common.jcr.BaseHippoJcrContentNodeTest;
 import org.onehippo.forge.content.pojo.mapper.ContentNodeMappingItemFilter;
-import org.onehippo.forge.content.pojo.mapper.jcr.DefaultJcrContentNodeMapper;
 import org.onehippo.forge.content.pojo.mapper.jcr.hippo.DocumentVariantNodeMappingFilter;
 import org.onehippo.forge.content.pojo.model.ContentNode;
 import org.onehippo.forge.content.pojo.model.ContentProperty;
@@ -83,7 +82,7 @@ public class DefaultJcrContentNodeMapperTest extends BaseHippoJcrContentNodeTest
         assertEquals(translationContentNode,
                 handleContentNode.queryObjectByXPath("nodes[@primaryType='" + HippoNodeType.NT_TRANSLATION + "']"));
 
-        List<Object> variantNodeObjects = handleContentNode
+        List<?> variantNodeObjects = handleContentNode
                 .queryObjectsByXPath("nodes[properties[@itemName='hippostd:state']]");
         assertEquals(2, variantNodeObjects.size());
 
@@ -105,7 +104,7 @@ public class DefaultJcrContentNodeMapperTest extends BaseHippoJcrContentNodeTest
         ContentNode handleContentNode = mapper.map(handleNode, nonLiveVariantNodeFilter);
         assertEquals(HippoNodeType.NT_HANDLE, handleContentNode.getPrimaryType());
 
-        List<Object> variantNodeObjects = handleContentNode
+        List<?> variantNodeObjects = handleContentNode
                 .queryObjectsByXPath("nodes[properties[@itemName='hippostd:state']]");
         assertEquals(1, variantNodeObjects.size());
 
@@ -137,7 +136,7 @@ public class DefaultJcrContentNodeMapperTest extends BaseHippoJcrContentNodeTest
         assertEquals("en", translationContentNode.getProperty(HippoNodeType.HIPPO_LANGUAGE).getValue());
         assertEquals("News 1", translationContentNode.getProperty(HippoNodeType.HIPPO_MESSAGE).getValue());
 
-        List<Object> variantNodeObjects = handleContentNode
+        List<?> variantNodeObjects = handleContentNode
                 .queryObjectsByXPath("nodes[properties[@itemName='hippostd:state']]");
         assertEquals(2, variantNodeObjects.size());
 
