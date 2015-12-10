@@ -72,10 +72,14 @@ public class DefaultJcrContentValueConverter implements ContentValueConverter<Va
                 stringifiedValue = value.getString();
                 break;
             }
-            case PropertyType.REFERENCE:
-            case PropertyType.WEAKREFERENCE:
+            case PropertyType.REFERENCE: {
                 stringifiedValue = referenceValueToString(value);
                 break;
+            }
+            case PropertyType.WEAKREFERENCE: {
+                stringifiedValue = weakReferenceValueToString(value);
+                break;
+            }
             }
 
             return stringifiedValue;
@@ -98,6 +102,10 @@ public class DefaultJcrContentValueConverter implements ContentValueConverter<Va
     }
 
     protected String referenceValueToString(final Value value) {
+        return null;
+    }
+
+    protected String weakReferenceValueToString(final Value value) {
         return null;
     }
 }
