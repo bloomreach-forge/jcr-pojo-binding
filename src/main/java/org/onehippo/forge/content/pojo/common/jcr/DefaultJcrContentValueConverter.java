@@ -17,6 +17,7 @@ package org.onehippo.forge.content.pojo.common.jcr;
 
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.Value;
 
 import org.apache.jackrabbit.util.ISO8601;
@@ -24,6 +25,12 @@ import org.onehippo.forge.content.pojo.common.ContentNodeException;
 import org.onehippo.forge.content.pojo.common.ContentValueConverter;
 
 public class DefaultJcrContentValueConverter implements ContentValueConverter<Value> {
+
+    private Session session;
+
+    public DefaultJcrContentValueConverter(final Session session) {
+        this.session = session;
+    }
 
     @Override
     public String toString(Value value) throws ContentNodeException {
@@ -36,8 +43,7 @@ public class DefaultJcrContentValueConverter implements ContentValueConverter<Va
                 break;
             }
             case PropertyType.BINARY: {
-                // TODO: NOT SUPPORTED YET
-                // Just ignore for now...
+                stringifiedValue = binaryValueToString(value);
                 break;
             }
             case PropertyType.LONG: {
@@ -56,14 +62,19 @@ public class DefaultJcrContentValueConverter implements ContentValueConverter<Va
                 stringifiedValue = Boolean.toString(value.getBoolean());
                 break;
             }
+            case PropertyType.DECIMAL: {
+                stringifiedValue = value.getDecimal().toString();
+                break;
+            }
             case PropertyType.NAME:
             case PropertyType.PATH:
             case PropertyType.URI: {
                 stringifiedValue = value.getString();
                 break;
             }
-            case PropertyType.DECIMAL:
-                stringifiedValue = value.getDecimal().toString();
+            case PropertyType.REFERENCE:
+            case PropertyType.WEAKREFERENCE:
+                stringifiedValue = referenceValueToString(value);
                 break;
             }
 
@@ -78,4 +89,15 @@ public class DefaultJcrContentValueConverter implements ContentValueConverter<Va
         return null;
     }
 
+    protected Session getSession() {
+        return session;
+    }
+
+    protected String binaryValueToString(final Value value) {
+        return null;
+    }
+
+    protected String referenceValueToString(final Value value) {
+        return null;
+    }
 }

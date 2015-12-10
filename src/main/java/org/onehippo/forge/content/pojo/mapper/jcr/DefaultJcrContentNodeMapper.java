@@ -65,7 +65,7 @@ public class DefaultJcrContentNodeMapper implements ContentNodeMapper<Node, Item
             }
 
             if (valueConverter == null) {
-                valueConverter = new DefaultJcrContentValueConverter();
+                valueConverter = new DefaultJcrContentValueConverter(jcrDataNode.getSession());
             }
 
             contentNode = createContentNodeByJcrNodeTypes(jcrDataNode);
