@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.forge.content.pojo.common.jcr.hippo;
+package org.onehippo.forge.content.pojo.common.jcr;
 
 import java.io.ByteArrayInputStream;
 import java.util.Arrays;

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.forge.content.pojo.mapper.jcr.hippo;
+package org.onehippo.forge.content.pojo.mapper.jcr;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -32,24 +32,26 @@ import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.forge.content.pojo.common.jcr.hippo.BaseHippoJcrContentNodeTest;
+import org.onehippo.forge.content.pojo.common.jcr.BaseHippoJcrContentNodeTest;
 import org.onehippo.forge.content.pojo.mapper.ContentNodeMappingItemFilter;
+import org.onehippo.forge.content.pojo.mapper.jcr.DefaultJcrContentNodeMapper;
+import org.onehippo.forge.content.pojo.mapper.jcr.hippo.DocumentVariantNodeMappingFilter;
 import org.onehippo.forge.content.pojo.model.ContentNode;
 import org.onehippo.forge.content.pojo.model.ContentProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultHippoJcrContentNodeMapperTest extends BaseHippoJcrContentNodeTest {
+public class DefaultJcrContentNodeMapperTest extends BaseHippoJcrContentNodeTest {
 
-    private static Logger log = LoggerFactory.getLogger(DefaultHippoJcrContentNodeMapperTest.class);
+    private static Logger log = LoggerFactory.getLogger(DefaultJcrContentNodeMapperTest.class);
 
-    private DefaultHippoJcrContentNodeMapper mapper;
-    private ContentNodeMappingItemFilter<Item> nonLiveVariantNodeFilter = new SpecificVariantAndNonVariantNodeMappingFilter(HippoStdNodeType.UNPUBLISHED);
+    private DefaultJcrContentNodeMapper mapper;
+    private ContentNodeMappingItemFilter<Item> nonLiveVariantNodeFilter = new DocumentVariantNodeMappingFilter(HippoStdNodeType.UNPUBLISHED);
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        mapper = new DefaultHippoJcrContentNodeMapper();
+        mapper = new DefaultJcrContentNodeMapper();
     }
 
     @Test

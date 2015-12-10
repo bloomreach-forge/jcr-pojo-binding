@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.forge.content.pojo.binder.jcr.hippo;
+package org.onehippo.forge.content.pojo.binder.jcr;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
@@ -36,11 +36,11 @@ import org.onehippo.forge.content.pojo.model.ContentItem;
 import org.onehippo.forge.content.pojo.model.ContentNode;
 import org.onehippo.forge.content.pojo.model.ContentProperty;
 
-public class DefaultHippoJcrContentNodeBinder implements ContentNodeBinder<Node, ContentItem> {
+public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, ContentItem> {
 
     private static final long serialVersionUID = 1L;
 
-    public DefaultHippoJcrContentNodeBinder() {
+    public DefaultJcrContentNodeBinder() {
         super();
     }
 

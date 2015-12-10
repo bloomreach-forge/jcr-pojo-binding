@@ -14,20 +14,30 @@
  *  limitations under the License.
  */package org.onehippo.forge.content.pojo.mapper.jcr.hippo;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.HippoStdNodeType;
-import org.onehippo.forge.content.pojo.common.jcr.hippo.HippoDocumentUtils;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.forge.content.pojo.mapper.ContentNodeMappingException;
 
-public class SpecificVariantAndNonVariantNodeMappingFilter extends DefaultHippoJcrItemMappingFilter {
+public class DocumentVariantNodeMappingFilter extends DefaultHippoJcrItemMappingFilter {
 
-    private String expectedState;
+    private Set<String> expectedStateSet;
 
-    public SpecificVariantAndNonVariantNodeMappingFilter(String expectedState) {
+    public DocumentVariantNodeMappingFilter(String... expectedStates) {
         super();
-        this.expectedState = expectedState;
+
+        expectedStateSet = new HashSet<>();
+
+        if (expectedStates != null && expectedStates.length != 0) {
+            for (String expectedState : expectedStates) {
+                expectedStateSet.add(expectedState);
+            }
+        }
     }
 
     @Override
@@ -37,8 +47,9 @@ public class SpecificVariantAndNonVariantNodeMappingFilter extends DefaultHippoJ
         }
 
         try {
-            if (HippoDocumentUtils.isDocumentVariantNode(node)) {
-                if (node.hasProperty(HippoStdNodeType.HIPPOSTD_STATE) && node.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString().equals(expectedState)) {
+            if (isDocumentVariantNode(node)) {
+                if (node.hasProperty(HippoStdNodeType.HIPPOSTD_STATE)
+                        && expectedStateSet.contains(node.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString())) {
                     return true;
                 } else {
                     return false;
@@ -49,6 +60,16 @@ public class SpecificVariantAndNonVariantNodeMappingFilter extends DefaultHippoJ
         } catch (RepositoryException e) {
             throw new ContentNodeMappingException(e.toString(), e);
         }
+    }
+
+    protected boolean isDocumentVariantNode(final Node jcrNode) throws RepositoryException {
+        if (jcrNode.isNodeType(HippoNodeType.NT_DOCUMENT)
+                && jcrNode.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)
+                && jcrNode.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+            return true;
+        }
+
+        return false;
     }
 
 }

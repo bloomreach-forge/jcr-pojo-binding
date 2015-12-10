@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.forge.content.pojo.mapper.jcr.hippo;
+package org.onehippo.forge.content.pojo.mapper.jcr;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
@@ -29,16 +29,16 @@ import org.onehippo.forge.content.pojo.common.jcr.JcrContentUtils;
 import org.onehippo.forge.content.pojo.mapper.ContentNodeMapper;
 import org.onehippo.forge.content.pojo.mapper.ContentNodeMappingException;
 import org.onehippo.forge.content.pojo.mapper.ContentNodeMappingItemFilter;
-import org.onehippo.forge.content.pojo.mapper.jcr.DefaultJcrItemMappingFilter;
+import org.onehippo.forge.content.pojo.mapper.jcr.hippo.DefaultHippoJcrItemMappingFilter;
 import org.onehippo.forge.content.pojo.model.ContentNode;
 import org.onehippo.forge.content.pojo.model.ContentProperty;
 import org.onehippo.forge.content.pojo.model.ContentPropertyType;
 
-public class DefaultHippoJcrContentNodeMapper implements ContentNodeMapper<Node, Item> {
+public class DefaultJcrContentNodeMapper implements ContentNodeMapper<Node, Item> {
 
     private static final long serialVersionUID = 1L;
 
-    public DefaultHippoJcrContentNodeMapper() {
+    public DefaultJcrContentNodeMapper() {
         super();
     }
 
