@@ -15,8 +15,6 @@
  */
 package org.onehippo.forge.content.pojo.binder.jcr;
 
-import java.math.BigDecimal;
-import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,7 +23,6 @@ import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
-import javax.jcr.ValueFactory;
 
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.forge.content.pojo.binder.ContentNodeBinder;
@@ -33,9 +30,11 @@ import org.onehippo.forge.content.pojo.binder.ContentNodeBindingException;
 import org.onehippo.forge.content.pojo.binder.ContentNodeBindingItemFilter;
 import org.onehippo.forge.content.pojo.common.ContentValueConverter;
 import org.onehippo.forge.content.pojo.common.jcr.DefaultJcrContentValueConverter;
+import org.onehippo.forge.content.pojo.model.BinaryValue;
 import org.onehippo.forge.content.pojo.model.ContentItem;
 import org.onehippo.forge.content.pojo.model.ContentNode;
 import org.onehippo.forge.content.pojo.model.ContentProperty;
+import org.onehippo.forge.content.pojo.model.ContentPropertyType;
 
 public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, ContentItem, Value> {
 
@@ -83,6 +82,7 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
             Property existingJcrProp;
 
             String propName;
+            String pathValue;
 
             for (ContentProperty contentProp : contentNode.getProperties()) {
                 propName = contentProp.getName();
@@ -97,13 +97,21 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
                     continue;
                 }
 
-                jcrValues = createJcrValuesFromContentProperty(jcrDataNode, contentProp);
+                if (ContentPropertyType.PATH.equals(contentProp.getType())) {
+                    pathValue = contentProp.getValue();
 
-                if (jcrValues != null && jcrValues.length > 0) {
-                    if (!contentProp.isMultiple()) {
-                        jcrDataNode.setProperty(propName, jcrValues[0]);
-                    } else {
-                        jcrDataNode.setProperty(propName, jcrValues);
+                    if (StringUtils.isNotBlank(pathValue) && jcrDataNode.getSession().nodeExists(pathValue)) {
+                        jcrDataNode.setProperty(propName, jcrDataNode.getSession().getNode(pathValue));
+                    }
+                } else {
+                    jcrValues = createJcrValuesFromContentProperty(jcrDataNode, contentProp, valueConverter);
+
+                    if (jcrValues != null && jcrValues.length > 0) {
+                        if (contentProp.isMultiple()) {
+                            jcrDataNode.setProperty(propName, jcrValues);
+                        } else {
+                            jcrDataNode.setProperty(propName, jcrValues[0]);
+                        }
                     }
                 }
             }
@@ -128,40 +136,28 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
         }
     }
 
-    private Value[] createJcrValuesFromContentProperty(final Node jcrNode, final ContentProperty contentProp)
+    private Value[] createJcrValuesFromContentProperty(final Node jcrNode, final ContentProperty contentProp,
+            final ContentValueConverter<Value> valueConverter)
             throws RepositoryException {
         List<Value> jcrValues = new LinkedList<>();
 
-        final ValueFactory valueFactory = jcrNode.getSession().getValueFactory();
+        Value jcrValue;
 
-        for (Object objectValue : contentProp.getObjectValues()) {
-            switch (contentProp.getType()) {
-            case STRING: {
-                jcrValues.add(valueFactory.createValue((String) objectValue));
-                break;
+        if (ContentPropertyType.BINARY.equals(contentProp.getType())) {
+            for (Object binaryValue : contentProp.getObjectValues()) {
+                jcrValue = valueConverter.toJcrValue((BinaryValue) binaryValue);
+
+                if (jcrValue != null) {
+                    jcrValues.add(jcrValue);
+                }
             }
-            case DATE: {
-                jcrValues.add(valueFactory.createValue((Calendar) objectValue));
-                break;
-            }
-            case BOOLEAN: {
-                jcrValues.add(valueFactory.createValue((Boolean) objectValue));
-                break;
-            }
-            case LONG: {
-                jcrValues.add(valueFactory.createValue((Long) objectValue));
-                break;
-            }
-            case DOUBLE: {
-                jcrValues.add(valueFactory.createValue((Double) objectValue));
-                break;
-            }
-            case DECIMAL: {
-                jcrValues.add(valueFactory.createValue((BigDecimal) objectValue));
-                break;
-            }
-            default:
-                break;
+        } else {
+            for (String stringValue : contentProp.getValues()) {
+                jcrValue = valueConverter.toJcrValue(contentProp.getType().toString(), stringValue);
+
+                if (jcrValue != null) {
+                    jcrValues.add(jcrValue);
+                }
             }
         }
 

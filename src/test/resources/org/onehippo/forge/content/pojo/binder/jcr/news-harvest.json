@@ -1,0 +1,161 @@
+{
+  "name" : "news-harvest",
+  "primaryType" : "hippo:handle",
+  "mixinTypes" : [ "mix:referenceable", "hippo:translated" ],
+  "properties" : [ {
+    "name" : "jcr:path",
+    "type" : "STRING",
+    "multiple" : false,
+    "values" : [ "/content/documents/folderctxmenusdemo/news/2015/11/news-harvest" ]
+  } ],
+  "nodes" : [ {
+    "name" : "news-harvest",
+    "primaryType" : "myhippoproject:newsdocument",
+    "mixinTypes" : [ "mix:referenceable" ],
+    "properties" : [ {
+      "name" : "myhippoproject:documenttype",
+      "type" : "STRING",
+      "multiple" : false,
+      "values" : [ "news" ]
+    }, {
+      "name" : "myhippoproject:introduction",
+      "type" : "STRING",
+      "multiple" : false,
+      "values" : [ "Lorem ipsum dolor sit amet" ]
+    }, {
+      "name" : "hippostdpubwf:lastModifiedBy",
+      "type" : "STRING",
+      "multiple" : false,
+      "values" : [ "admin" ]
+    }, {
+      "name" : "hippotranslation:locale",
+      "type" : "STRING",
+      "multiple" : false,
+      "values" : [ "en" ]
+    }, {
+      "name" : "hippostd:stateSummary",
+      "type" : "STRING",
+      "multiple" : false,
+      "values" : [ "live" ]
+    }, {
+      "name" : "hippostd:holder",
+      "type" : "STRING",
+      "multiple" : false,
+      "values" : [ "admin" ]
+    }, {
+      "name" : "hippostd:state",
+      "type" : "STRING",
+      "multiple" : false,
+      "values" : [ "published" ]
+    }, {
+      "name" : "myhippoproject:source",
+      "type" : "STRING",
+      "multiple" : false,
+      "values" : [ "" ]
+    }, {
+      "name" : "hippo:availability",
+      "type" : "STRING",
+      "multiple" : true,
+      "values" : [ "live", "preview" ]
+    }, {
+      "name" : "myhippoproject:title",
+      "type" : "STRING",
+      "multiple" : false,
+      "values" : [ "News Harvest" ]
+    }, {
+      "name" : "myhippoproject:location",
+      "type" : "STRING",
+      "multiple" : false,
+      "values" : [ "Rome" ]
+    }, {
+      "name" : "hippostdpubwf:publicationDate",
+      "type" : "DATE",
+      "multiple" : false,
+      "values" : [ "2013-11-12T14:31:00.000+01:00" ]
+    }, {
+      "name" : "hippotranslation:id",
+      "type" : "STRING",
+      "multiple" : false,
+      "values" : [ "046dc195-9720-4860-8512-6a9099e31b10" ]
+    }, {
+      "name" : "hippostdpubwf:lastModificationDate",
+      "type" : "DATE",
+      "multiple" : false,
+      "values" : [ "2013-11-12T14:31:00.000+01:00" ]
+    }, {
+      "name" : "myhippoproject:author",
+      "type" : "STRING",
+      "multiple" : false,
+      "values" : [ "Alfred Anonymous" ]
+    }, {
+      "name" : "hippostdpubwf:createdBy",
+      "type" : "STRING",
+      "multiple" : false,
+      "values" : [ "admin" ]
+    }, {
+      "name" : "myhippoproject:date",
+      "type" : "DATE",
+      "multiple" : false,
+      "values" : [ "2015-11-12T05:31:00.000-05:00" ]
+    }, {
+      "name" : "hippostdpubwf:creationDate",
+      "type" : "DATE",
+      "multiple" : false,
+      "values" : [ "2013-11-12T14:31:00.000+01:00" ]
+    } ],
+    "nodes" : [ {
+      "name" : "myhippoproject:content",
+      "primaryType" : "hippostd:html",
+      "mixinTypes" : [ ],
+      "properties" : [ {
+        "name" : "hippostd:content",
+        "type" : "STRING",
+        "multiple" : false,
+        "values" : [ "<html><body><p>Lorem ipsum dolor sit amet</p></body></html>" ]
+      } ],
+      "nodes" : [ ]
+    }, {
+      "name" : "myhippoproject:image",
+      "primaryType" : "hippogallerypicker:imagelink",
+      "mixinTypes" : [ ],
+      "properties" : [ {
+        "name" : "hippo:facets",
+        "type" : "STRING",
+        "multiple" : true,
+        "values" : [ ]
+      }, {
+        "name" : "hippo:values",
+        "type" : "STRING",
+        "multiple" : true,
+        "values" : [ ]
+      }, {
+        "name" : "hippo:docbase",
+        "type" : "STRING",
+        "multiple" : false,
+        "values" : [ "/content/gallery/folderctxmenusdemo/samples/viognier-grapes-188185_640.jpg" ]
+      }, {
+        "name" : "hippo:modes",
+        "type" : "STRING",
+        "multiple" : true,
+        "values" : [ ]
+      } ],
+      "nodes" : [ ]
+    } ]
+  }, {
+    "name" : "hippo:translation",
+    "primaryType" : "hippo:translation",
+    "mixinTypes" : [ ],
+    "properties" : [ {
+      "name" : "hippo:language",
+      "type" : "STRING",
+      "multiple" : false,
+      "values" : [ "en" ]
+    }, {
+      "name" : "hippo:message",
+      "type" : "STRING",
+      "multiple" : false,
+      "values" : [ "News Harvest" ]
+    } ],
+    "nodes" : [ ]
+  } ]
+}

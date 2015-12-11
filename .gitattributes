@@ -76,8 +76,10 @@ src/site/xdoc/build-from-source.xml -text svneol=unset#text/plain
 src/site/xdoc/index.xml -text svneol=unset#text/plain
 src/site/xdoc/install.xml -text svneol=unset#text/plain
 src/site/xdoc/release-notes.xml -text svneol=unset#text/plain
+src/test/java/org/onehippo/forge/content/pojo/binder/jcr/DefaultJcrContentNodeBinderTest.java -text svneol=unset#text/plain
 src/test/java/org/onehippo/forge/content/pojo/common/jcr/BaseHippoJcrContentNodeTest.java -text svneol=unset#text/plain
 src/test/java/org/onehippo/forge/content/pojo/mapper/jcr/DefaultJcrContentNodeMapperTest.java -text svneol=unset#text/plain
 src/test/java/org/onehippo/forge/content/pojo/model/BinaryValueTest.java -text svneol=unset#text/plain
 src/test/java/org/onehippo/forge/content/pojo/model/ContentNodeTest.java -text svneol=unset#text/plain
 src/test/resources/log4j.xml -text svneol=unset#text/plain
+src/test/resources/org/onehippo/forge/content/pojo/binder/jcr/news-harvest.json -text

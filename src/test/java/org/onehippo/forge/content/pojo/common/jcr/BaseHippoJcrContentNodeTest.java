@@ -31,8 +31,9 @@ public class BaseHippoJcrContentNodeTest {
 
     protected static final String MY_HIPPO_PROJECT_NS_PREFIX = "myhippoproject";
 
-    protected static final String NEWS1_DOC_HANDLE_PATH =
-            "/content/documents/" + MY_HIPPO_PROJECT_NS_PREFIX + "/news/2015/news1";
+    protected static final String NEWS_FOLDER_PATH = "/content/documents/" + MY_HIPPO_PROJECT_NS_PREFIX + "/news";
+
+    protected static final String NEWS1_DOC_HANDLE_PATH = NEWS_FOLDER_PATH + "/2015/news1";
 
     protected static final String NEWS1_IMAGE_SET_HANDLE_PATH =
             "/content/gallery/" + MY_HIPPO_PROJECT_NS_PREFIX + "/news/2015/news-image-1.jpg";

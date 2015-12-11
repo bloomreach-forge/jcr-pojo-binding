@@ -20,20 +20,25 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 
 import javax.jcr.Binary;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
+import javax.jcr.ValueFactory;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.VFS;
 import org.apache.jackrabbit.util.ISO8601;
 import org.onehippo.forge.content.pojo.common.ContentNodeException;
 import org.onehippo.forge.content.pojo.common.ContentValueConverter;
 import org.onehippo.forge.content.pojo.model.BinaryValue;
+import org.onehippo.forge.content.pojo.model.ContentPropertyType;
 
 public class DefaultJcrContentValueConverter implements ContentValueConverter<Value> {
 
@@ -169,12 +174,48 @@ public class DefaultJcrContentValueConverter implements ContentValueConverter<Va
     }
 
     @Override
-    public Value toValue(String stringValue) throws ContentNodeException {
-        return null;
+    public Value toJcrValue(String typeName, String stringValue) throws ContentNodeException {
+        if (stringValue == null) {
+            throw new IllegalArgumentException("Cannot convert null to a JCR value.");
+        }
+
+        ContentPropertyType type = ContentPropertyType.valueOf(typeName);
+        Value jcrValue = null;
+
+        try {
+            final ValueFactory valueFactory = getSession().getValueFactory();
+
+            switch (type) {
+            case STRING:
+                jcrValue = valueFactory.createValue(stringValue);
+                break;
+            case DATE:
+                jcrValue = valueFactory.createValue(ISO8601.parse(stringValue));
+                break;
+            case BOOLEAN:
+                jcrValue = valueFactory.createValue(BooleanUtils.toBoolean(stringValue));
+                break;
+            case LONG:
+                jcrValue = valueFactory.createValue(NumberUtils.toLong(stringValue));
+                break;
+            case DOUBLE:
+                jcrValue = valueFactory.createValue(NumberUtils.toDouble(stringValue));
+                break;
+            case DECIMAL:
+                jcrValue = valueFactory.createValue(new BigDecimal(stringValue));
+                break;
+            default:
+                break;
+            }
+        } catch (RepositoryException e) {
+            throw new ContentNodeException(e.toString(), e);
+        }
+
+        return jcrValue;
     }
 
     @Override
-    public Value toValue(BinaryValue binaryValue) throws ContentNodeException {
+    public Value toJcrValue(BinaryValue binaryValue) throws ContentNodeException {
         return null;
     }
 

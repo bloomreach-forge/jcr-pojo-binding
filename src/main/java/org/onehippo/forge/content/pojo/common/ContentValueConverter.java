@@ -23,8 +23,8 @@ public interface ContentValueConverter<V> {
 
     BinaryValue toBinaryValue(V value) throws ContentNodeException;
 
-    V toValue(String stringValue) throws ContentNodeException;
+    V toJcrValue(String typeName, String stringValue) throws ContentNodeException;
 
-    V toValue(BinaryValue binaryValue) throws ContentNodeException;
+    V toJcrValue(BinaryValue binaryValue) throws ContentNodeException;
 
 }

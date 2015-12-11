@@ -157,7 +157,7 @@ public class DefaultJcrContentNodeMapper implements ContentNodeMapper<Node, Item
         if (ContentPropertyType.PATH.equals(type)) {
             Node referenceNode = jcrProp.getNode();
             String referenceNodePath = referenceNode.getPath();
-            contentProp.setValue(PropertyType.nameFromValue(jcrPropType) + ":" + referenceNodePath);
+            contentProp.setValue(referenceNodePath);
         } else if (ContentPropertyType.BINARY.equals(type)) {
             if (jcrProp.isMultiple()) {
                 for (Value jcrValue : jcrProp.getValues()) {
