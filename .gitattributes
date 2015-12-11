@@ -3,7 +3,9 @@
 src/main/java/org/onehippo/forge/content/pojo/binder/ContentNodeBinder.java -text svneol=unset#text/plain
 src/main/java/org/onehippo/forge/content/pojo/binder/ContentNodeBindingException.java -text svneol=unset#text/plain
 src/main/java/org/onehippo/forge/content/pojo/binder/ContentNodeBindingItemFilter.java -text svneol=unset#text/plain
+src/main/java/org/onehippo/forge/content/pojo/binder/jcr/DefaultContentNodeJcrBindingItemFilter.java -text svneol=unset#text/plain
 src/main/java/org/onehippo/forge/content/pojo/binder/jcr/DefaultJcrContentNodeBinder.java -text svneol=unset#text/plain
+src/main/java/org/onehippo/forge/content/pojo/common/BasePathBasedContentNodeItemFilter.java -text svneol=unset#text/plain
 src/main/java/org/onehippo/forge/content/pojo/common/ContentNodeException.java -text svneol=unset#text/plain
 src/main/java/org/onehippo/forge/content/pojo/common/ContentValueConverter.java -text svneol=unset#text/plain
 src/main/java/org/onehippo/forge/content/pojo/common/jcr/DefaultJcrContentValueConverter.java -text svneol=unset#text/plain

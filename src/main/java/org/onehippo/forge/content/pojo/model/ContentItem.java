@@ -32,6 +32,8 @@ abstract public class ContentItem implements Serializable, Cloneable {
         this.name = name;
     }
 
+    abstract public boolean isNode();
+
     public String getName() {
         return name;
     }

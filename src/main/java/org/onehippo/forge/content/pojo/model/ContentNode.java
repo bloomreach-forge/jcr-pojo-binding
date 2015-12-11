@@ -28,6 +28,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class ContentNode extends ContentItem {
 
     private static final long serialVersionUID = 1L;
@@ -47,6 +49,11 @@ public class ContentNode extends ContentItem {
     public ContentNode(String name, String primaryType) {
         super(name);
         this.primaryType = primaryType;
+    }
+
+    @JsonIgnore
+    public boolean isNode() {
+        return true;
     }
 
     public String getPrimaryType() {

@@ -17,12 +17,17 @@ package org.onehippo.forge.content.pojo.binder;
 
 import java.io.Serializable;
 
+import org.onehippo.forge.content.pojo.common.ContentValueConverter;
 import org.onehippo.forge.content.pojo.model.ContentNode;
 
-public interface ContentNodeBinder<D, I> extends Serializable {
+public interface ContentNodeBinder<D, I, V> extends Serializable {
 
     public void bind(D dataNode, ContentNode source) throws ContentNodeBindingException;
 
-    public void bind(D dataNode, ContentNode source, ContentNodeBindingItemFilter<I> itemFilter) throws ContentNodeBindingException;
+    public void bind(D dataNode, ContentNode source, ContentNodeBindingItemFilter<I> itemFilter)
+            throws ContentNodeBindingException;
+
+    public void bind(D dataNode, ContentNode source, ContentNodeBindingItemFilter<I> itemFilter,
+            ContentValueConverter<V> valueConverter) throws ContentNodeBindingException;
 
 }

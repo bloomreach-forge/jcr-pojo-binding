@@ -27,8 +27,8 @@ public class DefaultHippoJcrItemMappingFilter extends DefaultJcrItemMappingFilte
 
         setProtectedPropertyExcluded(true);
 
-        addPropertyTypeExclude(PropertyType.REFERENCE);
-        addPropertyTypeExclude(PropertyType.WEAKREFERENCE);
+        addPropertyTypeNameExclude(PropertyType.TYPENAME_REFERENCE);
+        addPropertyTypeNameExclude(PropertyType.TYPENAME_WEAKREFERENCE);
 
         addPropertyPathExclude(HippoNodeType.HIPPO_PATHS);
     }

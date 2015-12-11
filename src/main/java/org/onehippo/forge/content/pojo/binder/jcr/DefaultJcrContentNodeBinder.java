@@ -31,11 +31,13 @@ import org.apache.commons.lang.StringUtils;
 import org.onehippo.forge.content.pojo.binder.ContentNodeBinder;
 import org.onehippo.forge.content.pojo.binder.ContentNodeBindingException;
 import org.onehippo.forge.content.pojo.binder.ContentNodeBindingItemFilter;
+import org.onehippo.forge.content.pojo.common.ContentValueConverter;
+import org.onehippo.forge.content.pojo.common.jcr.DefaultJcrContentValueConverter;
 import org.onehippo.forge.content.pojo.model.ContentItem;
 import org.onehippo.forge.content.pojo.model.ContentNode;
 import org.onehippo.forge.content.pojo.model.ContentProperty;
 
-public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, ContentItem> {
+public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, ContentItem, Value> {
 
     private static final long serialVersionUID = 1L;
 
@@ -49,8 +51,23 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
     }
 
     @Override
-    public void bind(Node jcrDataNode, ContentNode contentNode, ContentNodeBindingItemFilter<ContentItem> itemFilter) throws ContentNodeBindingException {
+    public void bind(Node jcrDataNode, ContentNode contentNode, ContentNodeBindingItemFilter<ContentItem> itemFilter)
+            throws ContentNodeBindingException {
+        bind(jcrDataNode, contentNode, itemFilter, null);
+    }
+
+    @Override
+    public void bind(Node jcrDataNode, ContentNode contentNode, ContentNodeBindingItemFilter<ContentItem> itemFilter,
+            ContentValueConverter<Value> valueConverter) throws ContentNodeBindingException {
         try {
+            if (itemFilter == null) {
+                itemFilter = new DefaultContentNodeJcrBindingItemFilter();
+            }
+
+            if (valueConverter == null) {
+                valueConverter = new DefaultJcrContentValueConverter(jcrDataNode.getSession());
+            }
+
             if (StringUtils.isNotBlank(contentNode.getPrimaryType())
                     && !jcrDataNode.getPrimaryNodeType().getName().equals(contentNode.getPrimaryType())) {
                 jcrDataNode.setPrimaryType(contentNode.getPrimaryType());
@@ -74,8 +91,7 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
                     continue;
                 }
 
-                existingJcrProp = jcrDataNode.hasProperty(propName)
-                        ? jcrDataNode.getProperty(propName) : null;
+                existingJcrProp = jcrDataNode.hasProperty(propName) ? jcrDataNode.getProperty(propName) : null;
 
                 if (existingJcrProp != null && isProtectedProperty(existingJcrProp)) {
                     continue;
@@ -105,7 +121,7 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
 
                 childJcrNode = jcrDataNode.addNode(childContentNode.getName(), childContentNode.getPrimaryType());
 
-                bind(childJcrNode, childContentNode, itemFilter);
+                bind(childJcrNode, childContentNode, itemFilter, valueConverter);
             }
         } catch (RepositoryException e) {
             throw new ContentNodeBindingException(e.toString(), e);
@@ -152,12 +168,13 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
         return jcrValues.toArray(new Value[jcrValues.size()]);
     }
 
-    private List<Node> findChildNodesByNameAndType(final Node base, final ContentNode contentNode) throws RepositoryException {
+    private List<Node> findChildNodesByNameAndType(final Node base, final ContentNode contentNode)
+            throws RepositoryException {
         List<Node> childNodes = new LinkedList<>();
 
         Node childNode;
 
-        for (NodeIterator nodeIt = base.getNodes(contentNode.getName()); nodeIt.hasNext(); ) {
+        for (NodeIterator nodeIt = base.getNodes(contentNode.getName()); nodeIt.hasNext();) {
             childNode = nodeIt.nextNode();
 
             if (childNode.getPrimaryNodeType().getName().equals(contentNode.getPrimaryType())) {

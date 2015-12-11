@@ -57,6 +57,11 @@ public class ContentProperty extends ContentItem {
         this.multiple = multiple;
     }
 
+    @JsonIgnore
+    public boolean isNode() {
+        return false;
+    }
+
     public ContentPropertyType getType() {
         return type;
     }
