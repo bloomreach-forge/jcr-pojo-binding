@@ -15,10 +15,16 @@
  */
 package org.onehippo.forge.content.pojo.common;
 
+import org.onehippo.forge.content.pojo.model.BinaryValue;
+
 public interface ContentValueConverter<V> {
 
     String toString(V value) throws ContentNodeException;
 
+    BinaryValue toBinaryValue(V value) throws ContentNodeException;
+
     V toValue(String stringValue) throws ContentNodeException;
+
+    V toValue(BinaryValue binaryValue) throws ContentNodeException;
 
 }

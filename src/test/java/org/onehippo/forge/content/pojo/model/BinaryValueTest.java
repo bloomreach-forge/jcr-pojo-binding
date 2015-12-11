@@ -35,6 +35,7 @@ public class BinaryValueTest {
         assertNull(bv.getCharset());
         assertEquals(RED_DOT_IMG_DATA_IN_BASE64,
                 Base64.getEncoder().encodeToString(IOUtils.toByteArray(bv.getStream())));
+        assertEquals(RED_DOT_IMG_DATA_URI, bv.toUriString());
         bv.dispose();
     }
 

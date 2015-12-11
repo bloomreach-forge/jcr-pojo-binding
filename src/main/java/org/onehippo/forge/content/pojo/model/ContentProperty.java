@@ -15,6 +15,7 @@
  */
 package org.onehippo.forge.content.pojo.model;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -95,12 +96,28 @@ public class ContentProperty extends ContentItem {
         }
     }
 
+    public void setValue(BinaryValue binaryValue) {
+        try {
+            setValue(binaryValue.toUriString());
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e.toString(), e);
+        }
+    }
+
     public void addValue(String value) {
         if (values == null) {
             values = new LinkedList<>();
         }
 
         values.add(value);
+    }
+
+    public void addValue(BinaryValue binaryValue) {
+        try {
+            addValue(binaryValue.toUriString());
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e.toString(), e);
+        }
     }
 
     public void removeValues() {

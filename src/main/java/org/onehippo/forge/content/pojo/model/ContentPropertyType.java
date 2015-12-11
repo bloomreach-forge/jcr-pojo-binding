@@ -24,6 +24,7 @@ public enum ContentPropertyType {
     DATE,
     BOOLEAN,
     DECIMAL,
+    PATH,
     UNDEFINED;
 
 }

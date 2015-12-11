@@ -34,6 +34,10 @@ public class BinaryValue {
     public BinaryValue() {
     }
 
+    public BinaryValue(byte [] data) {
+        this(data, null, null);
+    }
+
     public BinaryValue(byte [] data, String mediaType, String charset) {
         this.data = data;
         this.mediaType = mediaType;
@@ -48,8 +52,16 @@ public class BinaryValue {
         return mediaType;
     }
 
+    public void setMediaType(String mediaType) {
+        this.mediaType = mediaType;
+    }
+
     public String getCharset() {
         return charset;
+    }
+
+    public void setCharset(String charset) {
+        this.charset = charset;
     }
 
     public InputStream getStream() throws IOException {
@@ -63,6 +75,31 @@ public class BinaryValue {
 
         if (inputStream != null) {
             return inputStream;
+        }
+
+        throw new IOException("No data nor fileObject set.");
+    }
+
+    public String toUriString() throws IOException {
+        if (data != null) {
+            StringBuilder sb = new StringBuilder(data.length + 20);
+            sb.append("data:");
+
+            if (StringUtils.isNotBlank(mediaType)) {
+                sb.append(mediaType);
+            }
+
+            if (StringUtils.isNotBlank(charset)) {
+                sb.append(';').append(charset);
+            }
+
+            sb.append(";base64,");
+
+            sb.append(Base64.getEncoder().encodeToString(data));
+
+            return sb.toString();
+        } else if (fileObject != null) {
+            return fileObject.getURL().toString();
         }
 
         throw new IOException("No data nor fileObject set.");

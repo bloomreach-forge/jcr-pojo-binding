@@ -147,6 +147,24 @@ public class ContentNode extends ContentItem {
         setProperty(prop);
     }
 
+    public void setProperty(String name, BinaryValue binaryValue) {
+        ContentProperty prop = new ContentProperty(name, ContentPropertyType.BINARY);
+        prop.setValue(binaryValue);
+        setProperty(prop);
+    }
+
+    public void setProperty(String name, BinaryValue [] binaryValues) {
+        ContentProperty prop = new ContentProperty(name, ContentPropertyType.BINARY, true);
+
+        if (binaryValues != null) {
+            for (BinaryValue binaryValue : binaryValues) {
+                prop.addValue(binaryValue);
+            }
+        }
+
+        setProperty(prop);
+    }
+
     public List<ContentNode> getNodes() {
         if (nodes == null) {
             return Collections.emptyList();

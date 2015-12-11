@@ -94,7 +94,7 @@ public class DefaultJcrContentNodeMapper implements ContentNodeMapper<Node, Item
                     continue;
                 }
 
-                childContentNode = map(childJcrNode, itemFilter);
+                childContentNode = map(childJcrNode, itemFilter, valueConverter);
                 contentNode.addNode(childContentNode);
             }
         } catch (RepositoryException e) {
@@ -108,8 +108,9 @@ public class DefaultJcrContentNodeMapper implements ContentNodeMapper<Node, Item
         ContentProperty contentProp = null;
 
         ContentPropertyType type = ContentPropertyType.UNDEFINED;
+        final int jcrPropType = jcrProp.getType();
 
-        switch (jcrProp.getType()) {
+        switch (jcrPropType) {
         case PropertyType.STRING: {
             type = ContentPropertyType.STRING;
             break;
@@ -134,26 +135,45 @@ public class DefaultJcrContentNodeMapper implements ContentNodeMapper<Node, Item
             type = ContentPropertyType.BOOLEAN;
             break;
         }
+        case PropertyType.DECIMAL: {
+            type = ContentPropertyType.STRING;
+            break;
+        }
         case PropertyType.NAME:
-        case PropertyType.PATH:
         case PropertyType.URI: {
             type = ContentPropertyType.STRING;
             break;
         }
-        case PropertyType.DECIMAL: {
-            type = ContentPropertyType.STRING;
+        case PropertyType.PATH:
+        case PropertyType.REFERENCE:
+        case PropertyType.WEAKREFERENCE: {
+            type = ContentPropertyType.PATH;
             break;
         }
         }
 
         contentProp = new ContentProperty(jcrProp.getName(), type, jcrProp.isMultiple());
 
-        if (jcrProp.isMultiple()) {
-            for (Value jcrValue : jcrProp.getValues()) {
-                contentProp.addValue(valueConverter.toString(jcrValue));
+        if (ContentPropertyType.PATH.equals(type)) {
+            Node referenceNode = jcrProp.getNode();
+            String referenceNodePath = referenceNode.getPath();
+            contentProp.setValue(PropertyType.nameFromValue(jcrPropType) + ":" + referenceNodePath);
+        } else if (ContentPropertyType.BINARY.equals(type)) {
+            if (jcrProp.isMultiple()) {
+                for (Value jcrValue : jcrProp.getValues()) {
+                    contentProp.addValue(valueConverter.toBinaryValue(jcrValue));
+                }
+            } else {
+                contentProp.addValue(valueConverter.toBinaryValue(jcrProp.getValue()));
             }
         } else {
-            contentProp.addValue(valueConverter.toString(jcrProp.getValue()));
+            if (jcrProp.isMultiple()) {
+                for (Value jcrValue : jcrProp.getValues()) {
+                    contentProp.addValue(valueConverter.toString(jcrValue));
+                }
+            } else {
+                contentProp.addValue(valueConverter.toString(jcrProp.getValue()));
+            }
         }
 
         return contentProp;
