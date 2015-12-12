@@ -62,8 +62,8 @@ public class DefaultJcrContentNodeBinderTest extends BaseHippoJcrContentNodeTest
     }
 
     @Test
-    public void testBindingNews() throws Exception {
-        MockNode newsFolderNode = getRootNode().getNode(StringUtils.removeStart(NEWS_FOLDER_PATH, "/"));
+    public void testBindNewsDocument() throws Exception {
+        MockNode newsFolderNode = getRootNode().getNode(StringUtils.removeStart(NEWS_DOC_FOLDER_PATH, "/"));
         Node handle = createHippoDocumentHandleNode(newsFolderNode, "news-harvest", "News Harvest", "en");
         binder.bind(handle, newsContentNode);
 
@@ -147,5 +147,12 @@ public class DefaultJcrContentNodeBinderTest extends BaseHippoJcrContentNodeTest
                 imageLinkNode.getProperty("hippo:docbase").getString());
         assertTrue(!imageLinkNode.hasProperty("hippo:modes")
                 || imageLinkNode.getProperty("hippo:modes").getValues().length == 0);
+    }
+
+    @Test
+    public void testBindBinaryContent() throws Exception {
+        MockNode newsGalleryFolderNode = getRootNode().getNode(StringUtils.removeStart(NEWS_GALLERY_FOLDER_PATH, "/"));
+        Node handle = createHippoGalleryHandleNode(newsGalleryFolderNode, "animal-2883_640.jpg");
+        // TODO
     }
 }

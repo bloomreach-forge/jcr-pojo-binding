@@ -82,4 +82,6 @@ src/test/java/org/onehippo/forge/content/pojo/mapper/jcr/DefaultJcrContentNodeMa
 src/test/java/org/onehippo/forge/content/pojo/model/BinaryValueTest.java -text svneol=unset#text/plain
 src/test/java/org/onehippo/forge/content/pojo/model/ContentNodeTest.java -text svneol=unset#text/plain
 src/test/resources/log4j.xml -text svneol=unset#text/plain
+src/test/resources/org/onehippo/forge/content/pojo/binder/jcr/animal-2883_640.jpg -text
+src/test/resources/org/onehippo/forge/content/pojo/binder/jcr/animal-2883_640.json -text
 src/test/resources/org/onehippo/forge/content/pojo/binder/jcr/news-harvest.json -text

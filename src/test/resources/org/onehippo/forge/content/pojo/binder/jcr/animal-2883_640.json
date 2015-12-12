@@ -1,0 +1,95 @@
+{
+  "name" : "animal-2883_640.jpg",
+  "primaryType" : "hippo:handle",
+  "mixinTypes" : [ "mix:referenceable" ],
+  "properties" : [ {
+    "name" : "jcr:path",
+    "type" : "STRING",
+    "multiple" : false,
+    "values" : [ "/content/gallery/myhippoproject/samples/animal-2883_640.jpg" ]
+  } ],
+  "nodes" : [ {
+    "name" : "animal-2883_640.jpg",
+    "primaryType" : "hippogallery:imageset",
+    "mixinTypes" : [ "mix:referenceable" ],
+    "properties" : [ {
+      "name" : "hippogallery:description",
+      "type" : "STRING",
+      "multiple" : false,
+      "values" : [ "Description for animal-2883_640.jpg" ]
+    }, {
+      "name" : "hippo:availability",
+      "type" : "STRING",
+      "multiple" : true,
+      "values" : [ "live", "preview" ]
+    }, {
+      "name" : "hippogallery:filename",
+      "type" : "STRING",
+      "multiple" : false,
+      "values" : [ "animal-2883_640.jpg" ]
+    } ],
+    "nodes" : [ {
+      "name" : "hippogallery:thumbnail",
+      "primaryType" : "hippogallery:image",
+      "mixinTypes" : [ ],
+      "properties" : [ {
+        "name" : "jcr:data",
+        "type" : "BINARY",
+        "multiple" : false,
+        "values" : [ "data:;base64,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" ]
+      }, {
+        "name" : "jcr:lastModified",
+        "type" : "DATE",
+        "multiple" : false,
+        "values" : [ "2013-11-12T12:15:00.000+01:00" ]
+      }, {
+        "name" : "hippogallery:height",
+        "type" : "LONG",
+        "multiple" : false,
+        "values" : [ "39" ]
+      }, {
+        "name" : "jcr:mimeType",
+        "type" : "STRING",
+        "multiple" : false,
+        "values" : [ "image/jpeg" ]
+      }, {
+        "name" : "hippogallery:width",
+        "type" : "LONG",
+        "multiple" : false,
+        "values" : [ "60" ]
+      } ],
+      "nodes" : [ ]
+    }, {
+      "name" : "hippogallery:original",
+      "primaryType" : "hippogallery:image",
+      "mixinTypes" : [ ],
+      "properties" : [ {
+        "name" : "jcr:data",
+        "type" : "BINARY",
+        "multiple" : false,
+        "values" : [ "classpath:org/onehippo/forge/content/pojo/binder/jcr/animal-2883_640.jpg" ]
+      }, {
+        "name" : "jcr:lastModified",
+        "type" : "DATE",
+        "multiple" : false,
+        "values" : [ "2013-11-12T12:15:00.000+01:00" ]
+      }, {
+        "name" : "hippogallery:height",
+        "type" : "LONG",
+        "multiple" : false,
+        "values" : [ "426" ]
+      }, {
+        "name" : "jcr:mimeType",
+        "type" : "STRING",
+        "multiple" : false,
+        "values" : [ "image/jpeg" ]
+      }, {
+        "name" : "hippogallery:width",
+        "type" : "LONG",
+        "multiple" : false,
+        "values" : [ "640" ]
+      } ],
+      "nodes" : [ ]
+    } ]
+  } ]
+}

@@ -31,29 +31,20 @@ public class BaseHippoJcrContentNodeTest {
 
     protected static final String MY_HIPPO_PROJECT_NS_PREFIX = "myhippoproject";
 
-    protected static final String NEWS_FOLDER_PATH = "/content/documents/" + MY_HIPPO_PROJECT_NS_PREFIX + "/news";
+    protected static final String NEWS_DOC_FOLDER_PATH = "/content/documents/" + MY_HIPPO_PROJECT_NS_PREFIX + "/news";
 
-    protected static final String NEWS1_DOC_HANDLE_PATH = NEWS_FOLDER_PATH + "/2015/news1";
+    protected static final String NEWS1_DOC_HANDLE_PATH = NEWS_DOC_FOLDER_PATH + "/2015/news1";
 
-    protected static final String NEWS1_IMAGE_SET_HANDLE_PATH =
-            "/content/gallery/" + MY_HIPPO_PROJECT_NS_PREFIX + "/news/2015/news-image-1.jpg";
+    protected static final String NEWS_GALLERY_FOLDER_PATH = "/content/gallery/" + MY_HIPPO_PROJECT_NS_PREFIX + "/news";
+
+    protected static final String NEWS1_IMAGE_SET_HANDLE_PATH = NEWS_GALLERY_FOLDER_PATH + "/2015/news-image-1.jpg";
 
     protected static final String NEWS_NODE_TYPE = MY_HIPPO_PROJECT_NS_PREFIX + ":news";
 
-    protected static final Set<String> DOC_VARIANT_NODE_MIXIN_TYPES = new LinkedHashSet<>(
-            Arrays.asList(
-                    HippoNodeType.NT_DOCUMENT,
-                    HippoStdNodeType.NT_PUBLISHABLE,
-                    "hippotranslation:translated",
-                    "mix:referenceable",
-                    "hippo:container",
-                    "hippo:derived",
-                    "hippostd:container",
-                    "hippostd:publishable",
-                    "hippostd:publishableSummary",
-                    "hippostd:relaxed",
-                    "hippostdpubwf:document",
-                    "hippo:translated"));
+    protected static final Set<String> DOC_VARIANT_NODE_MIXIN_TYPES = new LinkedHashSet<>(Arrays.asList(
+            HippoNodeType.NT_DOCUMENT, HippoStdNodeType.NT_PUBLISHABLE, "hippotranslation:translated",
+            "mix:referenceable", "hippo:container", "hippo:derived", "hippostd:container", "hippostd:publishable",
+            "hippostd:publishableSummary", "hippostd:relaxed", "hippostdpubwf:document", "hippo:translated"));
 
     protected static final String NEWS_TITLE_PROP_NAME = MY_HIPPO_PROJECT_NS_PREFIX + ":title";
     protected static final String NEWS_DATE_PROP_NAME = MY_HIPPO_PROJECT_NS_PREFIX + ":date";
@@ -80,13 +71,16 @@ public class BaseHippoJcrContentNodeTest {
         newsImageBinary = new MockBinary(new ByteArrayInputStream(new byte[0]));
 
         MockNode galleryNode = createHippoGalleryFolderNode(contentNode, "gallery", null, null);
-        MockNode myhippoprojectGalleryNode = createHippoGalleryFolderNode(galleryNode, MY_HIPPO_PROJECT_NS_PREFIX, null, null);
+        MockNode myhippoprojectGalleryNode = createHippoGalleryFolderNode(galleryNode, MY_HIPPO_PROJECT_NS_PREFIX, null,
+                null);
         MockNode newsGalleryNode = createHippoGalleryFolderNode(myhippoprojectGalleryNode, "news", "News", "en");
         MockNode newsGallery2015Node = createHippoGalleryFolderNode(newsGalleryNode, "2015", "2015", "en");
         MockNode newsImageSetHandleNode = createHippoGalleryHandleNode(newsGallery2015Node, "news-image-1.jpg");
         MockNode newsImageSetNode = createHippoGalleryImageSetNode(newsImageSetHandleNode);
-        MockNode newsImageThumbnailNode = createHippoGalleryImageNode(newsImageSetNode, "thumbnail", "image/jpeg", newsImageBinary, 10, 10);
-        MockNode newsImageOriginalNode = createHippoGalleryImageNode(newsImageSetNode, "original", "image/jpeg", newsImageBinary, 10, 10);
+        MockNode newsImageThumbnailNode = createHippoGalleryImageNode(newsImageSetNode, "thumbnail", "image/jpeg",
+                newsImageBinary, 10, 10);
+        MockNode newsImageOriginalNode = createHippoGalleryImageNode(newsImageSetNode, "original", "image/jpeg",
+                newsImageBinary, 10, 10);
 
         MockNode documentsNode = createHippoFolderNode(contentNode, "documents", null, null);
         MockNode myhippoprojectNode = createHippoFolderNode(documentsNode, MY_HIPPO_PROJECT_NS_PREFIX, null, null);
@@ -99,7 +93,7 @@ public class BaseHippoJcrContentNodeTest {
         MockNode newsArticlePreviewNode = createHippoDocumentVariantNode(newsArticleHandleNode, NEWS_NODE_TYPE,
                 HippoStdNodeType.UNPUBLISHED);
 
-        MockNode [] variants = new MockNode [] { newsArticleLiveNode, newsArticlePreviewNode };
+        MockNode[] variants = new MockNode[] { newsArticleLiveNode, newsArticlePreviewNode };
 
         for (MockNode variant : variants) {
             variant.setProperty(NEWS_TITLE_PROP_NAME, NEWS_TITLE_PROP_VALUE);
@@ -114,14 +108,16 @@ public class BaseHippoJcrContentNodeTest {
         }
     }
 
-    protected MockNode createHippoGalleryFolderNode(MockNode baseNode, String name, String translationName, String translationLanguage) throws Exception {
+    protected MockNode createHippoGalleryFolderNode(MockNode baseNode, String name, String translationName,
+            String translationLanguage) throws Exception {
         MockNode galleryFolderNode = baseNode.addNode(name, "hippogallery:stdImageGallery");
         galleryFolderNode.addMixin("mix:referenceable");
-        galleryFolderNode.setProperty("hippostd:foldertype", new String [] { "new-image-folder" });
-        galleryFolderNode.setProperty("hippostd:gallerytype", new String [] { "hippogallery:imageset" });
+        galleryFolderNode.setProperty("hippostd:foldertype", new String[] { "new-image-folder" });
+        galleryFolderNode.setProperty("hippostd:gallerytype", new String[] { "hippogallery:imageset" });
 
         if (translationName != null) {
-            MockNode translationNode = galleryFolderNode.addNode(HippoNodeType.HIPPO_TRANSLATION, HippoNodeType.NT_TRANSLATION);
+            MockNode translationNode = galleryFolderNode.addNode(HippoNodeType.HIPPO_TRANSLATION,
+                    HippoNodeType.NT_TRANSLATION);
             translationNode.setProperty(HippoNodeType.HIPPO_LANGUAGE, translationLanguage);
             translationNode.setProperty(HippoNodeType.HIPPO_MESSAGE, translationName);
         }
@@ -138,7 +134,7 @@ public class BaseHippoJcrContentNodeTest {
     protected MockNode createHippoGalleryImageSetNode(MockNode handleNode) throws Exception {
         MockNode imageSetNode = handleNode.addNode(handleNode.getName(), "hippogallery:imageset");
         imageSetNode.addMixin("mix:referenceable");
-        imageSetNode.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String [] { "live", "preview" });
+        imageSetNode.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[] { "live", "preview" });
         imageSetNode.setProperty("hippogallery:filename", handleNode.getName());
         return imageSetNode;
     }
@@ -153,14 +149,16 @@ public class BaseHippoJcrContentNodeTest {
         return imageNode;
     }
 
-    protected MockNode createHippoFolderNode(MockNode baseNode, String name, String translationName, String translationLanguage) throws Exception {
+    protected MockNode createHippoFolderNode(MockNode baseNode, String name, String translationName,
+            String translationLanguage) throws Exception {
         MockNode folderNode = baseNode.addNode(name, HippoStdNodeType.NT_FOLDER);
         folderNode.addMixin("hippo:translated");
         folderNode.addMixin("mix:referenceable");
-        folderNode.setProperty("hippostd:foldertype", new String [] { "new-translated-folder", "new-document" });
+        folderNode.setProperty("hippostd:foldertype", new String[] { "new-translated-folder", "new-document" });
 
         if (translationName != null) {
-            MockNode translationNode = folderNode.addNode(HippoNodeType.HIPPO_TRANSLATION, HippoNodeType.NT_TRANSLATION);
+            MockNode translationNode = folderNode.addNode(HippoNodeType.HIPPO_TRANSLATION,
+                    HippoNodeType.NT_TRANSLATION);
             translationNode.setProperty(HippoNodeType.HIPPO_LANGUAGE, translationLanguage);
             translationNode.setProperty(HippoNodeType.HIPPO_MESSAGE, translationName);
         }
@@ -168,13 +166,15 @@ public class BaseHippoJcrContentNodeTest {
         return folderNode;
     }
 
-    protected MockNode createHippoDocumentHandleNode(MockNode baseNode, String name, String translationName, String translationLanguage) throws Exception {
+    protected MockNode createHippoDocumentHandleNode(MockNode baseNode, String name, String translationName,
+            String translationLanguage) throws Exception {
         MockNode handleNode = baseNode.addNode(name, HippoNodeType.NT_HANDLE);
         handleNode.addMixin("mix:referenceable");
         handleNode.addMixin(HippoNodeType.NT_TRANSLATED);
 
         if (translationName != null) {
-            MockNode translationNode = handleNode.addNode(HippoNodeType.HIPPO_TRANSLATION, HippoNodeType.NT_TRANSLATION);
+            MockNode translationNode = handleNode.addNode(HippoNodeType.HIPPO_TRANSLATION,
+                    HippoNodeType.NT_TRANSLATION);
             translationNode.setProperty(HippoNodeType.HIPPO_LANGUAGE, translationLanguage);
             translationNode.setProperty(HippoNodeType.HIPPO_MESSAGE, translationName);
         }
@@ -182,7 +182,8 @@ public class BaseHippoJcrContentNodeTest {
         return handleNode;
     }
 
-    protected MockNode createHippoDocumentVariantNode(MockNode handleNode, String primaryType, String state) throws Exception {
+    protected MockNode createHippoDocumentVariantNode(MockNode handleNode, String primaryType, String state)
+            throws Exception {
         MockNode variantNode = handleNode.addNode(handleNode.getName(), primaryType);
 
         for (String mixin : DOC_VARIANT_NODE_MIXIN_TYPES) {
@@ -190,11 +191,11 @@ public class BaseHippoJcrContentNodeTest {
         }
 
         if (HippoStdNodeType.PUBLISHED.equals(state)) {
-            variantNode.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String [] { "live", "preview" });
+            variantNode.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[] { "live", "preview" });
             variantNode.setProperty(HippoStdNodeType.HIPPOSTD_STATE, HippoStdNodeType.PUBLISHED);
             variantNode.setProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY, "live");
         } else {
-            variantNode.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String [] { "preview" });
+            variantNode.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[] { "preview" });
             variantNode.setProperty(HippoStdNodeType.HIPPOSTD_STATE, HippoStdNodeType.UNPUBLISHED);
             variantNode.setProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY, "changed");
         }
