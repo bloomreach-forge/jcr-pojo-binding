@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections.SetUtils;
@@ -36,6 +37,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @XmlRootElement(name = "node")
+@XmlType(propOrder={"primaryType", "mixinTypes", "properties", "nodes"})
 public class ContentNode extends ContentItem {
 
     private static final long serialVersionUID = 1L;
