@@ -15,11 +15,16 @@
  */
 package org.onehippo.forge.content.pojo.model;
 
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections.SetUtils;
@@ -30,6 +35,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+@XmlRootElement(name="node")
 public class ContentNode extends ContentItem {
 
     private static final long serialVersionUID = 1L;
@@ -52,20 +58,24 @@ public class ContentNode extends ContentItem {
     }
 
     @JsonIgnore
+    @XmlTransient
     public boolean isNode() {
         return true;
     }
 
+    @XmlElement(name="primaryType")
     public String getPrimaryType() {
         return primaryType;
     }
 
+    @XmlElementWrapper(name="mixinTypes")
+    @XmlElements(@XmlElement(name="mixinType"))
     public Set<String> getMixinTypes() {
         if (mixinTypes == null) {
-            return Collections.emptySet();
+            mixinTypes = new LinkedHashSet<>();
         }
 
-        return Collections.unmodifiableSet(mixinTypes);
+        return mixinTypes;
     }
 
     public void addMixinType(String mixinType) {
@@ -82,12 +92,14 @@ public class ContentNode extends ContentItem {
         }
     }
 
+    @XmlElementWrapper(name="properties")
+    @XmlElements(@XmlElement(name="property"))
     public List<ContentProperty> getProperties() {
         if (properties == null) {
-            return Collections.emptyList();
+            properties = new LinkedList<>();
         }
 
-        return Collections.unmodifiableList(properties);
+        return properties;
     }
 
     public boolean hasProperty(String name) {
@@ -172,12 +184,14 @@ public class ContentNode extends ContentItem {
         setProperty(prop);
     }
 
+    @XmlElementWrapper(name="nodes")
+    @XmlElements(@XmlElement(name="node"))
     public List<ContentNode> getNodes() {
         if (nodes == null) {
-            return Collections.emptyList();
+            nodes = new LinkedList<>();
         }
 
-        return Collections.unmodifiableList(nodes);
+        return nodes;
     }
 
     public boolean hasNode(String name) {

@@ -17,6 +17,8 @@ package org.onehippo.forge.content.pojo.model;
 
 import java.io.Serializable;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 abstract public class ContentItem implements Serializable, Cloneable {
@@ -39,6 +41,7 @@ abstract public class ContentItem implements Serializable, Cloneable {
     }
 
     @JsonIgnore
+    @XmlTransient
     public String getItemName() {
         return getName();
     }

@@ -17,9 +17,14 @@ package org.onehippo.forge.content.pojo.model;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang.StringUtils;
@@ -33,6 +38,7 @@ import org.apache.jackrabbit.util.ISO8601;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+@XmlRootElement(name="property")
 public class ContentProperty extends ContentItem {
 
     private static final long serialVersionUID = 1L;
@@ -58,27 +64,33 @@ public class ContentProperty extends ContentItem {
     }
 
     @JsonIgnore
+    @XmlTransient
     public boolean isNode() {
         return false;
     }
 
+    @XmlElement(name="type")
     public ContentPropertyType getType() {
         return type;
     }
 
+    @XmlElement(name="multiple")
     public boolean isMultiple() {
         return multiple;
     }
 
+    @XmlElementWrapper(name="values")
+    @XmlElements(@XmlElement(name="value"))
     public List<String> getValues() {
         if (values == null) {
-            return Collections.emptyList();
+            values= new LinkedList<>();
         }
 
-        return Collections.unmodifiableList(values);
+        return values;
     }
 
     @JsonIgnore
+    @XmlTransient
     public String getValue() {
         if (values != null && !values.isEmpty()) {
             return values.get(0);
@@ -132,11 +144,13 @@ public class ContentProperty extends ContentItem {
     }
 
     @JsonIgnore
+    @XmlTransient
     public int getValueCount() {
         return values == null ? 0 : values.size();
     }
 
     @JsonIgnore
+    @XmlTransient
     public List<Object> getObjectValues() {
         List<Object> objectValues = new LinkedList<>();
         int valueCount = getValueCount();
@@ -149,6 +163,7 @@ public class ContentProperty extends ContentItem {
     }
 
     @JsonIgnore
+    @XmlTransient
     public Object getObjectValue() {
         if (values != null && !values.isEmpty()) {
             return getObjectValueAt(0);

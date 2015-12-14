@@ -17,6 +17,13 @@ package org.onehippo.forge.content.pojo.model;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.StringReader;
+import java.io.StringWriter;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+
 import org.hippoecm.repository.HippoStdNodeType;
 import org.junit.Before;
 import org.junit.Test;
@@ -125,7 +132,7 @@ public class ContentNodeTest {
     }
 
     @Test
-    public void testDocumentContentSerialization() throws Exception {
+    public void testDocumentContentSerializationInJSON() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(liveNews1);
         log.debug("jsonString from liveNews1: {}", jsonString);
@@ -138,6 +145,31 @@ public class ContentNodeTest {
 
         jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(documentContent);
         log.debug("jsonString from documentContent: {}", jsonString);
+    }
+
+    @Test
+    public void testDocumentContentSerializationInJAXB() throws Exception {
+        JAXBContext jaxbContext = JAXBContext.newInstance(ContentNode.class);
+        Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+        jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        StringWriter sw = new StringWriter();
+        jaxbMarshaller.marshal(liveNews1, sw);
+        String xmlString = sw.toString();
+        log.debug("xmlString from liveNews1: {}", xmlString);
+
+        sw = new StringWriter();
+        jaxbMarshaller.marshal(previewNews1, sw);
+        xmlString = sw.toString();
+        log.debug("xmlString from previewNews1: {}", xmlString);
+
+        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+        ContentNode documentContent = (ContentNode) jaxbUnmarshaller.unmarshal(new StringReader(xmlString));
+        log.debug("documentContent: {}", documentContent);
+
+        sw = new StringWriter();
+        jaxbMarshaller.marshal(documentContent, sw);
+        xmlString = sw.toString();
+        log.debug("xmlString from documentContent: {}", xmlString);
     }
 
 }
