@@ -79,11 +79,7 @@ public class ContentNode extends ContentItem {
     }
 
     public void addMixinType(String mixinType) {
-        if (mixinTypes == null) {
-            mixinTypes = new LinkedHashSet<>();
-        }
-
-        mixinTypes.add(mixinType);
+        getMixinTypes().add(mixinType);
     }
 
     public void removeMixinType(String mixinType) {
@@ -119,25 +115,19 @@ public class ContentNode extends ContentItem {
     }
 
     public void setProperty(ContentProperty property) {
-        if (properties == null) {
-            properties = new LinkedList<>();
-        }
+        if (!getProperties().isEmpty()) {
+            int index = 0;
 
-        if (!properties.isEmpty()) {
-            int size = properties.size();
-            ContentProperty contentProp;
-
-            for (int i = 0; i < size; i++) {
-                contentProp = properties.get(i);
-
+            for (ContentProperty contentProp : getProperties()) {
                 if (contentProp.getName().equals(property.getName())) {
-                    properties.set(i, property);
+                    properties.set(index, property);
                     return;
                 }
+                ++index;
             }
         }
 
-        properties.add(property);
+        getProperties().add(property);
     }
 
     public void setProperty(String name, String value) {
@@ -211,11 +201,7 @@ public class ContentNode extends ContentItem {
     }
 
     public void addNode(ContentNode node) {
-        if (nodes == null) {
-            nodes = new LinkedList<>();
-        }
-
-        nodes.add(node);
+        getNodes().add(node);
     }
 
     public ContentNode queryNodeByXPath(String xpath) {

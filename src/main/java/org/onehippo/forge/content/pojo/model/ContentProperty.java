@@ -100,16 +100,12 @@ public class ContentProperty extends ContentItem {
     }
 
     public void setValue(String value) {
-        if (values == null) {
-            values = new LinkedList<>();
-        }
-
-        if (!values.isEmpty()) {
-            values.clear();
+        if (!getValues().isEmpty()) {
+            getValues().clear();
         }
 
         if (value != null) {
-            values.add(value);
+            getValues().add(value);
         }
     }
 
@@ -122,11 +118,7 @@ public class ContentProperty extends ContentItem {
     }
 
     public void addValue(String value) {
-        if (values == null) {
-            values = new LinkedList<>();
-        }
-
-        values.add(value);
+        getValues().add(value);
     }
 
     public void addValue(BinaryValue binaryValue) {
@@ -151,12 +143,12 @@ public class ContentProperty extends ContentItem {
 
     @JsonIgnore
     @XmlTransient
-    public List<Object> getObjectValues() {
+    public List<Object> getValuesAsObject() {
         List<Object> objectValues = new LinkedList<>();
         int valueCount = getValueCount();
 
         for (int i = 0; i < valueCount; i++) {
-            objectValues.add(getObjectValueAt(i));
+            objectValues.add(getValueAsObjectAt(i));
         }
 
         return objectValues;
@@ -164,15 +156,15 @@ public class ContentProperty extends ContentItem {
 
     @JsonIgnore
     @XmlTransient
-    public Object getObjectValue() {
+    public Object getValueAsObject() {
         if (values != null && !values.isEmpty()) {
-            return getObjectValueAt(0);
+            return getValueAsObjectAt(0);
         }
 
         return null;
     }
 
-    private Object getObjectValueAt(final int index) {
+    private Object getValueAsObjectAt(final int index) {
         Object objectValue = null;
 
         final String stringifiedValue = values.get(index);

@@ -144,7 +144,7 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
         Value jcrValue;
 
         if (ContentPropertyType.BINARY.equals(contentProp.getType())) {
-            for (Object binaryValue : contentProp.getObjectValues()) {
+            for (Object binaryValue : contentProp.getValuesAsObject()) {
                 jcrValue = valueConverter.toJcrValue((BinaryValue) binaryValue);
 
                 if (jcrValue != null) {
