@@ -172,4 +172,24 @@ public class ContentNodeTest {
         log.debug("xmlString from documentContent: {}", xmlString);
     }
 
+    @Test
+    public void testSameDocumentContentSerializationInEitherJsonOrJAXB() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(liveNews1);
+        log.debug("jsonString: {}", jsonString);
+        ContentNode documentContentFromJSON = mapper.readValue(jsonString, ContentNode.class);
+
+        JAXBContext jaxbContext = JAXBContext.newInstance(ContentNode.class);
+        Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+        jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        StringWriter sw = new StringWriter();
+        jaxbMarshaller.marshal(liveNews1, sw);
+        String xmlString = sw.toString();
+        log.debug("xmlString: {}", xmlString);
+        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+        ContentNode documentContentFromJaxb = (ContentNode) jaxbUnmarshaller.unmarshal(new StringReader(xmlString));
+
+        assertEquals(documentContentFromJSON, documentContentFromJaxb);
+    }
+
 }

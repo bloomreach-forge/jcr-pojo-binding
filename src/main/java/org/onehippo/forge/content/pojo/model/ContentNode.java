@@ -35,7 +35,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@XmlRootElement(name="node")
+@XmlRootElement(name = "node")
 public class ContentNode extends ContentItem {
 
     private static final long serialVersionUID = 1L;
@@ -63,13 +63,17 @@ public class ContentNode extends ContentItem {
         return true;
     }
 
-    @XmlElement(name="primaryType")
+    @XmlElement(name = "primaryType")
     public String getPrimaryType() {
         return primaryType;
     }
 
-    @XmlElementWrapper(name="mixinTypes")
-    @XmlElements(@XmlElement(name="mixinType"))
+    public void setPrimaryType(String primaryType) {
+        this.primaryType = primaryType;
+    }
+
+    @XmlElementWrapper(name = "mixinTypes")
+    @XmlElements(@XmlElement(name = "mixinType"))
     public Set<String> getMixinTypes() {
         if (mixinTypes == null) {
             mixinTypes = new LinkedHashSet<>();
@@ -88,8 +92,8 @@ public class ContentNode extends ContentItem {
         }
     }
 
-    @XmlElementWrapper(name="properties")
-    @XmlElements(@XmlElement(name="property"))
+    @XmlElementWrapper(name = "properties")
+    @XmlElements(@XmlElement(name = "property"))
     public List<ContentProperty> getProperties() {
         if (properties == null) {
             properties = new LinkedList<>();
@@ -140,11 +144,11 @@ public class ContentNode extends ContentItem {
         setProperty(prop);
     }
 
-    public void setProperty(String name, String [] values) {
+    public void setProperty(String name, String[] values) {
         setProperty(name, ContentPropertyType.STRING, values);
     }
 
-    public void setProperty(String name, ContentPropertyType type, String [] values) {
+    public void setProperty(String name, ContentPropertyType type, String[] values) {
         ContentProperty prop = new ContentProperty(name, type, true);
 
         if (values != null) {
@@ -162,7 +166,7 @@ public class ContentNode extends ContentItem {
         setProperty(prop);
     }
 
-    public void setProperty(String name, BinaryValue [] binaryValues) {
+    public void setProperty(String name, BinaryValue[] binaryValues) {
         ContentProperty prop = new ContentProperty(name, ContentPropertyType.BINARY, true);
 
         if (binaryValues != null) {
@@ -174,8 +178,8 @@ public class ContentNode extends ContentItem {
         setProperty(prop);
     }
 
-    @XmlElementWrapper(name="nodes")
-    @XmlElements(@XmlElement(name="node"))
+    @XmlElementWrapper(name = "nodes")
+    @XmlElements(@XmlElement(name = "node"))
     public List<ContentNode> getNodes() {
         if (nodes == null) {
             nodes = new LinkedList<>();
@@ -261,8 +265,8 @@ public class ContentNode extends ContentItem {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(primaryType).append(mixinTypes).append(properties).append(nodes)
-                .toHashCode();
+        return new HashCodeBuilder().append(getName()).append(primaryType).append(mixinTypes).append(properties)
+                .append(nodes).toHashCode();
     }
 
     @Override
@@ -272,6 +276,10 @@ public class ContentNode extends ContentItem {
         }
 
         ContentNode that = (ContentNode) o;
+
+        if (!StringUtils.equals(getName(), that.getName())) {
+            return false;
+        }
 
         if (!StringUtils.equals(primaryType, that.primaryType)) {
             return false;
@@ -286,7 +294,7 @@ public class ContentNode extends ContentItem {
                 return false;
             }
         } else {
-            if (!properties.equals(that.properties)) {
+            if (!ListUtils.isEqualList(properties, that.properties)) {
                 return false;
             }
         }
@@ -300,7 +308,7 @@ public class ContentNode extends ContentItem {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("primaryType", primaryType).append("mixinTypes", mixinTypes)
-                .append("properties", properties).append("nodes", nodes).toString();
+        return new ToStringBuilder(this).append("name", getName()).append("primaryType", primaryType)
+                .append("mixinTypes", mixinTypes).append("properties", properties).append("nodes", nodes).toString();
     }
 }

@@ -38,7 +38,7 @@ import org.apache.jackrabbit.util.ISO8601;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@XmlRootElement(name="property")
+@XmlRootElement(name = "property")
 public class ContentProperty extends ContentItem {
 
     private static final long serialVersionUID = 1L;
@@ -69,21 +69,25 @@ public class ContentProperty extends ContentItem {
         return false;
     }
 
-    @XmlElement(name="type")
+    @XmlElement(name = "type")
     public ContentPropertyType getType() {
         return type;
     }
 
-    @XmlElement(name="multiple")
+    public void setType(ContentPropertyType type) {
+        this.type = type;
+    }
+
+    @XmlElement(name = "multiple")
     public boolean isMultiple() {
         return multiple;
     }
 
-    @XmlElementWrapper(name="values")
-    @XmlElements(@XmlElement(name="value"))
+    @XmlElementWrapper(name = "values")
+    @XmlElements(@XmlElement(name = "value"))
     public List<String> getValues() {
         if (values == null) {
-            values= new LinkedList<>();
+            values = new LinkedList<>();
         }
 
         return values;
@@ -240,7 +244,7 @@ public class ContentProperty extends ContentItem {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(type).append(multiple).append(values).toHashCode();
+        return new HashCodeBuilder().append(getName()).append(type).append(multiple).append(values).toHashCode();
     }
 
     @Override
@@ -250,6 +254,10 @@ public class ContentProperty extends ContentItem {
         }
 
         ContentProperty that = (ContentProperty) o;
+
+        if (!StringUtils.equals(getName(), that.getName())) {
+            return false;
+        }
 
         if (!type.equals(that.type)) {
             return false;
