@@ -19,12 +19,42 @@
     <section name="Introduction">
       <subsection name="What is Hippo JCR POJO Binding?">
         <p>
-          This project provides POJO beans capturing document nodes and other JCR nodes for easier serialization/deserialization support.
+          This project aims to provide a simple set of POJO beans
+          with which you can <strong><i>map</i></strong> JCR (document, binary, etc) nodes to POJO (<code>ContentNode</code>) beans,
+          and also <strong><i>bind</i></strong> the POJO beans back to JCR (document, binary, etc) nodes.
+          The POJO beans provided by this project are very friendly to most marshalling/unmarshalling frameworks
+          such as Jackson (for JSON), JAXB (for XML) or any others (for YAML as an example).
+          Therefore, you can easily export JCR content through the POJO (<code>ContentNode</code>) beans after <strong><i>mapping</i></strong>,
+          and import data through the (unmarshalled) POJO (<code>ContentNode</code>) beans to JCR content by <strong><i>binding</i></strong>.
         </p>
+        <img src="images/hippo-jcr-pojo-bind.png" alt="Hippo JCR POJO Binding" />
         <p>
-          TODO:
+          As depicted in the diagram above, what this project provides is in the light yellow area in the center.
+          The left and right area are out of scope in this project.
         </p>
+        <p>Some pointers are:</p>
+        <ul>
+          <li>JCR nodes can be easily <strong><i>mapped</i></strong> to <strong><code>ContentNode</code></strong> POJO beans provided by this project.</li>
+          <li><strong><code>ContentNode</code></strong> POJO beans can be used to update JCR nodes back in <strong><i>binding</i></strong> process.</li>
+          <li>
+            Because <strong><code>ContentNode</code></strong> is purely lightweight POJO bean without any stateful members
+            such as <code>javax.jcr.Node</code> or <code>javax.jcr.Property</code>,
+            you can easily marshal the <strong><code>ContentNode</code></strong> POJO beans to JSON or XML files,
+            and unmarshal the <strong><code>ContentNode</code></strong> POJO beans back from the JSON or XML files.
+          </li>
+          <li>
+            Nowadays, it is very easy to (un)marshal from/to JSON using libraries such as Jackson,
+            and it is also easy to (un)marshal from/to XML using libraries such as JAXB API.
+          </li>
+          <li>
+            Therefore, this project can be valuable especially in case that JCR content should be serialized to files and/or
+            reconstructed or updated JCR content back from the files.
+          </li>
+        </ul>
       </subsection>
+    </section>
+    <section name="ContentNode and ContentProperty">
+      <p>TODO</p>
     </section>
     <section name="Project status">
       <p>

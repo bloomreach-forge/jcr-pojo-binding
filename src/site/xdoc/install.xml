@@ -58,7 +58,7 @@
         <!-- NOTE: You should set a property named 'forge.hippo-pojo-bind.version' to a version of this plugin! -->
         <dependency>
           <groupId>org.onehippo.forge.hippo-pojo-bind</groupId>
-          <artifactId>hippo-pojo-bind</artifactId>
+          <artifactId>hippo-pojo-bind-jcr</artifactId>
           <version>${forge.hippo-pojo-bind.version}</version>
         </dependency>
 
@@ -82,7 +82,7 @@
 
       <dependency>
         <groupId>org.onehippo.forge.hippo-pojo-bind</groupId>
-        <artifactId>hippo-pojo-bind</artifactId>
+        <artifactId>hippo-pojo-bind-jcr</artifactId>
       </dependency>
 
       <!-- SNIP -->
