@@ -54,7 +54,27 @@
       </subsection>
     </section>
     <section name="ContentNode and ContentProperty">
-      <p>TODO</p>
+      <p>
+        Basically two main POJO beans are provided by this project: <code>ContentNode</code> and <code>ContentProperty</code>.
+      </p>
+      <p>
+        <code>ContentNode</code> is analogous to <code>javax.jcr.Node</code> and
+        <code>ContentProperty</code> is analogous to <code>javax.jcr.Property</code>.
+        <code>ContentNode</code> may have multiple <code>ContentProperty</code> items
+        and multiple child <code>ContentNode</code> items like JCR.
+        But they are purely serializable as POJOs.
+        Also, for simplicity, <code>ContentProperty</code> stores all the values in string.
+        It provides type transforming getter methods for convenience though.
+        For example, <code>ContentProperty#getValue(String name)</code> returns a string value,
+        and <code>ContentProperty#getValues(String name)</code> returns a list of string values.
+        However, <code>CotnentProperty#getValueAsObject(String name)</code> returns a transformed object value
+        (e.g, Long, Double, BigDecimal, Calendar, BinaryValue, etc) from the internal string value,
+        and <code>CotnentProperty#getValuesAsObject(String name)</code> returns a list of transformed object values
+        for convenience.
+      </p>
+      <p>
+        Please see more detail in <a href="apidocs/index.html">JavaDocs</a>.
+      </p>
     </section>
     <section name="Project status">
       <p>
