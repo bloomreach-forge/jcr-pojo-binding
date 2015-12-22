@@ -24,18 +24,171 @@
   <body>
 
     <section name="Binding Examples">
-      <p>TODO</p>
 
-      <subsection name="Binding a Document">
-        <p>TODO</p>
+      <p>
+        This library can be used in any environment where JCR and Hippo Repository API are available.
+        However, just for simiplicty, the following examples are assumed to run in Hippo Updater Editor (a.k.a Groovy Updater).
+      </p>
+
+      <p>
+        <strong><em>WARNING</em></strong>:
+        If you run the following demo scripts in production or in system having too many content, then
+        it might cause a critical system overhead or problems.
+        So, run the following demo scripts in a local test environment or change the XPath query to narrow the
+        search result to a resonably small amount.
+      </p>
+
+      <subsection name="Binding a document from JSON">
+
+        <table border="1">
+          <tr>
+            <th>Name:</th>
+            <td>
+              Import a document from JSON
+            </td>
+          </tr>
+          <tr>
+            <th>Description:</th>
+            <td>
+              For demonstration purpose, this example groovy script (a) unmarshal <code>ContentNode</code> from JSON,
+              (b) creates a document handle and variant node,
+              and (c) binds the <code>ContentNode</code> to the document variant node.
+            </td>
+          </tr>
+          <tr>
+            <th>XPath query:</th>
+            <td>
+              <code>/jcr:root</code>
+            </td>
+          </tr>
+          <tr>
+            <th>Parameters:</th>
+            <td></td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <div class="brush: java">
+              <source><![CDATA[
+package org.hippoecm.frontend.plugins.cms.admin.updater
+
+import org.onehippo.repository.update.BaseNodeUpdateVisitor
+import java.util.*
+import javax.jcr.query.*
+import org.apache.commons.lang.*
+import org.onehippo.forge.content.pojo.common.jcr.*
+import org.onehippo.forge.content.pojo.common.util.*
+import org.onehippo.forge.content.pojo.mapper.*
+import org.onehippo.forge.content.pojo.mapper.jcr.*
+import org.onehippo.forge.content.pojo.mapper.jcr.hippo.*
+import org.onehippo.forge.content.pojo.model.*
+import com.fasterxml.jackson.databind.*
+
+class UpdaterTemplate extends BaseNodeUpdateVisitor {
+
+    Session jcrSession
+    ContentNodeMapper contentNodeMapper
+    ObjectMapper objectMapper
+
+    void initialize(Session jcrSession) {
+        this.jcrSession = jcrSession
+
+        contentNodeMapper = new DefaultJcrContentNodeMapper();
+        objectMapper = new ObjectMapper();
+    }
+
+    boolean doUpdate(Node node) {
+      log.debug "Updating node ${node.path}"
+
+      return false
+    }
+
+    boolean undoUpdate(Node node) {
+        throw new UnsupportedOperationException('Updater does not implement undoUpdate method')
+    }
+
+}
+              ]]></source>
+              </div>
+            </td>
+          </tr>
+        </table>
+
       </subsection>
 
-      <subsection name="Binding a Document Handle">
-        <p>TODO</p>
-      </subsection>
+      <subsection name="Binding Binary Content from JSON">
 
-      <subsection name="Binding a Binary Content">
-        <p>TODO</p>
+        <table border="1">
+          <tr>
+            <th>Name:</th>
+            <td>
+              Import an Image Set from JSON
+            </td>
+          </tr>
+          <tr>
+            <th>Description:</th>
+            <td>
+              For demonstration purpose, this example groovy script (a) unmarshal <code>ContentNode</code> from JSON,
+              (b) creates an Image Set node, and (c) binds the <code>ContentNode</code> to the Image Set node.
+            </td>
+          </tr>
+          <tr>
+            <th>XPath query:</th>
+            <td>
+              <code>/jcr:root</code>
+            </td>
+          </tr>
+          <tr>
+            <th>Parameters:</th>
+            <td></td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <div class="brush: java">
+              <source><![CDATA[
+package org.hippoecm.frontend.plugins.cms.admin.updater
+
+import org.onehippo.repository.update.BaseNodeUpdateVisitor
+import java.util.*
+import javax.jcr.query.*
+import org.apache.commons.lang.*
+import org.onehippo.forge.content.pojo.common.jcr.*
+import org.onehippo.forge.content.pojo.common.util.*
+import org.onehippo.forge.content.pojo.mapper.*
+import org.onehippo.forge.content.pojo.mapper.jcr.*
+import org.onehippo.forge.content.pojo.mapper.jcr.hippo.*
+import org.onehippo.forge.content.pojo.model.*
+import com.fasterxml.jackson.databind.*
+
+class UpdaterTemplate extends BaseNodeUpdateVisitor {
+
+    Session jcrSession
+    ContentNodeMapper contentNodeMapper
+    ObjectMapper objectMapper
+
+    void initialize(Session jcrSession) {
+        this.jcrSession = jcrSession
+
+        contentNodeMapper = new DefaultJcrContentNodeMapper();
+        objectMapper = new ObjectMapper();
+    }
+
+    boolean doUpdate(Node node) {
+      log.debug "Updating node ${node.path}"
+
+      return false
+    }
+
+    boolean undoUpdate(Node node) {
+        throw new UnsupportedOperationException('Updater does not implement undoUpdate method')
+    }
+
+}
+              ]]></source>
+              </div>
+            </td>
+          </tr>
+        </table>
+
       </subsection>
 
     </section>

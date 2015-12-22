@@ -24,18 +24,198 @@
   <body>
 
     <section name="Mapping Examples">
-      <p>TODO</p>
 
-      <subsection name="Mapping a Document">
-        <p>TODO</p>
+      <p>
+        This library can be used in any environment where JCR and Hippo Repository API are available.
+        However, just for simiplicty, the following examples are assumed to run in Hippo Updater Editor (a.k.a Groovy Updater).
+      </p>
+
+      <p>
+        <strong><em>WARNING</em></strong>:
+        If you run the following demo scripts in production or in system having too many content, then
+        it might cause a critical system overhead or problems.
+        So, run the following demo scripts in a local test environment or change the XPath query to narrow the
+        search result to a resonably small amount.
+      </p>
+
+      <subsection name="Mapping Documents">
+
+        <table border="1">
+          <tr>
+            <th>Name:</th>
+            <td>
+              Export All Published Documents to JSON
+            </td>
+          </tr>
+          <tr>
+            <th>Description:</th>
+            <td>
+              For demonstration purpose, this example groovy script (a) maps each live document variant node
+              to <code>ContentNode</code>, (b) replace UUIDs of compound mirror link nodes by paths as an
+              advanced example, and (c) logs a serialized string from the <code>ContentNode</code>.
+            </td>
+          </tr>
+          <tr>
+            <th>XPath query:</th>
+            <td>
+              <code>/jcr:root/content/documents//element(*,hippostd:publishable)[@hippostd:state='published']</code>
+            </td>
+          </tr>
+          <tr>
+            <th>Parameters:</th>
+            <td></td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <div class="brush: java">
+              <source><![CDATA[
+package org.hippoecm.frontend.plugins.cms.admin.updater
+
+import org.onehippo.repository.update.BaseNodeUpdateVisitor
+import java.util.*
+import javax.jcr.query.*
+import org.apache.commons.lang.*
+import org.onehippo.forge.content.pojo.common.jcr.*
+import org.onehippo.forge.content.pojo.common.util.*
+import org.onehippo.forge.content.pojo.mapper.*
+import org.onehippo.forge.content.pojo.mapper.jcr.*
+import org.onehippo.forge.content.pojo.mapper.jcr.hippo.*
+import org.onehippo.forge.content.pojo.model.*
+import com.fasterxml.jackson.databind.*
+
+class UpdaterTemplate extends BaseNodeUpdateVisitor {
+
+    Session jcrSession
+    ContentNodeMapper contentNodeMapper
+    ObjectMapper objectMapper
+
+    void initialize(Session jcrSession) {
+        this.jcrSession = jcrSession
+
+        contentNodeMapper = new DefaultJcrContentNodeMapper();
+        objectMapper = new ObjectMapper();
+    }
+
+    boolean doUpdate(Node node) {
+      log.debug "Updating node ${node.path}"
+      def handleNode = node.getParent()
+
+      // Mapping the document node to ContentNode
+      ContentNode contentNode = contentNodeMapper.map(node)
+      contentNode.setProperty("jcr:path", handleNode.getPath())
+
+      // Just as an advanced example, let's find all the mirror link node and replace the UUIDs by paths.
+      List<ContentNode> mirrors = contentNode.queryNodesByXPath("//nodes[properties[@itemName='hippo:docbase']]")
+      for (ContentNode mirror : mirrors) {
+          String docbase = mirror.getProperty("hippo:docbase").getValue();
+          mirror.setProperty("hippo:docbase", jcrSession.getNodeByIdentifier(docbase).getPath())
+      }
+
+      // Let's print out (serialize) the content node for debugging purpose.
+      StringWriter writer = new StringWriter(2048)
+      objectMapper.writerWithDefaultPrettyPrinter().writeValue(writer, contentNode)
+      log.debug "\n" + writer.toString() + "\n"
+
+      return false
+    }
+
+    boolean undoUpdate(Node node) {
+        throw new UnsupportedOperationException('Updater does not implement undoUpdate method')
+    }
+
+}
+              ]]></source>
+              </div>
+            </td>
+          </tr>
+        </table>
+
       </subsection>
 
-      <subsection name="Mapping a Document Handle">
-        <p>TODO</p>
-      </subsection>
+      <subsection name="Mapping Binary Content">
 
-      <subsection name="Mapping a Binary Content">
-        <p>TODO</p>
+        <table border="1">
+          <tr>
+            <th>Name:</th>
+            <td>
+              Export All Live Images to JSON
+            </td>
+          </tr>
+          <tr>
+            <th>Description:</th>
+            <td>
+              For demonstration purpose, this example groovy script (a) maps each live gallery imageset node
+              to <code>ContentNode</code>, and (b) logs a serialized string from the <code>ContentNode</code>.
+            </td>
+          </tr>
+          <tr>
+            <th>XPath query:</th>
+            <td>
+              <code>/jcr:root/content/gallery//element(*,hippogallery:imageset)[@hippo:availability='live']</code>
+            </td>
+          </tr>
+          <tr>
+            <th>Parameters:</th>
+            <td></td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <div class="brush: java">
+              <source><![CDATA[
+package org.hippoecm.frontend.plugins.cms.admin.updater
+
+import org.onehippo.repository.update.BaseNodeUpdateVisitor
+import java.util.*
+import javax.jcr.query.*
+import org.apache.commons.lang.*
+import org.onehippo.forge.content.pojo.common.jcr.*
+import org.onehippo.forge.content.pojo.common.util.*
+import org.onehippo.forge.content.pojo.mapper.*
+import org.onehippo.forge.content.pojo.mapper.jcr.*
+import org.onehippo.forge.content.pojo.mapper.jcr.hippo.*
+import org.onehippo.forge.content.pojo.model.*
+import com.fasterxml.jackson.databind.*
+
+class UpdaterTemplate extends BaseNodeUpdateVisitor {
+
+    Session jcrSession
+    ContentNodeMapper contentNodeMapper
+    ObjectMapper objectMapper
+
+    void initialize(Session jcrSession) {
+        this.jcrSession = jcrSession
+
+        contentNodeMapper = new DefaultJcrContentNodeMapper();
+        objectMapper = new ObjectMapper();
+    }
+
+    boolean doUpdate(Node node) {
+      log.debug "Updating node ${node.path}"
+      def handleNode = node.getParent()
+
+      // Mapping the gallery imageset node to ContentNode
+      ContentNode contentNode = contentNodeMapper.map(node)
+      contentNode.setProperty("jcr:path", handleNode.getPath())
+
+      // Let's print out (serialize) the content node for debugging purpose.
+      StringWriter writer = new StringWriter(2048)
+      objectMapper.writerWithDefaultPrettyPrinter().writeValue(writer, contentNode)
+      log.debug "\n" + writer.toString() + "\n"
+
+      return false
+    }
+
+    boolean undoUpdate(Node node) {
+        throw new UnsupportedOperationException('Updater does not implement undoUpdate method')
+    }
+
+}
+              ]]></source>
+              </div>
+            </td>
+          </tr>
+        </table>
+
       </subsection>
 
     </section>
