@@ -75,11 +75,10 @@ import org.onehippo.repository.update.BaseNodeUpdateVisitor
 import java.util.*
 import javax.jcr.query.*
 import org.apache.commons.lang.*
+import org.onehippo.forge.content.pojo.binder.*
+import org.onehippo.forge.content.pojo.binder.jcr.*
 import org.onehippo.forge.content.pojo.common.jcr.*
 import org.onehippo.forge.content.pojo.common.util.*
-import org.onehippo.forge.content.pojo.mapper.*
-import org.onehippo.forge.content.pojo.mapper.jcr.*
-import org.onehippo.forge.content.pojo.mapper.jcr.hippo.*
 import org.onehippo.forge.content.pojo.model.*
 import com.fasterxml.jackson.databind.*
 
@@ -97,9 +96,9 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {
     }
 
     boolean doUpdate(Node node) {
-      log.debug "Updating node ${node.path}"
+        log.debug "Visiting node ${node.path}"
 
-      return false
+        return false
     }
 
     boolean undoUpdate(Node node) {
@@ -151,11 +150,10 @@ import org.onehippo.repository.update.BaseNodeUpdateVisitor
 import java.util.*
 import javax.jcr.query.*
 import org.apache.commons.lang.*
+import org.onehippo.forge.content.pojo.binder.*
+import org.onehippo.forge.content.pojo.binder.jcr.*
 import org.onehippo.forge.content.pojo.common.jcr.*
 import org.onehippo.forge.content.pojo.common.util.*
-import org.onehippo.forge.content.pojo.mapper.*
-import org.onehippo.forge.content.pojo.mapper.jcr.*
-import org.onehippo.forge.content.pojo.mapper.jcr.hippo.*
 import org.onehippo.forge.content.pojo.model.*
 import com.fasterxml.jackson.databind.*
 
@@ -173,9 +171,9 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {
     }
 
     boolean doUpdate(Node node) {
-      log.debug "Updating node ${node.path}"
+        log.debug "Visiting node ${node.path}"
 
-      return false
+        return false
     }
 
     boolean undoUpdate(Node node) {

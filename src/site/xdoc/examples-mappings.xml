@@ -97,7 +97,7 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {
     }
 
     boolean doUpdate(Node node) {
-        log.debug "Updating node ${node.path}"
+        log.debug "Visiting node ${node.path}"
         def handleNode = node.getParent()
 
         // Mapping the document node to ContentNode
@@ -190,7 +190,7 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {
     }
 
     boolean doUpdate(Node node) {
-        log.debug "Updating node ${node.path}"
+        log.debug "Visiting node ${node.path}"
         def handleNode = node.getParent()
 
         // Mapping the gallery imageset node to ContentNode
