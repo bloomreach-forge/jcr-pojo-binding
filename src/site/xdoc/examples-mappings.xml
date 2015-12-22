@@ -111,7 +111,7 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {
             mirror.setProperty("hippo:docbase", jcrSession.getNodeByIdentifier(docbase).getPath())
         }
 
-        // Let's print out (serialize) the content node for debugging purpose.
+        // Let's print out (serialize) the content node by simply using Jackson ObjectMapper for debugging purpose.
         StringWriter writer = new StringWriter(2048)
         objectMapper.writerWithDefaultPrettyPrinter().writeValue(writer, contentNode)
         log.debug "\n" + writer.toString() + "\n"
@@ -197,7 +197,7 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {
         ContentNode contentNode = contentNodeMapper.map(node)
         contentNode.setProperty("jcr:path", handleNode.getPath())
 
-        // Let's print out (serialize) the content node for debugging purpose.
+        // Let's print out (serialize) the content node by simply using Jackson ObjectMapper for debugging purpose.
         StringWriter writer = new StringWriter(2048)
         objectMapper.writerWithDefaultPrettyPrinter().writeValue(writer, contentNode)
         log.debug "\n" + writer.toString() + "\n"
