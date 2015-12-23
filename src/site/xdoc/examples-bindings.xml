@@ -40,6 +40,12 @@
 
       <subsection name="Binding a document from JSON">
 
+        <p>
+          The following example groovy script reads JSON data from <code>parametersMap</code>,
+          creates a document through <code>FolderWorkflow</code>, binds <code>ContentNode</code> object
+          to document variant nodes and finally commits the changes through a <code>DocumentWorkflow</code>.
+        </p>
+
         <table border="1">
           <tr>
             <th>Name:</th>
@@ -234,6 +240,12 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {
       </subsection>
 
       <subsection name="Binding Binary Content from JSON">
+
+        <p>
+          The following example groovy script reads JSON data from <code>parametersMap</code>,
+          creates an imageset node through JCR API, binds <code>ContentNode</code> object
+          to the imageset nodes.
+        </p>
 
         <table border="1">
           <tr>

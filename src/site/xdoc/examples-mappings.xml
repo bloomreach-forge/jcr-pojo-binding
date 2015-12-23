@@ -40,6 +40,12 @@
 
       <subsection name="Mapping Documents">
 
+        <p>
+          The following example groovy script iterates all the <code>hippostd:publishable</code> documents,
+          maps each document to <code>ContentNode</code>, and finally marshal <code>ContentNode</code> object
+          to JSON string to log in the logging pane.
+        </p>
+
         <table border="1">
           <tr>
             <th>Name:</th>
@@ -218,6 +224,12 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {
       </subsection>
 
       <subsection name="Mapping Binary Content">
+
+        <p>
+          The following example groovy script iterates all the <code>hippogallery:imageset</code> documents,
+          maps each document to <code>ContentNode</code>, and finally marshal <code>ContentNode</code> object
+          to JSON string to log in the logging pane.
+        </p>
 
         <table border="1">
           <tr>
