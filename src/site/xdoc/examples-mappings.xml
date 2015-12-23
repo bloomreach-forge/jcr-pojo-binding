@@ -66,7 +66,8 @@
             <td></td>
           </tr>
           <tr>
-            <td colspan="2">
+            <th>Script &gt;&gt;&gt;</th>
+            <td>
               <div class="brush: java">
               <source><![CDATA[
 package org.hippoecm.frontend.plugins.cms.admin.updater
@@ -243,7 +244,8 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {
             <td></td>
           </tr>
           <tr>
-            <td colspan="2">
+            <th>Script &gt;&gt;&gt;</th>
+            <td>
               <div class="brush: java">
               <source><![CDATA[
 package org.hippoecm.frontend.plugins.cms.admin.updater

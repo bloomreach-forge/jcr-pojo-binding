@@ -216,7 +216,18 @@ public class DefaultJcrContentValueConverter implements ContentValueConverter<Va
 
     @Override
     public Value toJcrValue(BinaryValue binaryValue) throws ContentNodeException {
-        return null;
+        InputStream input = null;
+        Binary binary = null;
+
+        try {
+            ValueFactory valueFactory = getSession().getValueFactory();
+            input = binaryValue.getStream();
+            binary = valueFactory.createBinary(input);
+            return valueFactory.createValue(binary);
+        } catch (IOException | RepositoryException e) {
+            IOUtils.closeQuietly(input);
+            throw new ContentNodeException(e.toString(), e);
+        }
     }
 
     protected Session getSession() {
