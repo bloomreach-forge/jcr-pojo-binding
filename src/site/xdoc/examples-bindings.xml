@@ -63,7 +63,93 @@
           </tr>
           <tr>
             <th>Parameters:</th>
-            <td></td>
+            <td>
+              <div class="brush: javascript">
+              <source><![CDATA[
+{
+  "destination": "/content/documents/administration/labels",
+  "data" :
+  {
+    "name" : "examplemessages",
+    "primaryType" : "resourcebundle:resourcebundle",
+    "mixinTypes" : [ "mix:referenceable" ],
+    "properties" : [ {
+      "name" : "resourcebundle:descriptions",
+      "type" : "STRING",
+      "multiple" : true,
+      "values" : [ "Example resource bundle document" ]
+    }, {
+      "name" : "resourcebundle:id",
+      "type" : "STRING",
+      "multiple" : false,
+      "values" : [ "org.example.messages" ]
+    }, {
+      "name" : "hippostdpubwf:lastModifiedBy",
+      "type" : "STRING",
+      "multiple" : false,
+      "values" : [ "admin" ]
+    }, {
+      "name" : "hippotranslation:locale",
+      "type" : "STRING",
+      "multiple" : false,
+      "values" : [ "document-type-locale" ]
+    }, {
+      "name" : "resourcebundle:messages",
+      "type" : "STRING",
+      "multiple" : true,
+      "values" : [ "Example Header Message", "Example Footer Message" ]
+    }, {
+      "name" : "hippostd:stateSummary",
+      "type" : "STRING",
+      "multiple" : false,
+      "values" : [ "live" ]
+    }, {
+      "name" : "resourcebundle:keys",
+      "type" : "STRING",
+      "multiple" : true,
+      "values" : [ "header.text", "footer.text" ]
+    }, {
+      "name" : "hippostd:state",
+      "type" : "STRING",
+      "multiple" : false,
+      "values" : [ "published" ]
+    }, {
+      "name" : "hippo:availability",
+      "type" : "STRING",
+      "multiple" : true,
+      "values" : [ "live", "preview" ]
+    }, {
+      "name" : "hippostdpubwf:publicationDate",
+      "type" : "DATE",
+      "multiple" : false,
+      "values" : [ "2014-08-21T22:10:54.657+02:00" ]
+    }, {
+      "name" : "hippotranslation:id",
+      "type" : "STRING",
+      "multiple" : false,
+      "values" : [ "e9703ff4-d522-4238-bf3b-6016f959e88c" ]
+    }, {
+      "name" : "hippostdpubwf:lastModificationDate",
+      "type" : "DATE",
+      "multiple" : false,
+      "values" : [ "2014-08-21T22:10:52.812+02:00" ]
+    }, {
+      "name" : "hippostdpubwf:createdBy",
+      "type" : "STRING",
+      "multiple" : false,
+      "values" : [ "admin" ]
+    }, {
+      "name" : "hippostdpubwf:creationDate",
+      "type" : "DATE",
+      "multiple" : false,
+      "values" : [ "2014-08-21T22:10:13.443+02:00" ]
+    } ],
+    "nodes" : [ ]
+  }
+}
+              ]]></source>
+              </div>
+            </td>
           </tr>
           <tr>
             <td colspan="2">
@@ -75,6 +161,9 @@ import org.onehippo.repository.update.BaseNodeUpdateVisitor
 import java.util.*
 import javax.jcr.query.*
 import org.apache.commons.lang.*
+import org.hippoecm.repository.api.*
+import org.hippoecm.repository.standardworkflow.*
+import org.onehippo.repository.documentworkflow.*
 import org.onehippo.forge.content.pojo.binder.*
 import org.onehippo.forge.content.pojo.binder.jcr.*
 import org.onehippo.forge.content.pojo.common.jcr.*
@@ -85,18 +174,48 @@ import com.fasterxml.jackson.databind.*
 class UpdaterTemplate extends BaseNodeUpdateVisitor {
 
     Session jcrSession
-    ContentNodeMapper contentNodeMapper
+    ContentNodeBinder contentNodeBinder
+    DefaultContentNodeJcrBindingItemFilter bindingItemFilter
     ObjectMapper objectMapper
 
     void initialize(Session jcrSession) {
         this.jcrSession = jcrSession
 
-        contentNodeMapper = new DefaultJcrContentNodeMapper();
+        contentNodeBinder = new DefaultJcrContentNodeBinder();
+        bindingItemFilter = new DefaultContentNodeJcrBindingItemFilter()
+        bindingItemFilter.addPropertyPathExclude("jcr:*")
+        bindingItemFilter.addPropertyPathExclude("hippo:*")
+        bindingItemFilter.addPropertyPathExclude("hippostd:*")
+        bindingItemFilter.addPropertyPathExclude("hippostdpubwf:*")
+
         objectMapper = new ObjectMapper();
     }
 
     boolean doUpdate(Node node) {
         log.debug "Visiting node ${node.path}"
+
+        // unmarshal JSON to a ContentNode first
+        def destination = parametersMap["destination"]
+        def dataJson = parametersMap["data"].toString()
+        def contentNode = objectMapper.readValue(dataJson, ContentNode.class)
+
+        // let's create a document under the specific folderNode by an auto-generated name like the following
+        def newDocumentName = "examplemessages-" + System.currentTimeMillis()
+        def destinationFolderNode = jcrSession.getNode(destination)
+
+        WorkflowManager workflowManager = ((HippoWorkspace) jcrSession.getWorkspace()).getWorkflowManager()
+        FolderWorkflow folderWorkflow = (FolderWorkflow) workflowManager.getWorkflow("embedded", destinationFolderNode)
+        String documentVariantPath = folderWorkflow.add("new-document", "resourcebundle:resourcebundle", newDocumentName)
+        Node documentVariantNode = jcrSession.getNode(documentVariantPath)
+        Node documentHandleNode = documentVariantNode.getParent()
+        EditableWorkflow documentWorkflow = (EditableWorkflow) workflowManager.getWorkflow("default", documentHandleNode)
+        Document document = documentWorkflow.obtainEditableInstance()
+        documentVariantNode = document.getNode(jcrSession)
+        contentNodeBinder.bind(documentVariantNode, contentNode, bindingItemFilter)
+        document = documentWorkflow.commitEditableInstance()
+        documentVariantNode = document.getNode(jcrSession)
+        contentNodeBinder.bind(documentVariantNode, contentNode, bindingItemFilter)
+        log.debug "Committed document at " + document.getNode(jcrSession).getPath()
 
         return false
     }

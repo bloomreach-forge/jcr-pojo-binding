@@ -102,7 +102,6 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {
 
         // Mapping the document node to ContentNode
         ContentNode contentNode = contentNodeMapper.map(node)
-        contentNode.setProperty("jcr:path", handleNode.getPath())
 
         // Just as an advanced example, let's find all the mirror link node and replace the UUIDs by paths.
         List<ContentNode> mirrors = contentNode.queryNodesByXPath("//nodes[properties[@itemName='hippo:docbase']]")
@@ -210,11 +209,6 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {
     "type" : "DATE",
     "multiple" : false,
     "values" : [ "2014-08-21T22:10:13.443+02:00" ]
-  }, {
-    "name" : "jcr:path",
-    "type" : "STRING",
-    "multiple" : false,
-    "values" : [ "/content/documents/administration/labels/examplemessages" ]
   } ],
   "nodes" : [ ]
 }
@@ -285,7 +279,6 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {
 
         // Mapping the gallery imageset node to ContentNode
         ContentNode contentNode = contentNodeMapper.map(node)
-        contentNode.setProperty("jcr:path", handleNode.getPath())
 
         // Let's print out (serialize) the content node by simply using Jackson ObjectMapper for debugging purpose.
         StringWriter writer = new StringWriter(2048)
@@ -331,11 +324,6 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {
     "type" : "STRING",
     "multiple" : false,
     "values" : [ "viognier-grapes-188185_640.jpg" ]
-  }, {
-    "name" : "jcr:path",
-    "type" : "STRING",
-    "multiple" : false,
-    "values" : [ "/content/gallery/myhippoproject/samples/viognier-grapes-188185_640.jpg" ]
   } ],
   "nodes" : [ {
     "name" : "hippogallery:thumbnail",
