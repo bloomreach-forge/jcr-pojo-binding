@@ -33,6 +33,13 @@
       </table>
     </section>
     <section name="Release Notes">
+      <subsection name="1.1.1">
+        <ul>
+          <li>
+            Fixing a bug that it doesn't save an empty value array.
+          </li>
+        </ul>
+      </subsection>
       <subsection name="1.1.0">
         <ul>
           <li>

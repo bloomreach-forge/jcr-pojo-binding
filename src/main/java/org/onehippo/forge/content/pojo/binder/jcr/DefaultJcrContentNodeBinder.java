@@ -106,10 +106,14 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
                 } else {
                     jcrValues = createJcrValuesFromContentProperty(jcrDataNode, contentProp, valueConverter);
 
-                    if (jcrValues != null && jcrValues.length > 0) {
+                    if (jcrValues != null) {
                         if (contentProp.isMultiple()) {
-                            jcrDataNode.setProperty(propName, jcrValues);
-                        } else {
+                            try {
+                                jcrDataNode.setProperty(propName, jcrValues);
+                            } catch (ArrayIndexOutOfBoundsException ignore) {
+                                // Due to REPO-1428, let's ignore this kind of exception for now...
+                            }
+                        } else if (jcrValues.length > 0){
                             jcrDataNode.setProperty(propName, jcrValues[0]);
                         }
                     }
