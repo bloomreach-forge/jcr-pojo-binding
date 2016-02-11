@@ -28,11 +28,21 @@
         </tr>
         <tr>
           <td>1.1.x</td>
-          <td>10.0, 10.1</td>
+          <td>10.x</td>
         </tr>
       </table>
     </section>
     <section name="Release Notes">
+      <subsection name="1.1.2">
+        <ul>
+          <li>
+            Inferring a proper file name extension by default when storing binary data into an external file by mimeType.
+          </li>
+          <li>
+            Fixing a bug that closes fileObject when invoking on BinaryValue#getStream().
+          </li>
+        </ul>
+      </subsection>
       <subsection name="1.1.1">
         <ul>
           <li>
