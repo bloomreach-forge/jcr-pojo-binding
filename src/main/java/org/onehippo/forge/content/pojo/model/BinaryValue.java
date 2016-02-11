@@ -65,7 +65,10 @@ public class BinaryValue {
     }
 
     public InputStream getStream() throws IOException {
-        dispose();
+        if (inputStream != null) {
+            inputStream.close();
+            inputStream = null;
+        }
 
         if (data != null) {
             inputStream = new ByteArrayInputStream(data);
