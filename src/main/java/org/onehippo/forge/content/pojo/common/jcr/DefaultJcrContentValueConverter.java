@@ -31,23 +31,34 @@ import javax.jcr.ValueFactory;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.VFS;
 import org.apache.jackrabbit.util.ISO8601;
+import org.apache.tika.mime.MimeType;
+import org.apache.tika.mime.MimeTypeException;
+import org.apache.tika.mime.MimeTypes;
 import org.onehippo.forge.content.pojo.common.ContentNodeException;
 import org.onehippo.forge.content.pojo.common.ContentValueConverter;
 import org.onehippo.forge.content.pojo.model.BinaryValue;
 import org.onehippo.forge.content.pojo.model.ContentPropertyType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DefaultJcrContentValueConverter implements ContentValueConverter<Value> {
 
-    private static final String FILE_NAME_PREFIX = DefaultJcrContentValueConverter.class.getSimpleName() + "_";
-    private static final String FILE_NAME_SUFFIX = "";
+    private static Logger log = LoggerFactory.getLogger(DefaultJcrContentValueConverter.class);
+
+    private static final String DEFAULT_BINARY_FILE_NAME_PREFIX = "_hipojo_bin_";
+    private static final String DEFAULT_BINARY_FILE_NAME_SUFFIX = ".dat";
 
     private Session session;
     private long dataUrlSizeThreashold = 20 * 1024; // 20KB
     private FileObject binaryValueFileFolder;
+    private String binaryFileNamePrefix = DEFAULT_BINARY_FILE_NAME_PREFIX;
+    private String defaultBinaryFileNameSuffix = DEFAULT_BINARY_FILE_NAME_SUFFIX;
+    private MimeTypes mimeTypes = MimeTypes.getDefaultMimeTypes();
 
     public DefaultJcrContentValueConverter(final Session session) {
         this.session = session;
@@ -67,6 +78,34 @@ public class DefaultJcrContentValueConverter implements ContentValueConverter<Va
 
     public void setBinaryValueFileFolder(FileObject binaryValueFileFolder) {
         this.binaryValueFileFolder = binaryValueFileFolder;
+    }
+
+    public String getBinaryFileNamePrefix() {
+        return binaryFileNamePrefix;
+    }
+
+    public void setBinaryFileNamePrefix(String binaryFileNamePrefix) {
+        if (StringUtils.isBlank(binaryFileNamePrefix)) {
+            throw new IllegalArgumentException("Invalid binary file name prefix.");
+        }
+
+        this.binaryFileNamePrefix = binaryFileNamePrefix;
+    }
+
+    public String getDefaultBinaryFileNameSuffix() {
+        return defaultBinaryFileNameSuffix;
+    }
+
+    public void setDefaultBinaryFileNameSuffix(String defaultBinaryFileNameSuffix) {
+        this.defaultBinaryFileNameSuffix = StringUtils.defaultString(defaultBinaryFileNameSuffix);
+    }
+
+    public MimeTypes getMimeTypes() {
+        return mimeTypes;
+    }
+
+    public void setMimeTypes(MimeTypes mimeTypes) {
+        this.mimeTypes = mimeTypes;
     }
 
     @Override
@@ -113,7 +152,7 @@ public class DefaultJcrContentValueConverter implements ContentValueConverter<Va
     }
 
     @Override
-    public BinaryValue toBinaryValue(Value value) throws ContentNodeException {
+    public BinaryValue toBinaryValue(Value value, String mimeType) throws ContentNodeException {
         try {
             Binary binary = value.getBinary();
             long size = binary.getSize();
@@ -142,7 +181,7 @@ public class DefaultJcrContentValueConverter implements ContentValueConverter<Va
                     }
                 }
             } else {
-                FileObject binaryFile = createBinaryValueFileObject();
+                FileObject binaryFile = createRandomBinaryValueFileObject(mimeType);
                 InputStream input = null;
                 OutputStream output = null;
 
@@ -234,16 +273,37 @@ public class DefaultJcrContentValueConverter implements ContentValueConverter<Va
         return session;
     }
 
-    protected FileObject createBinaryValueFileObject() throws IOException {
+    protected FileObject createRandomBinaryValueFileObject(final String mimeType) throws IOException {
+        String fileNameSuffix = getDefaultBinaryFileNameSuffix();
+        String extension = findDefaultFileExtensionByMimeType(mimeType);
+
+        if (StringUtils.isNotEmpty(extension)) {
+            fileNameSuffix = extension;
+        }
+
         if (getBinaryValueFileFolder() == null) {
-            File binaryFile = File.createTempFile(FILE_NAME_PREFIX, FILE_NAME_SUFFIX);
+            File binaryFile = File.createTempFile(getBinaryFileNamePrefix(), fileNameSuffix);
             return VFS.getManager().toFileObject(binaryFile);
         } else {
             getBinaryValueFileFolder().createFolder();
             FileObject binaryFileObject = getBinaryValueFileFolder()
-                    .resolveFile(FILE_NAME_PREFIX + System.currentTimeMillis());
+                    .resolveFile(getBinaryFileNamePrefix() + System.currentTimeMillis() + fileNameSuffix);
             return binaryFileObject;
         }
     }
 
+    protected String findDefaultFileExtensionByMimeType(final String mimeTypeValue) {
+        String extension = null;
+
+        try {
+            if (StringUtils.isNotEmpty(mimeTypeValue)) {
+                final MimeType mimeType = getMimeTypes().forName(mimeTypeValue);
+                extension = mimeType.getExtension();
+            }
+        } catch (MimeTypeException e) {
+            log.warn("Failed to determine a file extension by the mimeType: '{}'", mimeTypeValue, e);
+        }
+
+        return StringUtils.trim(extension);
+    }
 }

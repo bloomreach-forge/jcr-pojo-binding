@@ -25,6 +25,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.nodetype.NodeType;
 
+import org.apache.commons.lang.StringUtils;
 import org.onehippo.forge.content.pojo.common.ContentValueConverter;
 import org.onehippo.forge.content.pojo.common.jcr.DefaultJcrContentValueConverter;
 import org.onehippo.forge.content.pojo.mapper.ContentNodeMapper;
@@ -109,6 +110,7 @@ public class DefaultJcrContentNodeMapper implements ContentNodeMapper<Node, Item
 
         ContentPropertyType type = ContentPropertyType.UNDEFINED;
         final int jcrPropType = jcrProp.getType();
+        final Node jcrNode = jcrProp.getParent();
 
         switch (jcrPropType) {
         case PropertyType.STRING: {
@@ -159,12 +161,18 @@ public class DefaultJcrContentNodeMapper implements ContentNodeMapper<Node, Item
             String referenceNodePath = referenceNode.getPath();
             contentProp.setValue(referenceNodePath);
         } else if (ContentPropertyType.BINARY.equals(type)) {
+            String mimeType = null;
+
+            if (jcrNode.hasProperty("jcr:mimeType")) {
+                mimeType = StringUtils.trim(jcrNode.getProperty("jcr:mimeType").getString());
+            }
+
             if (jcrProp.isMultiple()) {
                 for (Value jcrValue : jcrProp.getValues()) {
-                    contentProp.addValue(valueConverter.toBinaryValue(jcrValue));
+                    contentProp.addValue(valueConverter.toBinaryValue(jcrValue, mimeType));
                 }
             } else {
-                contentProp.addValue(valueConverter.toBinaryValue(jcrProp.getValue()));
+                contentProp.addValue(valueConverter.toBinaryValue(jcrProp.getValue(), mimeType));
             }
         } else {
             if (jcrProp.isMultiple()) {

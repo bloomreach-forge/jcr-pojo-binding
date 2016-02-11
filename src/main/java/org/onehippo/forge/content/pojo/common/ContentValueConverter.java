@@ -21,7 +21,7 @@ public interface ContentValueConverter<V> {
 
     String toString(V value) throws ContentNodeException;
 
-    BinaryValue toBinaryValue(V value) throws ContentNodeException;
+    BinaryValue toBinaryValue(V value, String mimeType) throws ContentNodeException;
 
     V toJcrValue(String typeName, String stringValue) throws ContentNodeException;
 
