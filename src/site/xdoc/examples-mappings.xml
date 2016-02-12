@@ -94,12 +94,23 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {
 
     Session jcrSession
     ContentNodeMapper contentNodeMapper
+    def mappingFilter
     ObjectMapper objectMapper
 
     void initialize(Session jcrSession) {
         this.jcrSession = jcrSession
 
         contentNodeMapper = new DefaultJcrContentNodeMapper();
+
+        mappingFilter = new DefaultHippoJcrItemMappingFilter()
+        mappingFilter.addPropertyPathExclude("hippostdpubwf:*")
+        mappingFilter.addPropertyPathExclude("hippo:availability")
+        mappingFilter.addPropertyPathExclude("hippo:paths")
+        mappingFilter.addPropertyPathExclude("hippo:related")
+        mappingFilter.addPropertyPathExclude("hippostd:holder")
+        mappingFilter.addPropertyPathExclude("hippostd:state")
+        mappingFilter.addPropertyPathExclude("hippostd:stateSummary")
+
         objectMapper = new ObjectMapper();
     }
 
@@ -108,7 +119,7 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {
         def handleNode = node.getParent()
 
         // Mapping the document node to ContentNode
-        ContentNode contentNode = contentNodeMapper.map(node)
+        ContentNode contentNode = contentNodeMapper.map(node, mappingFilter)
 
         // Just as an advanced example, let's find all the mirror link node and replace the UUIDs by paths.
         List<ContentNode> mirrors = contentNode.queryNodesByXPath("//nodes[properties[@itemName='hippo:docbase']]")
@@ -157,11 +168,6 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {
     "multiple" : false,
     "values" : [ "org.example.messages" ]
   }, {
-    "name" : "hippostdpubwf:lastModifiedBy",
-    "type" : "STRING",
-    "multiple" : false,
-    "values" : [ "admin" ]
-  }, {
     "name" : "hippotranslation:locale",
     "type" : "STRING",
     "multiple" : false,
@@ -172,50 +178,15 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {
     "multiple" : true,
     "values" : [ "Example Header Message", "Example Footer Message" ]
   }, {
-    "name" : "hippostd:stateSummary",
-    "type" : "STRING",
-    "multiple" : false,
-    "values" : [ "live" ]
-  }, {
     "name" : "resourcebundle:keys",
     "type" : "STRING",
     "multiple" : true,
     "values" : [ "header.text", "footer.text" ]
   }, {
-    "name" : "hippostd:state",
-    "type" : "STRING",
-    "multiple" : false,
-    "values" : [ "published" ]
-  }, {
-    "name" : "hippo:availability",
-    "type" : "STRING",
-    "multiple" : true,
-    "values" : [ "live", "preview" ]
-  }, {
-    "name" : "hippostdpubwf:publicationDate",
-    "type" : "DATE",
-    "multiple" : false,
-    "values" : [ "2014-08-21T22:10:54.657+02:00" ]
-  }, {
     "name" : "hippotranslation:id",
     "type" : "STRING",
     "multiple" : false,
     "values" : [ "e9703ff4-d522-4238-bf3b-6016f959e88c" ]
-  }, {
-    "name" : "hippostdpubwf:lastModificationDate",
-    "type" : "DATE",
-    "multiple" : false,
-    "values" : [ "2014-08-21T22:10:52.812+02:00" ]
-  }, {
-    "name" : "hippostdpubwf:createdBy",
-    "type" : "STRING",
-    "multiple" : false,
-    "values" : [ "admin" ]
-  }, {
-    "name" : "hippostdpubwf:creationDate",
-    "type" : "DATE",
-    "multiple" : false,
-    "values" : [ "2014-08-21T22:10:13.443+02:00" ]
   } ],
   "nodes" : [ ]
 }
@@ -278,12 +249,19 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {
 
     Session jcrSession
     ContentNodeMapper contentNodeMapper
+    def mappingFilter
     ObjectMapper objectMapper
 
     void initialize(Session jcrSession) {
         this.jcrSession = jcrSession
 
         contentNodeMapper = new DefaultJcrContentNodeMapper();
+
+        mappingFilter = new DefaultHippoJcrItemMappingFilter();
+        mappingFilter.addPropertyPathExclude("hippo:availability");
+        mappingFilter.addPropertyPathExclude("hippo:paths");
+        mappingFilter.addPropertyPathExclude("hippo:text");
+
         objectMapper = new ObjectMapper();
     }
 
@@ -292,7 +270,7 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {
         def handleNode = node.getParent()
 
         // Mapping the gallery imageset node to ContentNode
-        ContentNode contentNode = contentNodeMapper.map(node)
+        ContentNode contentNode = contentNodeMapper.map(node, mappingFilter)
 
         // Let's print out (serialize) the content node by simply using Jackson ObjectMapper for debugging purpose.
         StringWriter writer = new StringWriter(2048)
@@ -328,11 +306,6 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {
     "type" : "STRING",
     "multiple" : false,
     "values" : [ "Description for viognier-grapes-188185_640.jpg" ]
-  }, {
-    "name" : "hippo:availability",
-    "type" : "STRING",
-    "multiple" : true,
-    "values" : [ "live", "preview" ]
   }, {
     "name" : "hippogallery:filename",
     "type" : "STRING",
