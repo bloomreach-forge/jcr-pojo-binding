@@ -140,26 +140,26 @@ import com.fasterxml.jackson.databind.*
 
 class UpdaterTemplate extends BaseNodeUpdateVisitor {
 
-    Session jcrSession
-    ContentNodeBinder contentNodeBinder
-    DefaultContentNodeJcrBindingItemFilter bindingItemFilter
-    ObjectMapper objectMapper
+    def jcrSession
+    def contentNodeBinder
+    def bindingFilter
+    def objectMapper
 
     void initialize(Session jcrSession) {
         this.jcrSession = jcrSession
 
         contentNodeBinder = new DefaultJcrContentNodeBinder()
 
-        bindingItemFilter = new DefaultContentNodeJcrBindingItemFilter()
-        bindingItemFilter.addPropertyPathExclude("jcr:localizedName")
-        bindingItemFilter.addPropertyPathExclude("jcr:path")
-        bindingItemFilter.addPropertyPathExclude("hippostdpubwf:*")
-        bindingItemFilter.addPropertyPathExclude("hippo:availability")
-        bindingItemFilter.addPropertyPathExclude("hippo:paths")
-        bindingItemFilter.addPropertyPathExclude("hippo:related")
-        bindingItemFilter.addPropertyPathExclude("hippostd:holder")
-        bindingItemFilter.addPropertyPathExclude("hippostd:state")
-        bindingItemFilter.addPropertyPathExclude("hippostd:stateSummary")
+        bindingFilter = new DefaultContentNodeJcrBindingItemFilter()
+        bindingFilter.addPropertyPathExclude("jcr:localizedName")
+        bindingFilter.addPropertyPathExclude("jcr:path")
+        bindingFilter.addPropertyPathExclude("hippostdpubwf:*")
+        bindingFilter.addPropertyPathExclude("hippo:availability")
+        bindingFilter.addPropertyPathExclude("hippo:paths")
+        bindingFilter.addPropertyPathExclude("hippo:related")
+        bindingFilter.addPropertyPathExclude("hippostd:holder")
+        bindingFilter.addPropertyPathExclude("hippostd:state")
+        bindingFilter.addPropertyPathExclude("hippostd:stateSummary")
 
         objectMapper = new ObjectMapper();
     }
@@ -184,7 +184,7 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {
         EditableWorkflow documentWorkflow = (EditableWorkflow) workflowManager.getWorkflow("default", documentHandleNode)
         Document document = documentWorkflow.obtainEditableInstance()
         documentVariantNode = document.getNode(jcrSession)
-        contentNodeBinder.bind(documentVariantNode, contentNode, bindingItemFilter)
+        contentNodeBinder.bind(documentVariantNode, contentNode, bindingFilter)
         document = documentWorkflow.commitEditableInstance()
         log.debug "Committed document at " + document.getNode(jcrSession).getPath()
 
@@ -346,26 +346,26 @@ import com.fasterxml.jackson.databind.*
 
 class UpdaterTemplate extends BaseNodeUpdateVisitor {
 
-    Session jcrSession
-    ContentNodeBinder contentNodeBinder
-    DefaultContentNodeJcrBindingItemFilter bindingItemFilter
-    ObjectMapper objectMapper
+    def jcrSession
+    def contentNodeBinder
+    def bindingFilter
+    def objectMapper
 
     void initialize(Session jcrSession) {
         this.jcrSession = jcrSession
 
         contentNodeBinder = new DefaultJcrContentNodeBinder()
 
-        bindingItemFilter = new DefaultContentNodeJcrBindingItemFilter()
-        bindingItemFilter.addPropertyPathExclude("jcr:localizedName")
-        bindingItemFilter.addPropertyPathExclude("jcr:path")
-        bindingItemFilter.addPropertyPathExclude("hippostdpubwf:*")
-        bindingItemFilter.addPropertyPathExclude("hippo:availability")
-        bindingItemFilter.addPropertyPathExclude("hippo:paths")
-        bindingItemFilter.addPropertyPathExclude("hippo:related")
-        bindingItemFilter.addPropertyPathExclude("hippostd:holder")
-        bindingItemFilter.addPropertyPathExclude("hippostd:state")
-        bindingItemFilter.addPropertyPathExclude("hippostd:stateSummary")
+        bindingFilter = new DefaultContentNodeJcrBindingItemFilter()
+        bindingFilter.addPropertyPathExclude("jcr:localizedName")
+        bindingFilter.addPropertyPathExclude("jcr:path")
+        bindingFilter.addPropertyPathExclude("hippostdpubwf:*")
+        bindingFilter.addPropertyPathExclude("hippo:availability")
+        bindingFilter.addPropertyPathExclude("hippo:paths")
+        bindingFilter.addPropertyPathExclude("hippo:related")
+        bindingFilter.addPropertyPathExclude("hippostd:holder")
+        bindingFilter.addPropertyPathExclude("hippostd:state")
+        bindingFilter.addPropertyPathExclude("hippostd:stateSummary")
 
         objectMapper = new ObjectMapper();
     }
@@ -386,7 +386,7 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {
         handleNode.addMixin("mix:referenceable")
         def imageSetNode = handleNode.addNode(newImageSetName, "hippogallery:imageset")
         imageSetNode.addMixin("mix:referenceable")
-        contentNodeBinder.bind(imageSetNode, contentNode, bindingItemFilter)
+        contentNodeBinder.bind(imageSetNode, contentNode, bindingFilter)
         log.debug "Created imageset at " + imageSetNode.getPath()
 
         return false
