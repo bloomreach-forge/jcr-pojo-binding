@@ -176,16 +176,30 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {
         def newDocumentName = "examplemessages-" + System.currentTimeMillis()
         def destinationFolderNode = jcrSession.getNode(destination)
 
+        // The following lines before invoking #bind(node, contentNode, bindingFilter) are just an example
+        // to get a draft document variant in the end using hippo workflow api, only for demonstration purpose.
+
+        // using hippo folder workflow api, add a document.
         WorkflowManager workflowManager = ((HippoWorkspace) jcrSession.getWorkspace()).getWorkflowManager()
         FolderWorkflow folderWorkflow = (FolderWorkflow) workflowManager.getWorkflow("embedded", destinationFolderNode)
         String documentVariantPath = folderWorkflow.add("new-document", "resourcebundle:resourcebundle", newDocumentName)
+
+        // get the document handle first
         Node documentVariantNode = jcrSession.getNode(documentVariantPath)
         Node documentHandleNode = documentVariantNode.getParent()
+
+        // get an editable workflow from the document handle node
         EditableWorkflow documentWorkflow = (EditableWorkflow) workflowManager.getWorkflow("default", documentHandleNode)
+        // obtain editable document variant (a.k.a, draft document variant)
         Document document = documentWorkflow.obtainEditableInstance()
         documentVariantNode = document.getNode(jcrSession)
+
+        // finally, let's bind content node data to it! :-)
         contentNodeBinder.bind(documentVariantNode, contentNode, bindingFilter)
+
+        // commit the draft variant
         document = documentWorkflow.commitEditableInstance()
+
         log.debug "Committed document at " + document.getNode(jcrSession).getPath()
 
         return false
