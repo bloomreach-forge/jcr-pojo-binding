@@ -69,15 +69,264 @@ Title,Introduction,Date,Content
       </subsection>
 
       <subsection name="Reading CSV and Converting to Content Nodes">
+
         <p>
           In this example code, we will use <a href="https://commons.apache.org/proper/commons-csv/">Apache Commons CSV</a> library
           to parse a CSV file, and convert each row to a <code>ContentNode</code> object.
         </p>
+
+        <p>
+          The code snippets are excerpts (or slightly simplififed ones) from
+          <a href="https://forge.onehippo.org/svn/hippo-pojo-bind/hippo-pojo-bind/trunk/src/test/java/org/onehippo/forge/content/pojo/model/CsvConvertToContentNodesTest.java">CsvConvertToContentNodesTest.java</a>.
+        </p>
+
         <div class="brush: java">
           <source><![CDATA[
-TODO
+            // 1. Open a reader from a CSV file input stream (input).
+            Reader reader = new InputStreamReader(input, "UTF-8");
+
+            // 2. Create CSV parser to parse the CSV data with column headers.
+            CSVParser parser = CSVFormat.DEFAULT.withHeader("Title", "Introduction", "Date", "Content")
+                    .withSkipHeaderRecord().parse(reader);
+            CSVRecord record;
+
+            // 3. StringCodec to generate a JCR node name from the title column,
+            //    and ObjectMapper instance to log a ContentNode to JSON.
+            final StringCodec codec = new StringCodecFactory.UriEncoding();
+            final ObjectMapper objectMapper = new ObjectMapper();
+
+            String name;
+            String title;
+            String introduction;
+            String date;
+            String content;
+
+            String translationId;
+            String translationLocale = "en";
+
+            String targetDocumentLocation;
+
+            // 4. Iterate each data record and create a ContentNode for a news article with setting properties and child nodes.
+            for (Iterator<CSVRecord> it = parser.iterator(); it.hasNext(); ) {
+                record = it.next();
+
+                // 4.1. Read each column from a CSV record.
+                title = record.get("Title");
+                name = codec.encode(title);
+                introduction = record.get("Introduction");
+                date = record.get("Date");
+                content = record.get("Content");
+
+                // 4.2. Create a ContentNode for a news article and set primitive property values.
+                ContentNode newsNode = new ContentNode(name, "ns1:newsdocument");
+                newsNode.setProperty("ns1:title", title);
+                newsNode.setProperty("ns1:introduction", introduction);
+                newsNode.setProperty("ns1:date", ContentPropertyType.DATE, date);
+
+                // 4.3. Create/add a child hippostd:html content node and set the content.
+                ContentNode htmlNode = new ContentNode("ns1:content", HippoStdNodeType.NT_HTML);
+                newsNode.addNode(htmlNode);
+                htmlNode.setProperty(HippoStdNodeType.HIPPOSTD_CONTENT, content);
+
+                // 4.4. In Hippo CMS, the internal translation UUID and locale string are important in most cases.
+                //      So, let's generate a translation UUID and use 'en' for simplicity for now.
+                translationId = UUID.randomUUID().toString();
+                newsNode.setProperty(HippoTranslationNodeType.ID, translationId);
+                newsNode.setProperty(HippoTranslationNodeType.LOCALE, translationLocale);
+
+                // 4.5. (Optional) Set kind of meta property for localized document name which is displayed in folder view later.
+                //      This meta property is not used by Hippo CMS, but can be read/used by a higher level content importing application
+                //      to set a localized (translated) name of the document (e.g, using Hippo TranslationWorkflow).
+                newsNode.setProperty("jcr:localizedName", title);
+
+                // 4.6. (Optional) Determine the target document location where this content should be generated and
+                //      store it in a meta property, jcr:path.
+                //      This meta property cannot be used in JCR repository in importing process, but can be read/used by a higher level
+                //      content importing application to create a document using Hippo DocumentWorkflow for instance.
+                targetDocumentLocation = "/content/documents/ns1/news/" + name;
+                newsNode.setProperty("jcr:path", targetDocumentLocation);
+
+                // 4.7. (Optional) Log the JSON-ized string of the news ContentNode instance.
+                StringWriter stringWriter = new StringWriter(256);
+                objectMapper.writerWithDefaultPrettyPrinter().writeValue(stringWriter, newsNode);
+                log.debug("newsNode: \n{}\n", stringWriter.toString());
+            }
           ]]></source>
         </div>
+
+        <p>
+          Then it will log JSON data like the following example:
+        </p>
+
+        <div class="brush: javascript">
+          <source><![CDATA[
+2016-02-19 18:25:19,445 DEBUG [org.onehippo.forge.content.pojo.model.CsvConvertToContentNodesTest.testReadCsvAndConvertToContentNodes():119] newsNode: 
+{
+  "name" : "the-medusa-news",
+  "primaryType" : "ns1:newsdocument",
+  "mixinTypes" : [ ],
+  "properties" : [ {
+    "name" : "ns1:title",
+    "type" : "STRING",
+    "multiple" : false,
+    "values" : [ "The medusa news" ]
+  }, {
+    "name" : "ns1:introduction",
+    "type" : "STRING",
+    "multiple" : false,
+    "values" : [ "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." ]
+  }, {
+    "name" : "ns1:date",
+    "type" : "DATE",
+    "multiple" : false,
+    "values" : [ "2016-02-07T01:23:45.000-05:00" ]
+  }, {
+    "name" : "hippotranslation:id",
+    "type" : "STRING",
+    "multiple" : false,
+    "values" : [ "f7eef6c1-c80b-4975-a76c-0e23267acf80" ]
+  }, {
+    "name" : "hippotranslation:locale",
+    "type" : "STRING",
+    "multiple" : false,
+    "values" : [ "en" ]
+  }, {
+    "name" : "jcr:localizedName",
+    "type" : "STRING",
+    "multiple" : false,
+    "values" : [ "The medusa news" ]
+  }, {
+    "name" : "jcr:path",
+    "type" : "STRING",
+    "multiple" : false,
+    "values" : [ "/content/documents/ns1/news/the-medusa-news" ]
+  } ],
+  "nodes" : [ {
+    "name" : "ns1:content",
+    "primaryType" : "hippostd:html",
+    "mixinTypes" : [ ],
+    "properties" : [ {
+      "name" : "hippostd:content",
+      "type" : "STRING",
+      "multiple" : false,
+      "values" : [ "<html><body><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p></body></html>" ]
+    } ],
+    "nodes" : [ ]
+  } ]
+}
+
+2016-02-19 18:25:19,451 DEBUG [org.onehippo.forge.content.pojo.model.CsvConvertToContentNodesTest.testReadCsvAndConvertToContentNodes():119] newsNode: 
+{
+  "name" : "2013-harvest",
+  "primaryType" : "ns1:newsdocument",
+  "mixinTypes" : [ ],
+  "properties" : [ {
+    "name" : "ns1:title",
+    "type" : "STRING",
+    "multiple" : false,
+    "values" : [ "2013 harvest" ]
+  }, {
+    "name" : "ns1:introduction",
+    "type" : "STRING",
+    "multiple" : false,
+    "values" : [ "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." ]
+  }, {
+    "name" : "ns1:date",
+    "type" : "DATE",
+    "multiple" : false,
+    "values" : [ "2016-02-08T12:34:56.000-05:00" ]
+  }, {
+    "name" : "hippotranslation:id",
+    "type" : "STRING",
+    "multiple" : false,
+    "values" : [ "c1279acf-a75c-48ef-a47b-93a497241706" ]
+  }, {
+    "name" : "hippotranslation:locale",
+    "type" : "STRING",
+    "multiple" : false,
+    "values" : [ "en" ]
+  }, {
+    "name" : "jcr:localizedName",
+    "type" : "STRING",
+    "multiple" : false,
+    "values" : [ "2013 harvest" ]
+  }, {
+    "name" : "jcr:path",
+    "type" : "STRING",
+    "multiple" : false,
+    "values" : [ "/content/documents/ns1/news/2013-harvest" ]
+  } ],
+  "nodes" : [ {
+    "name" : "ns1:content",
+    "primaryType" : "hippostd:html",
+    "mixinTypes" : [ ],
+    "properties" : [ {
+      "name" : "hippostd:content",
+      "type" : "STRING",
+      "multiple" : false,
+      "values" : [ "<html><body><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p></body></html>" ]
+    } ],
+    "nodes" : [ ]
+  } ]
+}
+
+2016-02-19 18:25:19,453 DEBUG [org.onehippo.forge.content.pojo.model.CsvConvertToContentNodesTest.testReadCsvAndConvertToContentNodes():119] newsNode: 
+{
+  "name" : "the-gastropoda-news",
+  "primaryType" : "ns1:newsdocument",
+  "mixinTypes" : [ ],
+  "properties" : [ {
+    "name" : "ns1:title",
+    "type" : "STRING",
+    "multiple" : false,
+    "values" : [ "The gastropoda news" ]
+  }, {
+    "name" : "ns1:introduction",
+    "type" : "STRING",
+    "multiple" : false,
+    "values" : [ "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." ]
+  }, {
+    "name" : "ns1:date",
+    "type" : "DATE",
+    "multiple" : false,
+    "values" : [ "2016-02-09T23:45:59.000-05:00" ]
+  }, {
+    "name" : "hippotranslation:id",
+    "type" : "STRING",
+    "multiple" : false,
+    "values" : [ "947be18e-8731-44e9-83e8-f7da2777688e" ]
+  }, {
+    "name" : "hippotranslation:locale",
+    "type" : "STRING",
+    "multiple" : false,
+    "values" : [ "en" ]
+  }, {
+    "name" : "jcr:localizedName",
+    "type" : "STRING",
+    "multiple" : false,
+    "values" : [ "The gastropoda news" ]
+  }, {
+    "name" : "jcr:path",
+    "type" : "STRING",
+    "multiple" : false,
+    "values" : [ "/content/documents/ns1/news/the-gastropoda-news" ]
+  } ],
+  "nodes" : [ {
+    "name" : "ns1:content",
+    "primaryType" : "hippostd:html",
+    "mixinTypes" : [ ],
+    "properties" : [ {
+      "name" : "hippostd:content",
+      "type" : "STRING",
+      "multiple" : false,
+      "values" : [ "<html><body><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p></body></html>" ]
+    } ],
+    "nodes" : [ ]
+  } ]
+}
+          ]]></source>
+        </div>
+
       </subsection>
 
     </section>

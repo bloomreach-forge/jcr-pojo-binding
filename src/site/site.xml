@@ -27,6 +27,7 @@
       <item name="Examples" href="examples.html">
         <item name="Mapping Examples" href="examples-mappings.html" />
         <item name="Binding Examples" href="examples-bindings.html" />
+        <item name="Reading CSV and Converting to Content Nodes" href="examples-csv2contentnodes.html" />
       </item>
       <item name="FAQ" href="faq.html" />
       <item name="Build from source" href="build-from-source.html" />
