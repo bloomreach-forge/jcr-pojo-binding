@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+    Copyright 2015 Hippo
+
+    Licensed under the Apache License, Version 2.0 (the  "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<document>
+  <properties>
+    <title>Extra Examples - Reading CSV and Converting to Content Nodes</title>
+  </properties>
+  <body>
+
+    <section name="Extra Examples - Reading CSV and Converting to Content Nodes">
+
+      <subsection name="Introduction">
+        <p>
+          As you may know already, this library requires <code>ContentNode</code> objects
+          to bind external data to JCR repository.
+        </p>
+        <p>
+          However, in reality, the external data is probably in a different format such as CSV for example.
+        </p>
+        <p>
+          This example page explains how you can convert CSV data to <code>ContentNode</code> beans,
+          and so you can use the content binding feature easily.
+        </p>
+      </subsection>
+
+      <subsection name="Example Document Type">
+        <p>
+          For demonstration purpose, let's suppose a simple document type like the following.
+          Please note that it is written in a simplified CND format only for demonstration purpose.
+        </p>
+        <div class="brush: xml">
+          <source><![CDATA[
+[ns1:newsdocument]
+- ns1:title (string)
+- ns1:introduction (string)
+- ns1:date (date)
+- ns1:relatedarticle (string) multiple
++ ns1:content (hippostd:html)
+          ]]></source>
+        </div>
+      </subsection>
+
+      <subsection name="Example CSV File">
+        <p>For demonstration purpose, let's suppose a simple CSV file like the following:</p>
+        <div class="brush: plain">
+          <source><![CDATA[
+Title,Introduction,Date,Content
+"The medusa news","Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",2016-02-07T01:23:45.000-05:00,"<html><body><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p></body></html>"
+"2013 harvest","Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",2016-02-08T12:34:56.000-05:00,"<html><body><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p></body></html>"
+"The gastropoda news","Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",2016-02-09T23:45:59.000-05:00,"<html><body><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p></body></html>"
+          ]]></source>
+        </div>
+      </subsection>
+
+      <subsection name="Reading CSV and Converting to Content Nodes">
+        <p>
+          In this example code, we will use <a href="https://commons.apache.org/proper/commons-csv/">Apache Commons CSV</a> library
+          to parse a CSV file, and convert each row to a <code>ContentNode</code> object.
+        </p>
+        <div class="brush: java">
+          <source><![CDATA[
+TODO
+          ]]></source>
+        </div>
+      </subsection>
+
+    </section>
+
+  </body>
+</document>

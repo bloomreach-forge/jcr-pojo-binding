@@ -28,7 +28,9 @@ src/site/resources/images/hippo-jcr-pojo-bind.png -text
 src/site/site.xml -text svneol=unset#text/plain
 src/site/xdoc/build-from-source.xml -text svneol=unset#text/plain
 src/site/xdoc/examples-bindings.xml -text svneol=unset#text/plain
+src/site/xdoc/examples-csv2contentnodes.xml -text svneol=unset#text/plain
 src/site/xdoc/examples-mappings.xml -text svneol=unset#text/plain
+src/site/xdoc/examples.xml -text svneol=unset#text/plain
 src/site/xdoc/faq.xml -text svneol=unset#text/plain
 src/site/xdoc/index.xml -text svneol=unset#text/plain
 src/site/xdoc/install.xml -text svneol=unset#text/plain
