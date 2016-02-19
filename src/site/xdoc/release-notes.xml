@@ -33,6 +33,16 @@
       </table>
     </section>
     <section name="Release Notes">
+      <subsection name="1.1.3">
+        <ul>
+          <li>
+            Adds ContentProperty#addValues() methods for convenience.
+          </li>
+          <li>
+            Javadoc updates.
+          </li>
+        </ul>
+      </subsection>
       <subsection name="1.1.2">
         <ul>
           <li>
