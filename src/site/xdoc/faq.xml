@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+    Copyright 2015 Hippo
+
+    Licensed under the Apache License, Version 2.0 (the  "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<document>
+  <properties>
+    <title>FAQ</title>
+  </properties>
+  <body>
+
+    <section name="FAQ">
+
+      <subsection name="Q: Why released only for Hippo CMS 10.x?">
+        <p>
+          The module itself is not really using any new features of Hippo CMS 10.x or later versions,
+          and the depedencies are scoped to 'provided' for most API jars such as JCR API, Hippo Repository API jars.
+          However, it has not been tested yet with older versions.
+          You might want to experiment with Hippo CMS 7.9 if necessary.
+          Please share your experiences with us if you do! :-)
+        </p>
+      </subsection>
+
+      <subsection name="Q: What are the goals of Hippo JCR POJO Binding?">
+        <p>
+          This is not a general purpose POJO mapping/binding library like JPA.
+          It supports a simple mapping/binding for JCR item data only with a built-in POJO beans
+          (<code>ContentNode</code> and <code>ContentProperty</code>).
+          So, this project provides you with totally detachable simple POJO models from JCR content items in a way.
+        </p>
+        <p>
+          This simplicity is intended to serve as a lower-level mapping/binding and marshalling/unmarshaling needs.
+          This library can be used in higher level applications like a content exporting/importing module
+          which should handle more than simple content binding/mapping (e.g, document workflow handling).
+        </p>
+      </subsection>
+
+    </section>
+
+  </body>
+</document>
