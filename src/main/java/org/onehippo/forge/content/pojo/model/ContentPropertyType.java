@@ -15,6 +15,9 @@
  */
 package org.onehippo.forge.content.pojo.model;
 
+/**
+ * Supported Content Property Types.
+ */
 public enum ContentPropertyType {
 
     STRING,

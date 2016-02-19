@@ -24,7 +24,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.onehippo.forge.content.pojo.common.util.GlobPattern;
+import org.onehippo.forge.content.pojo.model.ContentItem;
 
+/**
+ * Base class implementation providing filtering on {@link ContentItem} objects,
+ * based on property type, property path, node path, with include/exclude patterns.
+ */
 public class BasePathBasedContentNodeItemFilter {
 
     private Set<String> propertyTypeNameIncludes;

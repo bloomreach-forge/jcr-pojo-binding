@@ -18,15 +18,45 @@ package org.onehippo.forge.content.pojo.binder;
 import java.io.Serializable;
 
 import org.onehippo.forge.content.pojo.common.ContentValueConverter;
+import org.onehippo.forge.content.pojo.model.ContentItem;
 import org.onehippo.forge.content.pojo.model.ContentNode;
+import org.onehippo.forge.content.pojo.model.ContentProperty;
 
+/**
+ * Content Node Binder interface, binding from a {@link ContentNode} to a physical data node.
+ *
+ * @param <D> physical data node (e.g, {@link javax.jcr.Node}) to which the {@link ContentNode} should bind.
+ * @param <I> content item (e.g, {@link ContentItem}) used when filtering a content item (e.g, {@link ContentItem}).
+ * @param <V> content value used when converting a value of {@link ContentProperty}.
+ */
 public interface ContentNodeBinder<D, I, V> extends Serializable {
 
+    /**
+     * Binds the {@code source} to the {@code dataNode}.
+     * @param dataNode physical data node to bind to.
+     * @param source {@link ContentNode} source to bind from.
+     * @throws ContentNodeBindingException if content node binding exception occurs
+     */
     public void bind(D dataNode, ContentNode source) throws ContentNodeBindingException;
 
+    /**
+     * Binds the {@code source} to the {@code dataNode} with the given {@code itemFilter}.
+     * @param dataNode physical data node to bind to.
+     * @param source {@link ContentNode} source to bind from.
+     * @param itemFilter content item filter
+     * @throws ContentNodeBindingException if content node binding exception occurs
+     */
     public void bind(D dataNode, ContentNode source, ContentNodeBindingItemFilter<I> itemFilter)
             throws ContentNodeBindingException;
 
+    /**
+     * Binds the {@code source} to the {@code dataNode} with the given {@code itemFilter} and {@code valueConverter}.
+     * @param dataNode physical data node to bind to.
+     * @param source {@link ContentNode} source to bind from.
+     * @param itemFilter content item filter
+     * @param valueConverter value converter
+     * @throws ContentNodeBindingException if content node binding exception occurs
+     */
     public void bind(D dataNode, ContentNode source, ContentNodeBindingItemFilter<I> itemFilter,
             ContentValueConverter<V> valueConverter) throws ContentNodeBindingException;
 

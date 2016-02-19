@@ -15,6 +15,9 @@
  */
 package org.onehippo.forge.content.pojo.common;
 
+/**
+ * ContentNodeException
+ */
 public class ContentNodeException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;

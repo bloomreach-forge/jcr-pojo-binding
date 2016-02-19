@@ -18,8 +18,14 @@ package org.onehippo.forge.content.pojo.mapper.jcr.hippo;
 import javax.jcr.PropertyType;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.forge.content.pojo.mapper.ContentNodeMappingItemFilter;
 import org.onehippo.forge.content.pojo.mapper.jcr.DefaultJcrItemMappingFilter;
 
+/**
+ * A {@link ContentNodeMappingItemFilter} implementation for Hippo JCR {@link javax.jcr.Item},
+ * extending {@link DefaultJcrItemMappingFilter},
+ * filtering out reference type properties and {@link HippoNodeType#HIPPO_PATHS} property by default.
+ */
 public class DefaultHippoJcrItemMappingFilter extends DefaultJcrItemMappingFilter {
 
     public DefaultHippoJcrItemMappingFilter() {

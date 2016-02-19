@@ -46,6 +46,16 @@ import org.onehippo.forge.content.pojo.model.ContentPropertyType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Default {@link ContentValueConverter} implementation for JCR.
+ * <P>
+ * Especially for binary data, this converts JCR {@link javax.jcr.Binary} value to
+ * a <code>data:</code> URL if the data size is less than {@link #getDataUrlSizeThreashold()}.
+ * Otherwise, this stores the binary data in an external {@link FileObject} in a randomly generated
+ * file under the {@link #getBinaryValueFileFolder()} with the file name prefix, {@link #getBinaryFileNamePrefix()},
+ * and keeps the file URL string instead of the whole data.
+ * </P>
+ */
 public class DefaultJcrContentValueConverter implements ContentValueConverter<Value> {
 
     private static Logger log = LoggerFactory.getLogger(DefaultJcrContentValueConverter.class);

@@ -23,7 +23,13 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.forge.content.pojo.mapper.ContentNodeMappingException;
+import org.onehippo.forge.content.pojo.mapper.ContentNodeMappingItemFilter;
 
+/**
+ * A {@link ContentNodeMappingItemFilter} implementation for Hippo JCR {@link javax.jcr.Item},
+ * extending {@link DefaultHippoJcrItemMappingFilter},
+ * to select given document variant types ({@link HippoStdNodeType#HIPPOSTD_STATE} property value) by default.
+ */
 public class DocumentVariantNodeMappingFilter extends DefaultHippoJcrItemMappingFilter {
 
     private Set<String> expectedStateSet;

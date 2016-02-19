@@ -25,6 +25,10 @@ import org.onehippo.forge.content.pojo.common.BasePathBasedContentNodeItemFilter
 import org.onehippo.forge.content.pojo.mapper.ContentNodeMappingException;
 import org.onehippo.forge.content.pojo.mapper.ContentNodeMappingItemFilter;
 
+/**
+ * Default {@link ContentNodeMappingItemFilter} implementation for JCR {@link javax.jcr.Item},
+ * based on basic name/path based includes/excludes filtering.
+ */
 public class DefaultJcrItemMappingFilter extends BasePathBasedContentNodeItemFilter
         implements ContentNodeMappingItemFilter<Item> {
 

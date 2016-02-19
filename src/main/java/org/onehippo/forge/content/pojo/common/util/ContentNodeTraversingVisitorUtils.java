@@ -17,11 +17,19 @@ package org.onehippo.forge.content.pojo.common.util;
 
 import org.onehippo.forge.content.pojo.model.ContentNode;
 
+/**
+ * {@link ContentNode} traversing utilities.
+ */
 public class ContentNodeTraversingVisitorUtils {
 
     private ContentNodeTraversingVisitorUtils() {
     }
 
+    /**
+     * Traverse the {@code contentNode} with the {@code visitor}.
+     * @param contentNode content node
+     * @param visitor traversing visitor instance
+     */
     public static void traverse(final ContentNode contentNode, ContentNodeTraversingVisitor visitor) {
         if (visitor.isAcceptable(contentNode)) {
             visitor.accept(contentNode);

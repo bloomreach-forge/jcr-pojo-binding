@@ -36,25 +36,40 @@ import org.onehippo.forge.content.pojo.model.ContentNode;
 import org.onehippo.forge.content.pojo.model.ContentProperty;
 import org.onehippo.forge.content.pojo.model.ContentPropertyType;
 
+/**
+ * Default {@link ContentNodeBinder} implementation for JCR.
+ */
 public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, ContentItem, Value> {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Default constructor.
+     */
     public DefaultJcrContentNodeBinder() {
         super();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void bind(Node jcrDataNode, ContentNode contentNode) throws ContentNodeBindingException {
         bind(jcrDataNode, contentNode, null);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void bind(Node jcrDataNode, ContentNode contentNode, ContentNodeBindingItemFilter<ContentItem> itemFilter)
             throws ContentNodeBindingException {
         bind(jcrDataNode, contentNode, itemFilter, null);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void bind(Node jcrDataNode, ContentNode contentNode, ContentNodeBindingItemFilter<ContentItem> itemFilter,
             ContentValueConverter<Value> valueConverter) throws ContentNodeBindingException {

@@ -17,6 +17,9 @@ package org.onehippo.forge.content.pojo.binder;
 
 import org.onehippo.forge.content.pojo.common.ContentNodeException;
 
+/**
+ * ContentNodeBindingException
+ */
 public class ContentNodeBindingException extends ContentNodeException {
 
     private static final long serialVersionUID = 1L;

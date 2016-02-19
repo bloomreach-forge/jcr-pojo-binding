@@ -36,25 +36,40 @@ import org.onehippo.forge.content.pojo.model.ContentNode;
 import org.onehippo.forge.content.pojo.model.ContentProperty;
 import org.onehippo.forge.content.pojo.model.ContentPropertyType;
 
+/**
+ * Default {@link ContentNodeMapper} implementation for JCR.
+ */
 public class DefaultJcrContentNodeMapper implements ContentNodeMapper<Node, Item, Value> {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Default constructor.
+     */
     public DefaultJcrContentNodeMapper() {
         super();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ContentNode map(Node jcrDataNode) throws ContentNodeMappingException {
         return map(jcrDataNode, null);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ContentNode map(Node jcrDataNode, ContentNodeMappingItemFilter<Item> itemFilter)
             throws ContentNodeMappingException {
         return map(jcrDataNode, itemFilter, null);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ContentNode map(Node jcrDataNode, ContentNodeMappingItemFilter<Item> itemFilter,
             ContentValueConverter<Value> valueConverter) throws ContentNodeMappingException {

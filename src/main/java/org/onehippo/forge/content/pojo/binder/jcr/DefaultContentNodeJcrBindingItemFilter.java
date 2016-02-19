@@ -8,9 +8,16 @@ import org.onehippo.forge.content.pojo.model.ContentItem;
 import org.onehippo.forge.content.pojo.model.ContentNode;
 import org.onehippo.forge.content.pojo.model.ContentProperty;
 
+/**
+ * Default {@link ContentNodeBindingItemFilter} implementation for JCR,
+ * based on name and path based inclusion/exclusion filtering.
+ */
 public class DefaultContentNodeJcrBindingItemFilter extends BasePathBasedContentNodeItemFilter
         implements ContentNodeBindingItemFilter<ContentItem> {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean accept(ContentItem item) throws ContentNodeBindingException {
         if (item.isNode()) {

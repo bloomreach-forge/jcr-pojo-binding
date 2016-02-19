@@ -22,30 +22,61 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+/**
+ * Serializable POJO abstraction for content item (e.g, {@link javax.jcr.Item}),
+ * which should be either {@link ContentNode} or {@link ContentProperty}.
+ */
 abstract public class ContentItem implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Content item (either {@link ContentNode} or {@link ContentProperty}) name.
+     */
     private String name;
 
+    /**
+     * Default constructor for deserialization.
+     */
     public ContentItem() {
     }
 
+    /**
+     * Constructor with item (either {@link ContentNode} or {@link ContentProperty}) name.
+     * @param name item name
+     */
     public ContentItem(String name) {
         this.name = name;
     }
 
+    /**
+     * Returns true if this is a {@link ContentNode}, or false otherwise.
+     * @return true if this is a {@link ContentNode}, or false otherwise
+     */
     abstract public boolean isNode();
 
+    /**
+     * Returns item (either {@link ContentNode} or {@link ContentProperty}) name.
+     * @return item (either {@link ContentNode} or {@link ContentProperty}) name
+     */
     @XmlElement(name="name")
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets item (either {@link ContentNode} or {@link ContentProperty}) name.
+     * @param name item (either {@link ContentNode} or {@link ContentProperty}) name
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Transient or ignore-able property in JSON marshaling, but this internal property
+     * can be used in <a href="https://commons.apache.org/proper/commons-jxpath/">JXPath</a> expressions.
+     * @return item (either {@link ContentNode} or {@link ContentProperty}) name
+     */
     @JsonIgnore
     @XmlTransient
     public String getItemName() {

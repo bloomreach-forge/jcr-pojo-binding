@@ -36,44 +36,82 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+/**
+ * Serializable POJO abstraction for content node (e.g, {@link javax.jcr.Node}).
+ */
 @XmlRootElement(name = "node")
 @XmlType(propOrder={"primaryType", "mixinTypes", "properties", "nodes"})
 public class ContentNode extends ContentItem {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Primary content node type.
+     */
     private String primaryType;
 
+    /**
+     * Mixin content node types.
+     */
     private Set<String> mixinTypes;
 
+    /**
+     * Content properties embedded in this content node.
+     */
     private List<ContentProperty> properties;
 
+    /**
+     * Child content nodes embedded in this content node.
+     */
     private List<ContentNode> nodes;
 
+    /**
+     * Default constructor for deserialization.
+     */
     public ContentNode() {
         super();
     }
 
+    /**
+     * Constructor with content node name and content node primary type.
+     * @param name content node name
+     * @param primaryType content node primary type name
+     */
     public ContentNode(String name, String primaryType) {
         super(name);
         this.primaryType = primaryType;
     }
 
+    /**
+     * Transient or ignore-able (in JSON marshaling) property, always returning true.
+     */
     @JsonIgnore
     @XmlTransient
     public boolean isNode() {
         return true;
     }
 
+    /**
+     * Returns content node primary type name.
+     * @return content node primary type name
+     */
     @XmlElement(name = "primaryType")
     public String getPrimaryType() {
         return primaryType;
     }
 
+    /**
+     * Sets content node primary type name.
+     * @param primaryType content node primary type name
+     */
     public void setPrimaryType(String primaryType) {
         this.primaryType = primaryType;
     }
 
+    /**
+     * Returns a non-null set of content node mixin type names.
+     * @return a non-null set of content node mixin type names
+     */
     @XmlElementWrapper(name = "mixinTypes")
     @XmlElements(@XmlElement(name = "mixinType"))
     public Set<String> getMixinTypes() {
@@ -84,16 +122,28 @@ public class ContentNode extends ContentItem {
         return mixinTypes;
     }
 
+    /**
+     * Adds a mixin content node type to this content node.
+     * @param mixinType mixin content node type name
+     */
     public void addMixinType(String mixinType) {
         getMixinTypes().add(mixinType);
     }
 
+    /**
+     * Removes a mixin content node type name from this content node.
+     * @param mixinType a mixin content node type name
+     */
     public void removeMixinType(String mixinType) {
         if (mixinTypes != null && !mixinTypes.isEmpty()) {
             mixinTypes.remove(mixinType);
         }
     }
 
+    /**
+     * Returns a non-null list of embedded content properties in this content node.
+     * @return a non-null list of embedded content properties in this content node
+     */
     @XmlElementWrapper(name = "properties")
     @XmlElements(@XmlElement(name = "property"))
     public List<ContentProperty> getProperties() {
@@ -104,10 +154,20 @@ public class ContentNode extends ContentItem {
         return properties;
     }
 
+    /**
+     * Returns true if this content node has a content property named by the {@code name}.
+     * @param name content property name
+     * @return true if this content node has a content property named by the {@code name}
+     */
     public boolean hasProperty(String name) {
         return getProperty(name) != null;
     }
 
+    /**
+     * Finds and return the content property by the {@code name}.
+     * @param name content property name
+     * @return the content property by the {@code name}
+     */
     public ContentProperty getProperty(String name) {
         if (properties != null) {
             for (ContentProperty contentProp : properties) {
@@ -120,6 +180,10 @@ public class ContentNode extends ContentItem {
         return null;
     }
 
+    /**
+     * Sets a content property by {@link ContentProperty} instance.
+     * @param property content property
+     */
     public void setProperty(ContentProperty property) {
         if (!getProperties().isEmpty()) {
             int index = 0;
@@ -136,20 +200,42 @@ public class ContentNode extends ContentItem {
         getProperties().add(property);
     }
 
+    /**
+     * Sets a {@link ContentPropertyType#STRING} typed content property having the {@code name} to the {@code value}. 
+     * @param name content property name
+     * @param value string content property value
+     */
     public void setProperty(String name, String value) {
         setProperty(name, ContentPropertyType.STRING, value);
     }
 
+    /**
+     * Sets a content property of {@code type} to the stringified {@code value}.
+     * @param name content property name
+     * @param type content property type
+     * @param value stringified content property value
+     */
     public void setProperty(String name, ContentPropertyType type, String value) {
         ContentProperty prop = new ContentProperty(name, type);
         prop.setValue(value);
         setProperty(prop);
     }
 
+    /**
+     * Sets a content property of a string array type to {@code values}.
+     * @param name content property name
+     * @param values string array of property values
+     */
     public void setProperty(String name, String[] values) {
         setProperty(name, ContentPropertyType.STRING, values);
     }
 
+    /**
+     * Sets a content property having {@code name} of {@code type} to the stringified {@code values}.
+     * @param name content property name
+     * @param type content property type
+     * @param values stringified property value array
+     */
     public void setProperty(String name, ContentPropertyType type, String[] values) {
         ContentProperty prop = new ContentProperty(name, type, true);
 
@@ -162,12 +248,22 @@ public class ContentNode extends ContentItem {
         setProperty(prop);
     }
 
+    /**
+     * Sets a property having {@code name} to the given {@link BinaryValue} object.
+     * @param name content property name
+     * @param binaryValue {@link BinaryValue} object
+     */
     public void setProperty(String name, BinaryValue binaryValue) {
         ContentProperty prop = new ContentProperty(name, ContentPropertyType.BINARY);
         prop.setValue(binaryValue);
         setProperty(prop);
     }
 
+    /**
+     * Sets a property having {@code name} to the given array of {@link BinaryValue} objects.
+     * @param name content property name
+     * @param binaryValues array of {@link BinaryValue} objects
+     */
     public void setProperty(String name, BinaryValue[] binaryValues) {
         ContentProperty prop = new ContentProperty(name, ContentPropertyType.BINARY, true);
 
@@ -180,6 +276,10 @@ public class ContentNode extends ContentItem {
         setProperty(prop);
     }
 
+    /**
+     * Returns a non-null child content nodes.
+     * @return a non-null child content nodes
+     */
     @XmlElementWrapper(name = "nodes")
     @XmlElements(@XmlElement(name = "node"))
     public List<ContentNode> getNodes() {
@@ -190,10 +290,20 @@ public class ContentNode extends ContentItem {
         return nodes;
     }
 
+    /**
+     * Returns true if this content node has any child content node having the {@code name}.
+     * @param name child content node name
+     * @return true if this content node has any child content node having the {@code name}
+     */
     public boolean hasNode(String name) {
         return getNode(name) != null;
     }
 
+    /**
+     * Returns the child content node having the {@code name} if existing. Null otherwise.
+     * @param name child content node name
+     * @return the child content node having the {@code name} if existing. Null otherwise.
+     */
     public ContentNode getNode(String name) {
         if (nodes != null) {
             for (ContentNode node : nodes) {
@@ -206,40 +316,88 @@ public class ContentNode extends ContentItem {
         return null;
     }
 
+    /**
+     * Adds a child content node.
+     * @param node child content node
+     */
     public void addNode(ContentNode node) {
         getNodes().add(node);
     }
 
-    public ContentNode queryNodeByXPath(String xpath) {
-        return (ContentNode) queryObjectByXPath(xpath);
+    /**
+     * Queries and returns single content node from this base content node by
+     * the <a href="https://commons.apache.org/proper/commons-jxpath/">JXPath</a> expression ({@code jxpath}).
+     * @param jxpath <a href="https://commons.apache.org/proper/commons-jxpath/">JXPath</a> expression
+     * @return single content node from this base content node from the JXPath query execution
+     */
+    public ContentNode queryNodeByXPath(String jxpath) {
+        return (ContentNode) queryObjectByXPath(jxpath);
     }
 
-    public ContentProperty queryPropertyByXPath(String xpath) {
-        return (ContentProperty) queryObjectByXPath(xpath);
+    /**
+     * Queries and returns single content property from this base content node by
+     * the <a href="https://commons.apache.org/proper/commons-jxpath/">JXPath</a> expression ({@code jxpath}).
+     * @param jxpath <a href="https://commons.apache.org/proper/commons-jxpath/">JXPath</a> expression
+     * @return single content property from this base content node from the JXPath query execution
+     */
+    public ContentProperty queryPropertyByXPath(String jxpath) {
+        return (ContentProperty) queryObjectByXPath(jxpath);
     }
 
-    public List<ContentNode> queryNodesByXPath(String xpath) {
-        return (List<ContentNode>) queryObjectsByXPath(xpath);
+    /**
+     * Queries and returns a list of content nodes from this base content node by
+     * the <a href="https://commons.apache.org/proper/commons-jxpath/">JXPath</a> expression ({@code jxpath}).
+     * @param jxpath <a href="https://commons.apache.org/proper/commons-jxpath/">JXPath</a> expression
+     * @return list of content nodes from this base content node from the JXPath query execution
+     */
+    public List<ContentNode> queryNodesByXPath(String jxpath) {
+        return (List<ContentNode>) queryObjectsByXPath(jxpath);
     }
 
-    public List<ContentProperty> queryPropertiesByXPath(String xpath) {
-        return (List<ContentProperty>) queryObjectsByXPath(xpath);
+    /**
+     * Queries and returns a list of content properties from this base content node by
+     * the <a href="https://commons.apache.org/proper/commons-jxpath/">JXPath</a> expression ({@code jxpath}).
+     * @param jxpath <a href="https://commons.apache.org/proper/commons-jxpath/">JXPath</a> expression
+     * @return list of content properties from this base content node from the JXPath query execution
+     */
+    public List<ContentProperty> queryPropertiesByXPath(String jxpath) {
+        return (List<ContentProperty>) queryObjectsByXPath(jxpath);
     }
 
-    public Object queryObjectByXPath(String xpath) {
-        return createJXPathContext().getValue(xpath);
+    /**
+     * Queries and returns an object from this base content node by
+     * the <a href="https://commons.apache.org/proper/commons-jxpath/">JXPath</a> expression ({@code jxpath}).
+     * @param jxpath <a href="https://commons.apache.org/proper/commons-jxpath/">JXPath</a> expression
+     * @return an object from this base content node from the JXPath query execution
+     */
+    public Object queryObjectByXPath(String jxpath) {
+        return createJXPathContext().getValue(jxpath);
     }
 
-    public List<?> queryObjectsByXPath(String xpath) {
-        return createJXPathContext().selectNodes(xpath);
+    /**
+     * Queries and returns a list of objects from this base content node by
+     * the <a href="https://commons.apache.org/proper/commons-jxpath/">JXPath</a> expression ({@code jxpath}).
+     * @param jxpath <a href="https://commons.apache.org/proper/commons-jxpath/">JXPath</a> expression
+     * @return a list of objects from this base content node from the JXPath query execution
+     */
+    public List<?> queryObjectsByXPath(String jxpath) {
+        return createJXPathContext().selectNodes(jxpath);
     }
 
+    /**
+     * Creates and returns a {@link JXPathContext} instance used by default.
+     * @return a {@link JXPathContext} instance used by default
+     */
     private JXPathContext createJXPathContext() {
         JXPathContext jxpathCtx = JXPathContext.newContext(this);
         jxpathCtx.setLenient(true);
         return jxpathCtx;
     }
 
+    /**
+     * Deep-clone this content node object.
+     * @return deep-cloned content node object
+     */
     @Override
     public Object clone() {
         ContentNode clone = new ContentNode(getName(), primaryType);

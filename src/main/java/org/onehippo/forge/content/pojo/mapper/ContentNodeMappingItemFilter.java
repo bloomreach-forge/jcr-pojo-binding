@@ -15,8 +15,21 @@
  */
 package org.onehippo.forge.content.pojo.mapper;
 
-public interface ContentNodeMappingItemFilter<T> {
+import org.onehippo.forge.content.pojo.model.ContentNode;
 
-    boolean accept(T item) throws ContentNodeMappingException;
+/**
+ * Filter used when filtering a physical data item in mapping from a physical data to a {@link ContentNode}.
+ *
+ * @param <I> physical data item (e.g, {@link javax.jcr.Item}).
+ */
+public interface ContentNodeMappingItemFilter<I> {
+
+    /**
+     * Returns true if the given {@code item} can be accepted in the mapping process.
+     * @param item physical content data item (e.g, {@link javax.jcr.Item}) 
+     * @return true if the given {@code item} can be accepted in the mapping process
+     * @throws ContentNodeMappingException if any content node mapping exception occurs
+     */
+    boolean accept(I item) throws ContentNodeMappingException;
 
 }

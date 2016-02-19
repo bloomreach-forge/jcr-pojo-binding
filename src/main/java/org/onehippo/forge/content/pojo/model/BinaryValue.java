@@ -23,47 +23,108 @@ import java.util.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.vfs2.FileObject;
 
+/**
+ * Non-serializable, transient Binary data value abstraction.
+ */
 public class BinaryValue {
 
+    /**
+     * Content media type.
+     */
     private String mediaType;
+
+    /**
+     * Character set information of this binary value.
+     */
     private String charset;
+
+    /**
+     * Binary data in byte array, which is used when marshaling/unmarshaling to/from a <code>data:</code> URL string.
+     */
     private byte [] data;
+
+    /**
+     * External {@link FileObject} instance having the binary data.
+     */
     private FileObject fileObject;
+
+    /**
+     * Transient input stream from the binary data.
+     */
     private InputStream inputStream;
 
+    /**
+     * Default constructor.
+     */
     public BinaryValue() {
     }
 
+    /**
+     * Constructor with binary data in byte array, which is used to build a <code>data:</code> URL string.
+     * @param data binary data in byte array, which is used to build a <code>data:</code> URL string
+     */
     public BinaryValue(byte [] data) {
         this(data, null, null);
     }
 
+    /**
+     * Constructor with binary data in byte array, which is used to build a <code>data:</code> URL string,
+     * {@code mediaType} and {@code charset}, when the {@code data} represents character based data.
+     * @param data binary data in byte array, which is used to build a <code>data:</code> URL string
+     * @param mediaType media type
+     * @param charset character set
+     */
     public BinaryValue(byte [] data, String mediaType, String charset) {
         this.data = data;
         this.mediaType = mediaType;
         this.charset = charset;
     }
 
+    /**
+     * Constructor with a {@link FileObject} instance representing an external data file.
+     * @param fileObject a {@link FileObject} instance representing an external data file
+     */
     public BinaryValue(FileObject fileObject) {
         this.fileObject = fileObject;
     }
 
+    /**
+     * Returns the media type.
+     * @return media type
+     */
     public String getMediaType() {
         return mediaType;
     }
 
+    /**
+     * Sets the media type
+     * @param mediaType media type
+     */
     public void setMediaType(String mediaType) {
         this.mediaType = mediaType;
     }
 
+    /**
+     * Returns the character set
+     * @return character set
+     */
     public String getCharset() {
         return charset;
     }
 
+    /**
+     * Sets the character set
+     * @param charset character set
+     */
     public void setCharset(String charset) {
         this.charset = charset;
     }
 
+    /**
+     * Creates and returns a transient input stream from the underlying data.
+     * @return  a transient input stream from the underlying data
+     * @throws IOException if any IO exception occurs
+     */
     public InputStream getStream() throws IOException {
         if (inputStream != null) {
             inputStream.close();
@@ -83,6 +144,12 @@ public class BinaryValue {
         throw new IOException("No data nor fileObject set.");
     }
 
+    /**
+     * Returns a URI representation of the underlying data.
+     * Either a <code>data:</code> URL or an external URL based on an internal {@link FileObject}.
+     * @return a <code>data:</code> URL or an external URL based on an internal {@link FileObject}
+     * @throws IOException if any IO exception occurs
+     */
     public String toUriString() throws IOException {
         if (data != null) {
             StringBuilder sb = new StringBuilder(data.length + 20);
@@ -108,6 +175,10 @@ public class BinaryValue {
         throw new IOException("No data nor fileObject set.");
     }
 
+    /**
+     * Disposes the transient input stream and the internal file object if any.
+     * @throws IOException if any IO exception occurs
+     */
     public void dispose() throws IOException {
         if (inputStream != null) {
             inputStream.close();
@@ -120,6 +191,12 @@ public class BinaryValue {
         }
     }
 
+    /**
+     * Converts the given {@code dataUri} which is supposed to be a <code>data:</code> URL
+     * to a {@link BinaryValue} object.
+     * @param dataUri a <code>data:</code> URL
+     * @return a {@link BinaryValue} object converted from the given {@code dataUri}
+     */
     public static BinaryValue fromDataURI(String dataUri) {
         if (!StringUtils.startsWith(dataUri, "data:")) {
             throw new IllegalArgumentException("Invalid data uri.");
@@ -154,6 +231,13 @@ public class BinaryValue {
         return binaryValue;
     }
 
+    /**
+     * Converts the {@code data} in {@code mediaType} and {@code charset} to a <code>data:</code> URL string.
+     * @param data binary data in byte array
+     * @param mediaType media type
+     * @param charset character set
+     * @return a <code>data:</code> URL string converted from the given {@code data}.
+     */
     public static String toDataURI(byte [] data, final String mediaType, final String charset) {
         int size = (data == null ? 0 : data.length);
         StringBuilder sbTemp = new StringBuilder(size + 20);

@@ -15,8 +15,22 @@
  */
 package org.onehippo.forge.content.pojo.binder;
 
-public interface ContentNodeBindingItemFilter<T> {
+import org.onehippo.forge.content.pojo.model.ContentItem;
+import org.onehippo.forge.content.pojo.model.ContentNode;
 
-    boolean accept(T item) throws ContentNodeBindingException;
+/**
+ * Filter used when filtering a {@link ContentItem} in binding from a {@link ContentNode} to a physical data node.
+ *
+ * @param <I> content item (e.g, {@link ContentItem}) filter.
+ */
+public interface ContentNodeBindingItemFilter<I> {
+
+    /**
+     * Returns true if the given {@code item} can be accepted in the binding process.
+     * @param item content item
+     * @return true if the given {@code item} can be accepted in the binding process
+     * @throws ContentNodeBindingException if any content node binding exception occurs
+     */
+    boolean accept(I item) throws ContentNodeBindingException;
 
 }

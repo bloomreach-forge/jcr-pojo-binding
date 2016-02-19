@@ -17,6 +17,7 @@ package org.onehippo.forge.content.pojo.model;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,51 +39,96 @@ import org.apache.jackrabbit.util.ISO8601;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+/**
+ * Serializable POJO abstraction for a content property (e.g, {@link javax.jcr.Property}).
+ */
 @XmlRootElement(name = "property")
 public class ContentProperty extends ContentItem {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Type of content property.
+     */
     private ContentPropertyType type = ContentPropertyType.UNDEFINED;
 
+    /**
+     * Whether or not this property is for multiple values.
+     */
     private boolean multiple;
 
+    /**
+     * List of stringified values.
+     */
     private List<String> values;
 
+    /**
+     * Default constructor for deserialization.
+     */
     public ContentProperty() {
         super();
     }
 
+    /**
+     * Constructor with content property name and content property type.
+     * @param name content property name
+     * @param type content property type
+     */
     public ContentProperty(String name, ContentPropertyType type) {
         this(name, type, false);
     }
 
+    /**
+     * Constructor with content property name, content property type and flag for multiplicity of its value(s).
+     * @param name content property name
+     * @param type content property type
+     * @param multiple whether or not this property is for multiple values
+     */
     public ContentProperty(String name, ContentPropertyType type, boolean multiple) {
         super(name);
         this.type = type;
         this.multiple = multiple;
     }
 
+    /**
+     * Transient or ignore-able (in JSON marshaling) property, always returning false.
+     */
     @JsonIgnore
     @XmlTransient
     public boolean isNode() {
         return false;
     }
 
+    /**
+     * Returns content property type.
+     * @return content property type
+     */
     @XmlElement(name = "type")
     public ContentPropertyType getType() {
         return type;
     }
 
+    /**
+     * Sets content property type.
+     * @param type content property type
+     */
     public void setType(ContentPropertyType type) {
         this.type = type;
     }
 
+    /**
+     * Sets multiplicity of its value(s).
+     * @return true if this content property can have multiple values.
+     */
     @XmlElement(name = "multiple")
     public boolean isMultiple() {
         return multiple;
     }
 
+    /**
+     * Returns a non-null list of stringified values.
+     * @return a non-null list of stringified values
+     */
     @XmlElementWrapper(name = "values")
     @XmlElements(@XmlElement(name = "value"))
     public List<String> getValues() {
@@ -93,6 +139,10 @@ public class ContentProperty extends ContentItem {
         return values;
     }
 
+    /**
+     * Returns the first stringified value.
+     * @return the first stringified value
+     */
     @JsonIgnore
     @XmlTransient
     public String getValue() {
@@ -103,6 +153,10 @@ public class ContentProperty extends ContentItem {
         return null;
     }
 
+    /**
+     * Sets single stringified value to this content property.
+     * @param value single stringified value
+     */
     public void setValue(String value) {
         if (!getValues().isEmpty()) {
             getValues().clear();
@@ -113,6 +167,10 @@ public class ContentProperty extends ContentItem {
         }
     }
 
+    /**
+     * Sets single {@link BinaryValue} to this content property.
+     * @param binaryValue {@link BinaryValue} value
+     */
     public void setValue(BinaryValue binaryValue) {
         try {
             setValue(binaryValue.toUriString());
@@ -121,10 +179,30 @@ public class ContentProperty extends ContentItem {
         }
     }
 
+    /**
+     * Adds a stringified value to this content property.
+     * @param value a stringified value
+     */
     public void addValue(String value) {
         getValues().add(value);
     }
 
+    /**
+     * Adds all the items of the given array of the stringified values to this content property.
+     * @param values array of the stringified values
+     */
+    public void addValues(String ... values) {
+        if (values != null && values.length > 0) {
+            for (String value : values) {
+                addValue(value);
+            }
+        }
+    }
+
+    /**
+     * Adds a {@link BinaryValue} value to this content property.
+     * @param binaryValue a {@link BinaryValue} value
+     */
     public void addValue(BinaryValue binaryValue) {
         try {
             addValue(binaryValue.toUriString());
@@ -133,18 +211,43 @@ public class ContentProperty extends ContentItem {
         }
     }
 
+    /**
+     * Adds all the items of the given array of {@link BinaryValue} values to this content property.
+     * @param binaryValues array of {@link BinaryValue} values
+     */
+    public void addValues(BinaryValue ... binaryValues) {
+        if (binaryValues != null && binaryValues.length > 0) {
+            for (BinaryValue binaryValue : binaryValues) {
+                addValue(binaryValue);
+            }
+        }
+    }
+
+    /**
+     * Remove all the values from this content property.
+     */
     public void removeValues() {
         if (values != null) {
             values.clear();
         }
     }
 
+    /**
+     * Returns the count of the values in this content property.
+     * @return the count of the values in this content property
+     */
     @JsonIgnore
     @XmlTransient
     public int getValueCount() {
         return values == null ? 0 : values.size();
     }
 
+    /**
+     * Converts the internally stored stringified values to a list of native Java objects
+     * such as {@link String}, {@link Calendar}, {@link Boolean}, {@link Long}, {@link Double}, {@link BigDecimal} and {@link BinaryValue}
+     * based on the {@link #getType()} value of this content property.
+     * @return list of converted native Java objects from the internal stringified values based on content property type
+     */
     @JsonIgnore
     @XmlTransient
     public List<Object> getValuesAsObject() {
@@ -158,6 +261,13 @@ public class ContentProperty extends ContentItem {
         return objectValues;
     }
 
+    /**
+     * Converts the first internally stored stringified value to a native Java object
+     * such as {@link String}, {@link Calendar}, {@link Boolean}, {@link Long}, {@link Double}, {@link BigDecimal} and {@link BinaryValue}
+     * based on the {@link #getType()} value of this content property.
+     * Or returns null if there's no value.
+     * @return converted native Java object from the first internal stringified value based on content property type. Null if there's no value.
+     */
     @JsonIgnore
     @XmlTransient
     public Object getValueAsObject() {
@@ -168,6 +278,13 @@ public class ContentProperty extends ContentItem {
         return null;
     }
 
+    /**
+     * Converts the internally stored stringified value at the value {@code index} to a native Java object
+     * such as {@link String}, {@link Calendar}, {@link Boolean}, {@link Long}, {@link Double}, {@link BigDecimal} and {@link BinaryValue}
+     * based on the {@link #getType()} value of this content property.
+     * @param index value index
+     * @return converted native Java object from the internal stringified value based on content property type
+     */
     private Object getValueAsObjectAt(final int index) {
         Object objectValue = null;
 
@@ -211,6 +328,12 @@ public class ContentProperty extends ContentItem {
         return objectValue;
     }
 
+    /**
+     * Creates a {@link BinaryValue} instance from the given stringified value
+     * which can be either a <code>data:</code> URL or any other external URL to be read.
+     * @param stringifiedValue stringfieid binary value, either a <code>data:</code> URL or any other external URL to be read
+     * @return a {@link BinaryValue} instance
+     */
     private BinaryValue createBinaryValue(String stringifiedValue) {
         BinaryValue binaryValue = null;
 
@@ -229,6 +352,10 @@ public class ContentProperty extends ContentItem {
         return binaryValue;
     }
 
+    /**
+     * Deep-clone this content property.
+     * @return deep-cloned content property instance
+     */
     @Override
     public Object clone() {
         ContentProperty clone = new ContentProperty(getName(), type, multiple);
