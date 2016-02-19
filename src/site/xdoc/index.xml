@@ -76,6 +76,24 @@
         Please see more detail in <a href="apidocs/index.html">JavaDocs</a>.
       </p>
     </section>
+    <section name="Binary Data Value Handling">
+      <p>
+        It is very crucial to handle binary data properly even in a simple mapping/binding library
+        because the data size of a binary value can be big which may make a bad impact on system availability (e.g, OutOfMemoryError).
+      </p>
+      <p>
+        So, this library handles binary data values carefully with using <code>BinaryValue</code> unlike other values
+        (other values are always stringified internally for simplicity).
+      </p>
+      <p>
+        For example, <code>DefaultJcrContentValueConverter</code> (the default <code>ContentValueConverter</code> implementation)
+        is able to automatically serialize a binary data into an external <a href="https://commons.apache.org/proper/commons-vfs/">VFS</a> file
+        and keep the URL string only in the <code>ContentProperty</code> instance
+        if the data size exceeds the configured threshold size.
+        If the data size is less than the configured threshold size, it simply converts the binary data
+        into a <code>data:</code> URL (containing a mimeType optionally as well as BASE64 encoded string).
+      </p>
+    </section>
     <section name="Project status">
       <p>
         Please see <a href="release-notes.html">Release Notes</a>.
