@@ -145,6 +145,12 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
                 for (Node sameNameTypeChildNode : findChildNodesByNameAndType(jcrDataNode, childContentNode)) {
                     sameNameTypeChildNode.remove();
                 }
+            }
+
+            for (ContentNode childContentNode : contentNode.getNodes()) {
+                if (itemFilter != null && !itemFilter.accept(childContentNode)) {
+                    continue;
+                }
 
                 childJcrNode = jcrDataNode.addNode(childContentNode.getName(), childContentNode.getPrimaryType());
 
