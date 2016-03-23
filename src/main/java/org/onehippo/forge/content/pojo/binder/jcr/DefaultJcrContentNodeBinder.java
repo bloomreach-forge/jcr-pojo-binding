@@ -23,6 +23,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
+import javax.jcr.ValueFormatException;
 
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.forge.content.pojo.binder.ContentNodeBinder;
@@ -128,8 +129,19 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
                             } catch (ArrayIndexOutOfBoundsException ignore) {
                                 // Due to REPO-1428, let's ignore this kind of exception for now...
                             }
-                        } else if (jcrValues.length > 0){
-                            jcrDataNode.setProperty(propName, jcrValues[0]);
+                        } else if (jcrValues.length > 0) {
+                            try {
+                                jcrDataNode.setProperty(propName, jcrValues[0]);
+                            } catch (ValueFormatException e) {
+                                // In this case, the content node (from a file) has a property as single value.
+                                // However, if the relaxed document type has changed from single value to multiple values for a property,
+                                // and so if the prototype has changed to multiple values, while the exported content property
+                                // is still single property,
+                                // then this ValueFormatException may happen because the single value cannot be set
+                                // for a new multi-value property generated from the new prototype.
+                                // Therefore, try to set property with array again in this case.
+                                jcrDataNode.setProperty(propName, jcrValues);
+                            }
                         }
                     }
                 }
