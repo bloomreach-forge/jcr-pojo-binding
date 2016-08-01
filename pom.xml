@@ -21,7 +21,7 @@
   <description>Hippo JCR POJO Binding</description>
   <groupId>org.onehippo.forge.hippo-pojo-bind</groupId>
   <artifactId>hippo-pojo-bind-jcr</artifactId>
-  <version>1.1.5-SNAPSHOT</version>
+  <version>1.1.5</version>
   <url>http://hippo-pojo-bind.forge.onehippo.org/</url>
 
   <properties>
@@ -93,9 +93,9 @@
   </developers>
 
   <scm>
-    <connection>scm:svn:https://forge.onehippo.org/svn/hippo-pojo-bind/hippo-pojo-bind/trunk</connection>
-    <developerConnection>scm:svn:https://forge.onehippo.org/svn/hippo-pojo-bind/hippo-pojo-bind/trunk</developerConnection>
-    <url>https://forge.onehippo.org/svn/hippo-pojo-bind/hippo-pojo-bind/trunk</url>
+    <connection>scm:svn:https://forge.onehippo.org/svn/hippo-pojo-bind/tags/hippo-pojo-bind-jcr-1.1.5</connection>
+    <developerConnection>scm:svn:https://forge.onehippo.org/svn/hippo-pojo-bind/tags/hippo-pojo-bind-jcr-1.1.5</developerConnection>
+    <url>https://forge.onehippo.org/svn/hippo-pojo-bind/tags/hippo-pojo-bind-jcr-1.1.5</url>
   </scm>
 
   <issueManagement>
