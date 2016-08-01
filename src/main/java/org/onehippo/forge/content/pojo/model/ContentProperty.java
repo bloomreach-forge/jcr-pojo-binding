@@ -117,12 +117,20 @@ public class ContentProperty extends ContentItem {
     }
 
     /**
-     * Sets multiplicity of its value(s).
+     * Gets multiplicity of its value(s).
      * @return true if this content property can have multiple values.
      */
     @XmlElement(name = "multiple")
     public boolean isMultiple() {
         return multiple;
+    }
+
+    /**
+     * Sets multiplicity of its value(s).
+     * @param multiple multiplicity of its value(s)
+     */
+    public void setMultiple(boolean multiple) {
+        this.multiple = multiple;
     }
 
     /**

@@ -33,6 +33,13 @@
       </table>
     </section>
     <section name="Release Notes">
+      <subsection name="1.1.5">
+        <ul>
+          <li>
+            Bug fix: Unmarshalling from XML to ContentNode failed because of missing <code>ContentProperty#setMultiple(boolean)</code>.
+          </li>
+        </ul>
+      </subsection>
       <subsection name="1.1.4">
         <ul>
           <li>
