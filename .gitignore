@@ -1,1 +1,6 @@
-/*.log
+*.log
+*.iml
+.idea
+target
+storage
+overlays
