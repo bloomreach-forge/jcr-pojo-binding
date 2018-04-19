@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -64,6 +64,11 @@ public class ContentNode extends ContentItem {
      * Child content nodes embedded in this content node.
      */
     private List<ContentNode> nodes;
+
+    /**
+     * Transient set of compound node names that may be present for the document involved
+     */
+    private Set<String> compoundNodeNames;
 
     /**
      * Default constructor for deserialization.
@@ -325,6 +330,22 @@ public class ContentNode extends ContentItem {
     }
 
     /**
+     * Get a set of node names of compounds that may be present for the document involved.
+     */
+    @JsonIgnore
+    @XmlTransient
+    public Set<String> getCompoundNodeNames() {
+        return compoundNodeNames;
+    }
+
+    /**
+     * Set a list of node names of compounds that may be present for the document involved.
+     */
+    public void setCompoundNodeNames(Set<String> compoundNodeNames) {
+        this.compoundNodeNames = compoundNodeNames;
+    }
+
+    /**
      * Queries and returns single content node from this base content node by
      * the <a href="https://commons.apache.org/proper/commons-jxpath/">JXPath</a> expression ({@code jxpath}).
      * @param jxpath <a href="https://commons.apache.org/proper/commons-jxpath/">JXPath</a> expression
@@ -383,6 +404,7 @@ public class ContentNode extends ContentItem {
     public List<?> queryObjectsByXPath(String jxpath) {
         return createJXPathContext().selectNodes(jxpath);
     }
+
 
     /**
      * Creates and returns a {@link JXPathContext} instance used by default.
@@ -468,7 +490,12 @@ public class ContentNode extends ContentItem {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("name", getName()).append("primaryType", primaryType)
-                .append("mixinTypes", mixinTypes).append("properties", properties).append("nodes", nodes).toString();
+        return new ToStringBuilder(this)
+                .append("name", getName())
+                .append("primaryType", primaryType)
+                .append("mixinTypes", mixinTypes)
+                .append("properties", properties)
+                .append("nodes", nodes)
+                .append("compoundNodeNames", compoundNodeNames).toString();
     }
 }
