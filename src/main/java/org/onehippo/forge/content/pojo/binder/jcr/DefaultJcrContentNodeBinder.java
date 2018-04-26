@@ -110,7 +110,7 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
 
             bindProperties(jcrDataNode, contentNode, itemFilter, valueConverter);
 
-            removeSubNodes(jcrDataNode);
+            removeSubNodes(jcrDataNode, contentNode, itemFilter);
 
             addSubNodes(jcrDataNode, contentNode, itemFilter, valueConverter);
 
@@ -178,14 +178,29 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
     }
 
     /**
-     * Remove subnodes from the JCR node, based on compound node names.
+     * Remove subnodes from the JCR node, when binding.
      */
-    protected void removeSubNodes(final Node jcrDataNode) throws RepositoryException {
+    protected void removeSubNodes(final Node jcrDataNode, final ContentNode contentNode, final ContentNodeBindingItemFilter<ContentItem> itemFilter) throws RepositoryException {
 
-        final Set<String> subNodeNames = getCompoundNodeNames(jcrDataNode);
-        final String[] nameGlobs = subNodeNames.toArray(new String[subNodeNames.size()]);
-        for (NodeIterator nodeIt = jcrDataNode.getNodes(nameGlobs); nodeIt.hasNext(); ) {
-            nodeIt.nextNode().remove();
+        if (jcrDataNode.isNodeType(HippoNodeType.NT_DOCUMENT) && jcrDataNode.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+            // remove compounds of a document
+            final Set<String> subNodeNames = getCompoundNodeNames(jcrDataNode);
+            final String[] nameGlobs = subNodeNames.toArray(new String[subNodeNames.size()]);
+            for (NodeIterator nodeIt = jcrDataNode.getNodes(nameGlobs); nodeIt.hasNext(); ) {
+                nodeIt.nextNode().remove();
+            }
+        }
+        else {
+            // remove subnodes based on the POJO's subnodes
+            for (ContentNode childContentNode : contentNode.getNodes()) {
+                if (itemFilter != null && !itemFilter.accept(childContentNode)) {
+                    continue;
+                }
+
+                for (Node sameNameTypeChildNode : findChildNodesByNameAndType(jcrDataNode, childContentNode)) {
+                    sameNameTypeChildNode.remove();
+                }
+            }
         }
     }
 
@@ -256,6 +271,21 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
                 node.isNodeType(HippoStdNodeType.NT_HTML) ||
                 node.isNodeType(NT_IMAGE_LINK);
 
+    }
+
+    protected List<Node> findChildNodesByNameAndType(final Node base, final ContentNode contentNode)
+            throws RepositoryException {
+        final List<Node> childNodes = new LinkedList<>();
+
+        for (NodeIterator nodeIt = base.getNodes(contentNode.getName()); nodeIt.hasNext();) {
+            final Node childNode = nodeIt.nextNode();
+
+            if (childNode.getPrimaryNodeType().getName().equals(contentNode.getPrimaryType())) {
+                childNodes.add(childNode);
+            }
+        }
+
+        return childNodes;
     }
 
     protected boolean isProtectedProperty(final Property property) throws RepositoryException {
