@@ -57,12 +57,17 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
 
     // No constant in the product until 12.3
     private static final String NT_IMAGE_LINK = "hippogallerypicker:imagelink";
+    private boolean isMergingOnly;
 
     /**
      * Default constructor.
      */
     public DefaultJcrContentNodeBinder() {
         super();
+    }
+    
+    public void setIsMergingOnly(boolean flag){
+    	this.isMergingOnly = flag;
     }
 
     /**
@@ -110,14 +115,19 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
 
             bindProperties(jcrDataNode, contentNode, itemFilter, valueConverter);
 
-            removeSubNodes(jcrDataNode, contentNode, itemFilter);
-
-            addSubNodes(jcrDataNode, contentNode, itemFilter, valueConverter);
+             if(isMergingOnly) {
+            	mergeSubNodes(jcrDataNode, contentNode, itemFilter, valueConverter);
+            } else {
+            	removeSubNodes(jcrDataNode, contentNode, itemFilter);
+                addSubNodes(jcrDataNode, contentNode, itemFilter, valueConverter);
+            }
 
         } catch (RepositoryException e) {
             throw new ContentNodeBindingException(e.toString(), e);
         }
     }
+    
+    
 
     /**
      * Set the properties on the JCR node based on the POJO.
@@ -175,6 +185,33 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
                 }
             }
         }
+    }
+    
+    /**
+     * Traverse incoming ContentNode recursively and update the JCR node 
+     */
+    protected void mergeSubNodes(final Node jcrDataNode, final ContentNode contentNode, final ContentNodeBindingItemFilter<ContentItem> itemFilter
+    							 ,final ContentValueConverter<Value> valueConverter) throws RepositoryException {
+
+            Node childJcrNode = null;
+            
+            List<ContentNode> childContentNodes = contentNode.getNodes();
+            
+            if(childContentNodes!=null & !childContentNodes.isEmpty()) {
+	            for(ContentNode childContentNode : childContentNodes) {
+	            	
+	            	if (itemFilter != null && !itemFilter.accept(childContentNode)) {
+	                    continue;
+	                }
+	            	
+	            	if(!jcrDataNode.hasNode(childContentNode.getName())){
+	            		childJcrNode = jcrDataNode.addNode(childContentNode.getName(), childContentNode.getPrimaryType());
+	                } else {
+	                	childJcrNode = jcrDataNode.getNode(childContentNode.getName());
+	                }
+	            	bind(childJcrNode, childContentNode, itemFilter, valueConverter);
+	            }
+            }
     }
 
     /**
