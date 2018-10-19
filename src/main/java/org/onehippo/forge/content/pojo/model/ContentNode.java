@@ -61,6 +61,11 @@ public class ContentNode extends ContentItem {
     private List<ContentProperty> properties;
 
     /**
+     * Parent content node embdding this content node.
+     */
+    private ContentNode parent;
+
+    /**
      * Child content nodes embedded in this content node.
      */
     private List<ContentNode> nodes;
@@ -276,6 +281,12 @@ public class ContentNode extends ContentItem {
         setProperty(prop);
     }
 
+    @XmlTransient
+    @JsonIgnore
+    public ContentNode getParent() {
+        return parent;
+    }
+
     /**
      * Returns a non-null child content nodes.
      * @return a non-null child content nodes
@@ -288,6 +299,10 @@ public class ContentNode extends ContentItem {
         }
 
         return nodes;
+    }
+
+    public boolean hasAnyNode() {
+        return (nodes != null && !nodes.isEmpty());
     }
 
     /**
@@ -321,7 +336,37 @@ public class ContentNode extends ContentItem {
      * @param node child content node
      */
     public void addNode(ContentNode node) {
-        getNodes().add(node);
+        if (nodes == null) {
+            nodes = new LinkedList<>();
+        }
+
+        nodes.add(node);
+        node.parent = this;
+    }
+
+    /**
+     * Return the index of this content node within the ordered set of its
+     * same-name sibling content nodes.Note that the index always starts at 1 (not 0).
+     * As a result, for content nodes that do not have same-name-siblings, this method will always return 1.
+     * @return The index of this content node within the ordered set of its same-name
+     *         sibling content nodes.
+     */
+    @XmlTransient
+    @JsonIgnore
+    public int getIndex() {
+        if (parent != null && parent.hasAnyNode()) {
+            int index = 0;
+
+            for (ContentNode sibling : parent.getNodes()) {
+                if (sibling == this) {
+                    return ++index;
+                } else if (getName().equals(sibling.getName())) {
+                    ++index;
+                }
+            }
+        }
+
+        return 1;
     }
 
     /**

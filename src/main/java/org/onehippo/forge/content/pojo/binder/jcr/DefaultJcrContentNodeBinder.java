@@ -33,6 +33,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.forge.content.pojo.binder.ContentNodeBinder;
 import org.onehippo.forge.content.pojo.binder.ContentNodeBindingException;
 import org.onehippo.forge.content.pojo.binder.ContentNodeBindingItemFilter;
+import org.onehippo.forge.content.pojo.binder.ContentNodeBindingTargetSelector;
 import org.onehippo.forge.content.pojo.common.ContentValueConverter;
 import org.onehippo.forge.content.pojo.common.jcr.DefaultJcrContentValueConverter;
 import org.onehippo.forge.content.pojo.model.BinaryValue;
@@ -64,6 +65,13 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
     private boolean subNodesMergingOnly;
 
     /**
+     * {@link ContentNodeBindingTargetSelector} to use when finding the target physical JCR subnodes when merging
+     * in {@link #mergeSubNodes(Node, ContentNode, ContentNodeBindingItemFilter, ContentValueConverter)}
+     * which is used only when {@link #isSubNodesMergingOnly()} returns {@code true}.
+     */
+    private ContentNodeBindingTargetSelector<Node> contentNodeBindingTargetSelector;
+
+    /**
      * Default constructor.
      */
     public DefaultJcrContentNodeBinder() {
@@ -88,6 +96,19 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
      */
     public void setSubNodesMergingOnly(boolean subNodesMergingOnly) {
         this.subNodesMergingOnly = subNodesMergingOnly;
+    }
+
+    public ContentNodeBindingTargetSelector<Node> getContentNodeBindingTargetSelector() {
+        if (contentNodeBindingTargetSelector == null) {
+            contentNodeBindingTargetSelector = new DefaultContentNodeBindingTargetNodeSelector();
+        }
+
+        return contentNodeBindingTargetSelector;
+    }
+
+    public void setContentNodeBindingTargetSelector(
+            ContentNodeBindingTargetSelector<Node> contentNodeBindingTargetSelector) {
+        this.contentNodeBindingTargetSelector = contentNodeBindingTargetSelector;
     }
 
     @Override
@@ -257,7 +278,12 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
             if (!jcrDataNode.hasNode(childContentNode.getName())) {
                 childJcrNode = jcrDataNode.addNode(childContentNode.getName(), childContentNode.getPrimaryType());
             } else {
-                childJcrNode = jcrDataNode.getNode(childContentNode.getName());
+                childJcrNode = getContentNodeBindingTargetSelector().select(childContentNode, jcrDataNode);
+
+                if (childJcrNode == null) {
+                    // Note: no merging is needed for this if ContentNodeBindingTargetSelector returns null target node.
+                    continue;
+                }
             }
 
             bind(childJcrNode, childContentNode, itemFilter, valueConverter);
