@@ -38,11 +38,22 @@
       </table>
     </section>
     <section name="Release Notes">
+      <subsection name="1.3.0">
+        <p class="smallinfo">Release Date: TBD</p>
+        <ul>
+          <li>
+            <a href="https://issues.onehippo.com/browse/HIPFORGE-188">HIPFORGE-158</a>:
+            Fix a bug in 1.2.0 where <code>DefaultJcrContentNodeBinder#bind</code> failed for images and assets because
+            their autocreated subnodes (thumbnail, resource) were not removed first any more, before re-adding them
+            from POJO.
+          </li>
+        </ul>
+      </subsection>
       <subsection name="1.2.0">
         <p class="smallinfo">Release Date: 2 May 2018</p>
         <ul>
           <li>
-            <a href="https://issues.onehippo.com/browse/HIPFORGE-154" target="_blank">HIPFORGE-154</a>:
+            <a href="https://issues.onehippo.com/browse/HIPFORGE-154">HIPFORGE-154</a>:
             <code>DefaultJcrContentNodeBinder#bind</code> will now delete all compound subnodes when the binding
             concerns a document. This replaces deletion of subnodes based on the incoming POJO, which fails if none are
             left in a multiple or optional compound structure.

@@ -222,24 +222,21 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
      */
     protected void removeSubNodes(final Node jcrDataNode, final ContentNode contentNode, final ContentNodeBindingItemFilter<ContentItem> itemFilter) throws RepositoryException {
 
-        if (jcrDataNode.isNodeType(HippoNodeType.NT_DOCUMENT) && jcrDataNode.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-            // remove compounds of a document
-            final Set<String> subNodeNames = getCompoundNodeNames(jcrDataNode);
-            final String[] nameGlobs = subNodeNames.toArray(new String[subNodeNames.size()]);
-            for (NodeIterator nodeIt = jcrDataNode.getNodes(nameGlobs); nodeIt.hasNext(); ) {
-                nodeIt.nextNode().remove();
-            }
+        // remove all compounds, to not leave some in case of a multiple, that has deletions in the POJO
+        final Set<String> subNodeNames = getCompoundNodeNames(jcrDataNode);
+        final String[] nameGlobs = subNodeNames.toArray(new String[subNodeNames.size()]);
+        for (NodeIterator nodeIt = jcrDataNode.getNodes(nameGlobs); nodeIt.hasNext(); ) {
+            nodeIt.nextNode().remove();
         }
-        else {
-            // remove subnodes based on the POJO's subnodes
-            for (ContentNode childContentNode : contentNode.getNodes()) {
-                if (itemFilter != null && !itemFilter.accept(childContentNode)) {
-                    continue;
-                }
 
-                for (Node sameNameTypeChildNode : findChildNodesByNameAndType(jcrDataNode, childContentNode)) {
-                    sameNameTypeChildNode.remove();
-                }
+        // remove subnodes based on the POJO's subnodes
+        for (ContentNode childContentNode : contentNode.getNodes()) {
+            if (itemFilter != null && !itemFilter.accept(childContentNode)) {
+                continue;
+            }
+
+            for (Node sameNameTypeChildNode : findChildNodesByNameAndType(jcrDataNode, childContentNode)) {
+                sameNameTypeChildNode.remove();
             }
         }
     }
