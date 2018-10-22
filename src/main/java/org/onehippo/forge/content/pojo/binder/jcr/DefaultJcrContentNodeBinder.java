@@ -281,8 +281,8 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
                 childJcrNode = getContentNodeBindingTargetSelector().select(childContentNode, jcrDataNode);
 
                 if (childJcrNode == null) {
-                    // Note: no merging is needed for this if ContentNodeBindingTargetSelector returns null target node.
-                    continue;
+                    // Note: there is no target subnode to merge. Let's create a new subnode then.
+                    childJcrNode = jcrDataNode.addNode(childContentNode.getName(), childContentNode.getPrimaryType());
                 }
             }
 

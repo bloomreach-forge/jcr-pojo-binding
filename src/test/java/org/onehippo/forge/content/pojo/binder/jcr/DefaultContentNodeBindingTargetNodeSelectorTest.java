@@ -23,6 +23,7 @@ import org.onehippo.forge.content.pojo.binder.ContentNodeBindingTargetSelector;
 import org.onehippo.forge.content.pojo.model.ContentNode;
 import org.onehippo.repository.mock.MockNode;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
 public class DefaultContentNodeBindingTargetNodeSelectorTest {
@@ -91,7 +92,7 @@ public class DefaultContentNodeBindingTargetNodeSelectorTest {
     }
 
     @Test
-    public void testFallbackCases() throws Exception {
+    public void testNoMergingTarget() throws Exception {
         Node base = rootNode.addNode("document-fallback", "nt:unstructured");
         Node sub1 = base.addNode("subNode1", "nt:unstructured");
         Node sub2 = base.addNode("subNode2", "nt:unstructured");
@@ -100,7 +101,7 @@ public class DefaultContentNodeBindingTargetNodeSelectorTest {
         assertSame(sub1, contentNodeBindingTargetSelector.select(subContentNode1, base));
         assertSame(sub2, contentNodeBindingTargetSelector.select(subContentNode2, base));
         assertSame(sub3, contentNodeBindingTargetSelector.select(subContentNode3_1, base));
-        assertSame(sub3, contentNodeBindingTargetSelector.select(subContentNode3_2, base));
-        assertSame(sub3, contentNodeBindingTargetSelector.select(subContentNode3_3, base));
+        assertNull(contentNodeBindingTargetSelector.select(subContentNode3_2, base));
+        assertNull(contentNodeBindingTargetSelector.select(subContentNode3_3, base));
     }
 }

@@ -53,9 +53,7 @@ public class DefaultContentNodeBindingTargetNodeSelector implements ContentNodeB
                 final List<Node> siblings = collectSiblingNodes(base, contentNode.getName());
 
                 if (contentNodeIndex > siblings.size()) {
-                    // Well... no match found by index here, let's return the default one.
-                    // This is just a default implementation anyway, doing the best...
-                    return targetNode;
+                    return null;
                 }
 
                 return siblings.get(contentNodeIndex - 1);
