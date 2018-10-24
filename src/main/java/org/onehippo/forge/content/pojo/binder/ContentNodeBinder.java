@@ -37,7 +37,7 @@ public interface ContentNodeBinder<D, I, V> extends Serializable {
      * @param source {@link ContentNode} source to bind from.
      * @throws ContentNodeBindingException if content node binding exception occurs
      */
-    public void bind(D dataNode, ContentNode source) throws ContentNodeBindingException;
+    void bind(D dataNode, ContentNode source) throws ContentNodeBindingException;
 
     /**
      * Binds the {@code source} to the {@code dataNode} with the given {@code itemFilter}.
@@ -46,7 +46,7 @@ public interface ContentNodeBinder<D, I, V> extends Serializable {
      * @param itemFilter content item filter
      * @throws ContentNodeBindingException if content node binding exception occurs
      */
-    public void bind(D dataNode, ContentNode source, ContentNodeBindingItemFilter<I> itemFilter)
+    void bind(D dataNode, ContentNode source, ContentNodeBindingItemFilter<I> itemFilter)
             throws ContentNodeBindingException;
 
     /**
@@ -57,7 +57,7 @@ public interface ContentNodeBinder<D, I, V> extends Serializable {
      * @param valueConverter value converter
      * @throws ContentNodeBindingException if content node binding exception occurs
      */
-    public void bind(D dataNode, ContentNode source, ContentNodeBindingItemFilter<I> itemFilter,
+    void bind(D dataNode, ContentNode source, ContentNodeBindingItemFilter<I> itemFilter,
             ContentValueConverter<V> valueConverter) throws ContentNodeBindingException;
 
 }
