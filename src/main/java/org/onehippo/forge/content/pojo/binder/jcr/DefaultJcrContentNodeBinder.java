@@ -28,17 +28,14 @@ import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 
 import org.apache.commons.lang.StringUtils;
-
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
-
 import org.onehippo.forge.content.pojo.binder.ContentNodeBinder;
 import org.onehippo.forge.content.pojo.binder.ContentNodeBindingException;
 import org.onehippo.forge.content.pojo.binder.ContentNodeBindingItemFilter;
-
+import org.onehippo.forge.content.pojo.binder.ContentNodeBindingTargetSelector;
 import org.onehippo.forge.content.pojo.common.ContentValueConverter;
 import org.onehippo.forge.content.pojo.common.jcr.DefaultJcrContentValueConverter;
-
 import org.onehippo.forge.content.pojo.model.BinaryValue;
 import org.onehippo.forge.content.pojo.model.ContentItem;
 import org.onehippo.forge.content.pojo.model.ContentNode;
@@ -59,6 +56,22 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
     private static final String NT_IMAGE_LINK = "hippogallerypicker:imagelink";
 
     /**
+     * Flag whether it should merge subnodes without removing any other existing subnodes.
+     * <p>
+     * The default value is {@code false}, meaning the default behavior is to remove all the existing subnodes
+     * beforehand and add all the subnodes from the {@link ContentNode} afterward, resulting any other subnodes
+     * that do not exist in the input {@link ContentNode} to be removed by default.
+     */
+    private boolean subNodesMergingOnly;
+
+    /**
+     * {@link ContentNodeBindingTargetSelector} to use when finding the target physical JCR subnodes when merging
+     * in {@link #mergeSubNodes(Node, ContentNode, ContentNodeBindingItemFilter, ContentValueConverter)}
+     * which is used only when {@link #isSubNodesMergingOnly()} returns {@code true}.
+     */
+    private ContentNodeBindingTargetSelector<Node> contentNodeBindingTargetSelector;
+
+    /**
      * Default constructor.
      */
     public DefaultJcrContentNodeBinder() {
@@ -66,25 +79,49 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
     }
 
     /**
-     * {@inheritDoc}
+     * Return true if it should merge subnodes without removing any other existing subnodes.
+     * <p>
+     * The default value is {@code false}, meaning the default behavior is to remove all the existing subnodes
+     * beforehand and add all the subnodes from the {@link ContentNode} afterward, resulting any other subnodes
+     * that do not exist in the input {@link ContentNode} to be removed by default.
+     * @return true if it should merge subnodes without removing any other existing subnodes
      */
+    public boolean isSubNodesMergingOnly() {
+        return subNodesMergingOnly;
+    }
+
+    /**
+     * Set flag whether it should merge subnodes without removing any other existing subnodes.
+     * @param subNodesMergingOnly
+     */
+    public void setSubNodesMergingOnly(boolean subNodesMergingOnly) {
+        this.subNodesMergingOnly = subNodesMergingOnly;
+    }
+
+    public ContentNodeBindingTargetSelector<Node> getContentNodeBindingTargetSelector() {
+        if (contentNodeBindingTargetSelector == null) {
+            contentNodeBindingTargetSelector = new DefaultContentNodeBindingTargetNodeSelector();
+        }
+
+        return contentNodeBindingTargetSelector;
+    }
+
+    public void setContentNodeBindingTargetSelector(
+            ContentNodeBindingTargetSelector<Node> contentNodeBindingTargetSelector) {
+        this.contentNodeBindingTargetSelector = contentNodeBindingTargetSelector;
+    }
+
     @Override
     public void bind(Node jcrDataNode, ContentNode contentNode) throws ContentNodeBindingException {
         bind(jcrDataNode, contentNode, null);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void bind(Node jcrDataNode, ContentNode contentNode, ContentNodeBindingItemFilter<ContentItem> itemFilter)
             throws ContentNodeBindingException {
         bind(jcrDataNode, contentNode, itemFilter, null);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void bind(Node jcrDataNode, ContentNode contentNode, ContentNodeBindingItemFilter<ContentItem> itemFilter,
                      ContentValueConverter<Value> valueConverter) throws ContentNodeBindingException {
@@ -110,9 +147,12 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
 
             bindProperties(jcrDataNode, contentNode, itemFilter, valueConverter);
 
-            removeSubNodes(jcrDataNode, contentNode, itemFilter);
-
-            addSubNodes(jcrDataNode, contentNode, itemFilter, valueConverter);
+            if (!isSubNodesMergingOnly()) {
+                removeSubNodes(jcrDataNode, contentNode, itemFilter);
+                addSubNodes(jcrDataNode, contentNode, itemFilter, valueConverter);
+            } else {
+                mergeSubNodes(jcrDataNode, contentNode, itemFilter, valueConverter);
+            }
 
         } catch (RepositoryException e) {
             throw new ContentNodeBindingException(e.toString(), e);
@@ -182,24 +222,21 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
      */
     protected void removeSubNodes(final Node jcrDataNode, final ContentNode contentNode, final ContentNodeBindingItemFilter<ContentItem> itemFilter) throws RepositoryException {
 
-        if (jcrDataNode.isNodeType(HippoNodeType.NT_DOCUMENT) && jcrDataNode.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-            // remove compounds of a document
-            final Set<String> subNodeNames = getCompoundNodeNames(jcrDataNode);
-            final String[] nameGlobs = subNodeNames.toArray(new String[subNodeNames.size()]);
-            for (NodeIterator nodeIt = jcrDataNode.getNodes(nameGlobs); nodeIt.hasNext(); ) {
-                nodeIt.nextNode().remove();
-            }
+        // remove all compounds, to not leave some in case of a multiple, that has deletions in the POJO
+        final Set<String> subNodeNames = getCompoundNodeNames(jcrDataNode);
+        final String[] nameGlobs = subNodeNames.toArray(new String[subNodeNames.size()]);
+        for (NodeIterator nodeIt = jcrDataNode.getNodes(nameGlobs); nodeIt.hasNext(); ) {
+            nodeIt.nextNode().remove();
         }
-        else {
-            // remove subnodes based on the POJO's subnodes
-            for (ContentNode childContentNode : contentNode.getNodes()) {
-                if (itemFilter != null && !itemFilter.accept(childContentNode)) {
-                    continue;
-                }
 
-                for (Node sameNameTypeChildNode : findChildNodesByNameAndType(jcrDataNode, childContentNode)) {
-                    sameNameTypeChildNode.remove();
-                }
+        // remove subnodes based on the POJO's subnodes
+        for (ContentNode childContentNode : contentNode.getNodes()) {
+            if (itemFilter != null && !itemFilter.accept(childContentNode)) {
+                continue;
+            }
+
+            for (Node sameNameTypeChildNode : findChildNodesByNameAndType(jcrDataNode, childContentNode)) {
+                sameNameTypeChildNode.remove();
             }
         }
     }
@@ -215,6 +252,36 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
             }
 
             final Node childJcrNode = jcrDataNode.addNode(childContentNode.getName(), childContentNode.getPrimaryType());
+
+            bind(childJcrNode, childContentNode, itemFilter, valueConverter);
+        }
+    }
+
+    /**
+     * Merge subnodes in the JCR node, based on POJO.
+     */
+    protected void mergeSubNodes(final Node jcrDataNode, final ContentNode contentNode,
+            final ContentNodeBindingItemFilter<ContentItem> itemFilter,
+            final ContentValueConverter<Value> valueConverter) throws RepositoryException {
+
+        Node childJcrNode;
+
+        for (ContentNode childContentNode : contentNode.getNodes()) {
+
+            if (itemFilter != null && !itemFilter.accept(childContentNode)) {
+                continue;
+            }
+
+            if (!jcrDataNode.hasNode(childContentNode.getName())) {
+                childJcrNode = jcrDataNode.addNode(childContentNode.getName(), childContentNode.getPrimaryType());
+            } else {
+                childJcrNode = getContentNodeBindingTargetSelector().select(childContentNode, jcrDataNode);
+
+                if (childJcrNode == null) {
+                    // Note: there is no target subnode to merge. Let's create a new subnode then.
+                    childJcrNode = jcrDataNode.addNode(childContentNode.getName(), childContentNode.getPrimaryType());
+                }
+            }
 
             bind(childJcrNode, childContentNode, itemFilter, valueConverter);
         }

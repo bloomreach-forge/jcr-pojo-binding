@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 package org.onehippo.forge.content.pojo.model;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.StringReader;
 import java.io.StringWriter;
 
@@ -31,6 +29,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 
 public class ContentNodeTest {
 
@@ -192,4 +194,41 @@ public class ContentNodeTest {
         assertEquals(documentContentFromJSON, documentContentFromJaxb);
     }
 
+    @Test
+    public void testContentNodeIndex() throws Exception {
+        ContentNode root = new ContentNode("", "repo:root");
+        assertNull(root.getParent());
+        assertFalse(root.hasAnyNode());
+        assertEquals(1, root.getIndex());
+
+        ContentNode folder1 = new ContentNode("folder1", "nt:folder");
+        ContentNode folder2 = new ContentNode("folder2", "nt:folder");
+        ContentNode folder3_1 = new ContentNode("folder3", "nt:folder");
+        ContentNode folder3_2 = new ContentNode("folder3", "nt:folder");
+        ContentNode folder3_3 = new ContentNode("folder3", "nt:folder");
+        ContentNode folder6 = new ContentNode("folder6", "nt:folder");
+        ContentNode folder7_1 = new ContentNode("folder7", "nt:folder");
+        ContentNode folder7_2 = new ContentNode("folder7", "nt:folder");
+        ContentNode folder9 = new ContentNode("folder9", "nt:folder");
+
+        root.addNode(folder1);
+        root.addNode(folder2);
+        root.addNode(folder3_1);
+        root.addNode(folder3_2);
+        root.addNode(folder3_3);
+        root.addNode(folder6);
+        root.addNode(folder7_1);
+        root.addNode(folder7_2);
+        root.addNode(folder9);
+
+        assertEquals(1, folder1.getIndex());
+        assertEquals(1, folder2.getIndex());
+        assertEquals(1, folder3_1.getIndex());
+        assertEquals(2, folder3_2.getIndex());
+        assertEquals(3, folder3_3.getIndex());
+        assertEquals(1, folder6.getIndex());
+        assertEquals(1, folder7_1.getIndex());
+        assertEquals(2, folder7_2.getIndex());
+        assertEquals(1, folder9.getIndex());
+    }
 }

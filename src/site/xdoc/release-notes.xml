@@ -38,11 +38,33 @@
       </table>
     </section>
     <section name="Release Notes">
+      <subsection name="1.3.0">
+        <p class="smallinfo">Release Date: 24 October 2018</p>
+        <ul>
+          <li>
+            <a href="https://issues.onehippo.com/browse/HIPFORGE-210">HIPFORGE-210</a>:
+            Add <code>DefaultJcrContentNodeBinder#setSubNodesMergingOnly</code> supporting the merge of existing
+            subnodes so their properties are kept if these not present in the incoming data.
+          </li>
+          <li>
+            <a href="https://issues.onehippo.com/browse/HIPFORGE-213">HIPFORGE-213</a>: Bump Jackson2 version from 2.4.5 to 2.8.11.
+          </li>
+          <li>
+            <a href="https://issues.onehippo.com/browse/HIPFORGE-221">HIPFORGE-221</a>: Bump Tika version from 1.11 to 1.19.1.
+          </li>
+          <li>
+            <a href="https://issues.onehippo.com/browse/HIPFORGE-188">HIPFORGE-188</a>:
+            Fix a bug in 1.2.0 where <code>DefaultJcrContentNodeBinder#bind</code> failed for images and assets because
+            their autocreated subnodes (thumbnail, resource) were not removed first any more, before re-adding them
+            from POJO.
+          </li>
+        </ul>
+      </subsection>
       <subsection name="1.2.0">
         <p class="smallinfo">Release Date: 2 May 2018</p>
         <ul>
           <li>
-            <a href="https://issues.onehippo.com/browse/HIPFORGE-154" target="_blank">HIPFORGE-154</a>:
+            <a href="https://issues.onehippo.com/browse/HIPFORGE-154">HIPFORGE-154</a>:
             <code>DefaultJcrContentNodeBinder#bind</code> will now delete all compound subnodes when the binding
             concerns a document. This replaces deletion of subnodes based on the incoming POJO, which fails if none are
             left in a multiple or optional compound structure.
