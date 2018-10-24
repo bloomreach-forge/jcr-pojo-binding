@@ -42,13 +42,10 @@ public class DefaultContentNodeBindingTargetNodeSelector implements ContentNodeB
             }
 
             // Must be >= 1.
-            int contentNodeIndex = contentNode.getIndex();
-
-            Node targetNode = base.getNode(contentNodeName);
-            // targetNode's index must be 1 always as we used #getNode(name) initially.
+            final int contentNodeIndex = contentNode.getIndex();
 
             if (contentNodeIndex == 1) {
-                return targetNode;
+                return base.getNode(contentNodeName);
             } else {
                 final List<Node> siblings = collectSiblingNodes(base, contentNode.getName());
 

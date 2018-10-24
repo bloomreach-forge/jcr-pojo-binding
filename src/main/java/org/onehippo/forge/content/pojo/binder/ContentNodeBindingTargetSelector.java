@@ -28,13 +28,13 @@ public interface ContentNodeBindingTargetSelector<D> {
      * from the given {@code base} physical data node. Or return null if there's no existing target to merge.
      * <p>
      * If this method returns null, it means there's nothing to update and that's not a problem.
-     * @param source {@link ContentNode} source to bind from.
+     * @param contentNode {@link ContentNode} source to bind from.
      * @param base base physical data node from which the target physical data node should be found.
-     *        e.g, a child data node with the same name.
-     * @return a target physical data node (e.g, {@link javax.jcr.Node}) to bind the input {@link ContentNode}.
+     *        e.g. a child data node with the same name as the contentNode.
+     * @return a target physical data node (e.g. {@link javax.jcr.Node}) to bind the input {@link ContentNode}.
      *         Or null if there's no target to merge.
-     * @throws ContentNodeBindingException
+     * @throws ContentNodeBindingException if an error occurs
      */
-    public D select(ContentNode contentNode, D base) throws ContentNodeBindingException;
+    D select(ContentNode contentNode, D base) throws ContentNodeBindingException;
 
 }
