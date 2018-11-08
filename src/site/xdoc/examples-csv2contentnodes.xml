@@ -77,7 +77,7 @@ Title,Introduction,Date,Content
 
         <p>
           The code snippets are excerpts (or slightly simplififed ones) from
-          <a href="https://github.com/onehippo-forge/jcr-pojo-binding/tree/master/src/test/java/org/onehippo/forge/content/pojo/model/CsvConvertToContentNodesTest.java">CsvConvertToContentNodesTest.java</a>.
+          <a href="https://github.com/bloomreach-forge/jcr-pojo-binding/tree/master/src/test/java/org/onehippo/forge/content/pojo/model/CsvConvertToContentNodesTest.java">CsvConvertToContentNodesTest.java</a>.
         </p>
 
         <div class="brush: java">

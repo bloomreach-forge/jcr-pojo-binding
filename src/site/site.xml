@@ -14,18 +14,18 @@
 <project name="Hippo JCR POJO Binding Documentation">
 
   <skin>
-    <groupId>org.onehippo.forge.mavenskin</groupId>
+    <groupId>org.bloomreach.forge.mavenskin</groupId>
     <artifactId>forge-maven-skin</artifactId>
-    <version>2.0.1</version>
+    <version>3.0.1</version>
   </skin>
 
   <custom>
-    <hippoSkin>
+    <bloomreach>
       <!-- Add a 'Fork me on GitHub' ribbon  -->
       <gitHub>
-        <projectId>onehippo-forge/jcr-pojo-binding</projectId>
+        <projectId>bloomreach-forge/jcr-pojo-binding</projectId>
       </gitHub>
-    </hippoSkin>
+    </bloomreach>
   </custom>
 
   <body>
