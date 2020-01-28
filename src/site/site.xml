@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
   <!--
-    Copyright 2015 Hippo Licensed under the Apache License, Version 2.0
+    Copyright 2015-2020 Hippo Licensed under the Apache License, Version 2.0
     (the "License"); you may not use this file except in compliance with
     the License. You may obtain a copy of the License at
 
@@ -16,7 +16,7 @@
   <skin>
     <groupId>org.bloomreach.forge.mavenskin</groupId>
     <artifactId>forge-maven-skin</artifactId>
-    <version>3.0.1</version>
+    <version>3.1.1</version>
   </skin>
 
   <custom>
