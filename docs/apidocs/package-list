@@ -1,0 +1,9 @@
+org.onehippo.forge.content.pojo.binder
+org.onehippo.forge.content.pojo.binder.jcr
+org.onehippo.forge.content.pojo.common
+org.onehippo.forge.content.pojo.common.jcr
+org.onehippo.forge.content.pojo.common.util
+org.onehippo.forge.content.pojo.mapper
+org.onehippo.forge.content.pojo.mapper.jcr
+org.onehippo.forge.content.pojo.mapper.jcr.hippo
+org.onehippo.forge.content.pojo.model
