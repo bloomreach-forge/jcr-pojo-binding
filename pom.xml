@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -30,43 +30,36 @@
     <project.build.javaVersion>1.7</project.build.javaVersion>
 
     <javax.jcr.version>2.0</javax.jcr.version>
-    <jackrabbit.version>2.10.1</jackrabbit.version>
+    <jackrabbit.version>2.18.5</jackrabbit.version>
     <hippo.repository.version>3.1.0</hippo.repository.version>
-    <jackson2.version>2.8.11</jackson2.version>
-    <tika.version>1.20</tika.version>
+    <jackson2.version>2.9.10.4</jackson2.version>
+    <tika.version>1.22</tika.version>
     <commons-lang.version>2.6</commons-lang.version>
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-jxpath.version>1.3</commons-jxpath.version>
-    <commons-vfs2.version>2.0</commons-vfs2.version>
-    <commons-io.version>2.4</commons-io.version>
-    <commons.csv.version>1.2</commons.csv.version>
+    <commons-vfs2.version>2.6.0</commons-vfs2.version>
+    <commons-io.version>2.7</commons-io.version>
+    <commons.csv.version>1.8</commons.csv.version>
 
-    <lib.junit.version>4.8.2</lib.junit.version>
-    <lib.easymock.version>3.0</lib.easymock.version>
-    <lib.slf4j.version>1.7.6</lib.slf4j.version>
+    <lib.junit.version>4.13</lib.junit.version>
+    <lib.easymock.version>4.2</lib.easymock.version>
+    <lib.slf4j.version>1.7.30</lib.slf4j.version>
     <lib.log4j.version>1.2.17</lib.log4j.version>
 
-    <plugin.compiler.version>3.1</plugin.compiler.version>
-    <plugin.clean.version>2.5</plugin.clean.version>
-    <plugin.deploy.version>2.8.1</plugin.deploy.version>
-    <plugin.install.version>2.5.1</plugin.install.version>
-    <plugin.jar.version>2.4</plugin.jar.version>
-    <plugin.javadoc.version>2.9.1</plugin.javadoc.version>
-    <plugin.jxr.version>2.3</plugin.jxr.version>
-    <plugin.pmd.version>3.1</plugin.pmd.version>
-    <plugin.project-info-reports.version>2.7</plugin.project-info-reports.version>
-    <plugin.release.version>2.5</plugin.release.version>
-    <plugin.resources.version>2.6</plugin.resources.version>
-    <plugin.site.version>3.6</plugin.site.version>
-    <plugin.source.version>2.2.1</plugin.source.version>
-    <plugin.surefire.version>2.17</plugin.surefire.version>
-    <plugin.surefire-report.version>2.17</plugin.surefire-report.version>
-
-    <plugin.checkstyle.version>2.6</plugin.checkstyle.version>
-    <plugin.cobertura.version>2.4</plugin.cobertura.version>
-    <plugin.findbugs.version>2.3.2</plugin.findbugs.version>
-
-    <extension.wagon-svn.version>1.9</extension.wagon-svn.version>
+    <plugin.compiler.version>3.8.1</plugin.compiler.version>
+    <plugin.clean.version>3.1.0</plugin.clean.version>
+    <plugin.deploy.version>2.8.2</plugin.deploy.version>
+    <plugin.install.version>2.5.2</plugin.install.version>
+    <plugin.jar.version>3.2.0</plugin.jar.version>
+    <plugin.javadoc.version>3.2.0</plugin.javadoc.version>
+    <plugin.jxr.version>3.0.0</plugin.jxr.version>
+    <plugin.pmd.version>3.13.0</plugin.pmd.version>
+    <plugin.project-info-reports.version>3.1.0</plugin.project-info-reports.version>
+    <plugin.resources.version>3.1.0</plugin.resources.version>
+    <plugin.site.version>3.9.0</plugin.site.version>
+    <plugin.source.version>3.2.1</plugin.source.version>
+    <plugin.surefire.version>2.22.2</plugin.surefire.version>
+    <plugin.surefire-report.version>2.22.2</plugin.surefire-report.version>
 
   </properties>
 
