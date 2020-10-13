@@ -41,7 +41,7 @@
     <commons-io.version>2.7</commons-io.version>
     <commons.csv.version>1.8</commons.csv.version>
 
-    <lib.junit.version>4.13</lib.junit.version>
+    <lib.junit.version>4.13.1</lib.junit.version>
     <lib.easymock.version>4.2</lib.easymock.version>
 
     <plugin.compiler.version>3.8.1</plugin.compiler.version>
