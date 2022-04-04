@@ -32,7 +32,7 @@
     <javax.jcr.version>2.0</javax.jcr.version>
     <jackrabbit.version>2.18.5</jackrabbit.version>
     <hippo.repository.version>3.1.0</hippo.repository.version>
-    <jackson2.version>2.9.10.8</jackson2.version>
+    <jackson2.version>2.12.6.1</jackson2.version>
     <tika.version>1.22</tika.version>
     <commons-lang.version>2.6</commons-lang.version>
     <commons-collections.version>3.2.2</commons-collections.version>
