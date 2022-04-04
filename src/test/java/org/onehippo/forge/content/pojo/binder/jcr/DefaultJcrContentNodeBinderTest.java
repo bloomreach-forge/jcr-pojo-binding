@@ -26,8 +26,10 @@ import javax.jcr.Node;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.util.ISO8601;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.forge.content.pojo.common.jcr.BaseHippoJcrContentNodeTest;
 import org.onehippo.forge.content.pojo.model.ContentNode;
@@ -64,7 +66,7 @@ public class DefaultJcrContentNodeBinderTest extends BaseHippoJcrContentNodeTest
     @Test
     public void testBindNewsDocument() throws Exception {
         MockNode newsFolderNode = getRootNode().getNode(StringUtils.removeStart(NEWS_DOC_FOLDER_PATH, "/"));
-        Node handle = createHippoDocumentHandleNode(newsFolderNode, "news-harvest", "News Harvest", "en");
+        Node handle = createHippoDocumentHandleNode(newsFolderNode, "news-harvest", "News Harvest");
         binder.bind(handle, newsContentNode);
 
         assertEquals("news-harvest", handle.getName());
@@ -72,13 +74,8 @@ public class DefaultJcrContentNodeBinderTest extends BaseHippoJcrContentNodeTest
         assertTrue(handle.isNodeType("mix:referenceable"));
         assertTrue(handle.isNodeType("hippo:translated"));
 
-        assertTrue(handle.hasNode("hippo:translation"));
-        Node translationNode = handle.getNode("hippo:translation");
-        assertEquals("hippo:translation", translationNode.getPrimaryNodeType().getName());
-        assertEquals("en", translationNode.getProperty("hippo:language").getString());
-        assertFalse(translationNode.getProperty("hippo:language").isMultiple());
-        assertEquals("News Harvest", translationNode.getProperty("hippo:message").getString());
-        assertFalse(translationNode.getProperty("hippo:message").isMultiple());
+        assertTrue(handle.isNodeType(HippoNodeType.NT_NAMED));
+        assertEquals("News Harvest", handle.getProperty(HippoNodeType.HIPPO_NAME).getString());
 
         assertTrue(handle.hasNode(handle.getName()));
         Node variant = handle.getNode(handle.getName());

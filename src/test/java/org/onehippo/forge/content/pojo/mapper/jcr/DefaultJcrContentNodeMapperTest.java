@@ -42,10 +42,10 @@ import org.slf4j.LoggerFactory;
 
 public class DefaultJcrContentNodeMapperTest extends BaseHippoJcrContentNodeTest {
 
-    private static Logger log = LoggerFactory.getLogger(DefaultJcrContentNodeMapperTest.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultJcrContentNodeMapperTest.class);
 
     private DefaultJcrContentNodeMapper mapper;
-    private ContentNodeMappingItemFilter<Item> nonLiveVariantNodeFilter = new DocumentVariantNodeMappingFilter(HippoStdNodeType.UNPUBLISHED);
+    private final ContentNodeMappingItemFilter<Item> nonLiveVariantNodeFilter = new DocumentVariantNodeMappingFilter(HippoStdNodeType.UNPUBLISHED);
 
     @Before
     public void setUp() throws Exception {
@@ -74,13 +74,8 @@ public class DefaultJcrContentNodeMapperTest extends BaseHippoJcrContentNodeTest
         ContentNode handleContentNode = mapper.map(handleNode);
         assertEquals(HippoNodeType.NT_HANDLE, handleContentNode.getPrimaryType());
 
-        ContentNode translationContentNode = handleContentNode.getNode(HippoNodeType.HIPPO_TRANSLATION);
-        assertEquals(HippoNodeType.NT_TRANSLATION, translationContentNode.getPrimaryType());
-        assertEquals("en", translationContentNode.getProperty(HippoNodeType.HIPPO_LANGUAGE).getValue());
-        assertEquals("News 1", translationContentNode.getProperty(HippoNodeType.HIPPO_MESSAGE).getValue());
-
-        assertEquals(translationContentNode,
-                handleContentNode.queryObjectByXPath("nodes[@primaryType='" + HippoNodeType.NT_TRANSLATION + "']"));
+        assertTrue(handleContentNode.getMixinTypes().contains(HippoNodeType.NT_NAMED));
+        assertEquals("News 1", handleContentNode.getProperty(HippoNodeType.HIPPO_NAME).getValue());
 
         List<?> variantNodeObjects = handleContentNode
                 .queryObjectsByXPath("nodes[properties[@itemName='hippostd:state']]");
@@ -123,18 +118,14 @@ public class DefaultJcrContentNodeMapperTest extends BaseHippoJcrContentNodeTest
         assertTrue(folderContentNode.getProperty("hippostd:foldertype").getValues().contains("new-translated-folder"));
         assertTrue(folderContentNode.getProperty("hippostd:foldertype").getValues().contains("new-document"));
 
-        ContentNode translationContentNode = folderContentNode.getNode(HippoNodeType.HIPPO_TRANSLATION);
-        assertEquals(HippoNodeType.NT_TRANSLATION, translationContentNode.getPrimaryType());
-        assertEquals("en", translationContentNode.getProperty(HippoNodeType.HIPPO_LANGUAGE).getValue());
-        assertEquals("2015", translationContentNode.getProperty(HippoNodeType.HIPPO_MESSAGE).getValue());
+        assertTrue(folderContentNode.getMixinTypes().contains(HippoNodeType.NT_NAMED));
+        assertEquals("2015", folderContentNode.getProperty(HippoNodeType.HIPPO_NAME).getValue());
 
         ContentNode handleContentNode = folderContentNode.getNode("news1");
         assertEquals(HippoNodeType.NT_HANDLE, handleContentNode.getPrimaryType());
 
-        translationContentNode = handleContentNode.getNode(HippoNodeType.HIPPO_TRANSLATION);
-        assertEquals(HippoNodeType.NT_TRANSLATION, translationContentNode.getPrimaryType());
-        assertEquals("en", translationContentNode.getProperty(HippoNodeType.HIPPO_LANGUAGE).getValue());
-        assertEquals("News 1", translationContentNode.getProperty(HippoNodeType.HIPPO_MESSAGE).getValue());
+        assertTrue(handleContentNode.getMixinTypes().contains(HippoNodeType.NT_NAMED));
+        assertEquals("News 1", handleContentNode.getProperty(HippoNodeType.HIPPO_NAME).getValue());
 
         List<?> variantNodeObjects = handleContentNode
                 .queryObjectsByXPath("nodes[properties[@itemName='hippostd:state']]");
