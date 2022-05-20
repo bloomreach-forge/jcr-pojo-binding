@@ -66,15 +66,14 @@ public class BaseHippoJcrContentNodeTest {
     public void setUp() throws Exception {
         rootNode = MockNode.root();
 
-        MockNode contentNode = createHippoFolderNode(rootNode, "content", null, null);
+        MockNode contentNode = createHippoFolderNode(rootNode, "content", null);
 
         newsImageBinary = new MockBinary(new ByteArrayInputStream(new byte[0]));
 
-        MockNode galleryNode = createHippoGalleryFolderNode(contentNode, "gallery", null, null);
-        MockNode myhippoprojectGalleryNode = createHippoGalleryFolderNode(galleryNode, MY_HIPPO_PROJECT_NS_PREFIX, null,
-                null);
-        MockNode newsGalleryNode = createHippoGalleryFolderNode(myhippoprojectGalleryNode, "news", "News", "en");
-        MockNode newsGallery2015Node = createHippoGalleryFolderNode(newsGalleryNode, "2015", "2015", "en");
+        MockNode galleryNode = createHippoGalleryFolderNode(contentNode, "gallery", null);
+        MockNode myhippoprojectGalleryNode = createHippoGalleryFolderNode(galleryNode, MY_HIPPO_PROJECT_NS_PREFIX, null);
+        MockNode newsGalleryNode = createHippoGalleryFolderNode(myhippoprojectGalleryNode, "news", "News");
+        MockNode newsGallery2015Node = createHippoGalleryFolderNode(newsGalleryNode, "2015", "2015");
         MockNode newsImageSetHandleNode = createHippoGalleryHandleNode(newsGallery2015Node, "news-image-1.jpg");
         MockNode newsImageSetNode = createHippoGalleryImageSetNode(newsImageSetHandleNode);
         MockNode newsImageThumbnailNode = createHippoGalleryImageNode(newsImageSetNode, "thumbnail", "image/jpeg",
@@ -82,11 +81,11 @@ public class BaseHippoJcrContentNodeTest {
         MockNode newsImageOriginalNode = createHippoGalleryImageNode(newsImageSetNode, "original", "image/jpeg",
                 newsImageBinary, 10, 10);
 
-        MockNode documentsNode = createHippoFolderNode(contentNode, "documents", null, null);
-        MockNode myhippoprojectNode = createHippoFolderNode(documentsNode, MY_HIPPO_PROJECT_NS_PREFIX, null, null);
-        MockNode newsNode = createHippoFolderNode(myhippoprojectNode, "news", "News", "en");
-        MockNode newsFolder2015Node = createHippoFolderNode(newsNode, "2015", "2015", "en");
-        MockNode newsArticleHandleNode = createHippoDocumentHandleNode(newsFolder2015Node, "news1", "News 1", "en");
+        MockNode documentsNode = createHippoFolderNode(contentNode, "documents", null);
+        MockNode myhippoprojectNode = createHippoFolderNode(documentsNode, MY_HIPPO_PROJECT_NS_PREFIX, null);
+        MockNode newsNode = createHippoFolderNode(myhippoprojectNode, "news", "News");
+        MockNode newsFolder2015Node = createHippoFolderNode(newsNode, "2015", "2015");
+        MockNode newsArticleHandleNode = createHippoDocumentHandleNode(newsFolder2015Node, "news1", "News 1");
 
         MockNode newsArticleLiveNode = createHippoDocumentVariantNode(newsArticleHandleNode, NEWS_NODE_TYPE,
                 HippoStdNodeType.PUBLISHED);
@@ -108,18 +107,15 @@ public class BaseHippoJcrContentNodeTest {
         }
     }
 
-    protected MockNode createHippoGalleryFolderNode(MockNode baseNode, String name, String translationName,
-            String translationLanguage) throws Exception {
+    protected MockNode createHippoGalleryFolderNode(MockNode baseNode, String name, String displayName) throws Exception {
         MockNode galleryFolderNode = baseNode.addNode(name, "hippogallery:stdImageGallery");
         galleryFolderNode.addMixin("mix:referenceable");
         galleryFolderNode.setProperty("hippostd:foldertype", new String[] { "new-image-folder" });
         galleryFolderNode.setProperty("hippostd:gallerytype", new String[] { "hippogallery:imageset" });
 
-        if (translationName != null) {
-            MockNode translationNode = galleryFolderNode.addNode(HippoNodeType.HIPPO_TRANSLATION,
-                    HippoNodeType.NT_TRANSLATION);
-            translationNode.setProperty(HippoNodeType.HIPPO_LANGUAGE, translationLanguage);
-            translationNode.setProperty(HippoNodeType.HIPPO_MESSAGE, translationName);
+        if (displayName != null) {
+            galleryFolderNode.addMixin(HippoNodeType.NT_NAMED);
+            galleryFolderNode.setProperty(HippoNodeType.HIPPO_NAME, displayName);
         }
 
         return galleryFolderNode;
@@ -149,34 +145,27 @@ public class BaseHippoJcrContentNodeTest {
         return imageNode;
     }
 
-    protected MockNode createHippoFolderNode(MockNode baseNode, String name, String translationName,
-            String translationLanguage) throws Exception {
+    protected MockNode createHippoFolderNode(MockNode baseNode, String name, String displayName) throws Exception {
         MockNode folderNode = baseNode.addNode(name, HippoStdNodeType.NT_FOLDER);
         folderNode.addMixin("hippo:translated");
         folderNode.addMixin("mix:referenceable");
         folderNode.setProperty("hippostd:foldertype", new String[] { "new-translated-folder", "new-document" });
 
-        if (translationName != null) {
-            MockNode translationNode = folderNode.addNode(HippoNodeType.HIPPO_TRANSLATION,
-                    HippoNodeType.NT_TRANSLATION);
-            translationNode.setProperty(HippoNodeType.HIPPO_LANGUAGE, translationLanguage);
-            translationNode.setProperty(HippoNodeType.HIPPO_MESSAGE, translationName);
+        if (displayName != null) {
+            folderNode.addMixin(HippoNodeType.NT_NAMED);
+            folderNode.setProperty(HippoNodeType.HIPPO_NAME, displayName);
         }
 
         return folderNode;
     }
 
-    protected MockNode createHippoDocumentHandleNode(MockNode baseNode, String name, String translationName,
-            String translationLanguage) throws Exception {
+    protected MockNode createHippoDocumentHandleNode(MockNode baseNode, String name, String displayName) throws Exception {
         MockNode handleNode = baseNode.addNode(name, HippoNodeType.NT_HANDLE);
         handleNode.addMixin("mix:referenceable");
-        handleNode.addMixin(HippoNodeType.NT_TRANSLATED);
 
-        if (translationName != null) {
-            MockNode translationNode = handleNode.addNode(HippoNodeType.HIPPO_TRANSLATION,
-                    HippoNodeType.NT_TRANSLATION);
-            translationNode.setProperty(HippoNodeType.HIPPO_LANGUAGE, translationLanguage);
-            translationNode.setProperty(HippoNodeType.HIPPO_MESSAGE, translationName);
+        if (displayName != null) {
+            handleNode.addMixin(HippoNodeType.NT_NAMED);
+            handleNode.setProperty(HippoNodeType.HIPPO_NAME, displayName);
         }
 
         return handleNode;

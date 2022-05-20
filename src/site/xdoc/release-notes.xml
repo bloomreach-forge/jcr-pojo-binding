@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-   Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
+   Copyright 2015-2022 Hippo B.V. (http://www.onehippo.com)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -32,12 +32,25 @@
           </th>
         </tr>
         <tr>
+          <td>2.x</td>
+          <td>15.x</td>
+        </tr>
+        <tr>
           <td>1.x</td>
           <td>14.x, 13.x, 12.x, 11.x, 10.x</td>
         </tr>
       </table>
     </section>
     <section name="Release Notes">
+      <subsection name="2.0.0">
+        <p class="smallinfo">Release Date: 20 May 2022</p>
+        <ul>
+          <li>
+            <a href="https://issues.onehippo.com/browse/HIPFORGE-421">HIPFORGE-421</a>:<br/>
+            Upgrade to Experience Manager 15, i.e. align the version numbers and build with Java 11.
+          </li>
+        </ul>
+      </subsection>
       <subsection name="1.3.2">
         <p class="smallinfo">Release Date: 15 June 2020</p>
         <ul>
