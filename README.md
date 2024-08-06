@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/bloomreach-forge/jcr-pojo-binding.svg?branch=master)](https://travis-ci.org/bloomreach-forge/jcr-pojo-binding)
-
 # JCR POJO Binding
 
 This project aims to provide a simple set of POJO beans with which you can map JCR (document, binary, etc) nodes to POJO 
