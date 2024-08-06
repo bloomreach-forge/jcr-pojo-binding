@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2024 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import java.util.UUID;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-import org.apache.tika.io.IOUtils;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
@@ -44,13 +43,11 @@ public class CsvConvertToContentNodesTest {
 
     @Test
     public void testReadCsvAndConvertToContentNodes() throws Exception {
-        InputStream input = null;
-        InputStreamReader reader = null;
 
-        try {
+        try (InputStream input = NEWS_CSV_URL.openStream();InputStreamReader reader = new InputStreamReader(input, "UTF-8");){
             // 1. Open a reader from a CSV file.
-            input = NEWS_CSV_URL.openStream();
-            reader = new InputStreamReader(input, "UTF-8");
+
+
 
             // 2. Create CSV parser to parse the CSV data with column headers.
             CSVParser parser = CSVFormat.DEFAULT.withHeader("Title", "Introduction", "Date", "Content")
@@ -118,9 +115,6 @@ public class CsvConvertToContentNodesTest {
                 objectMapper.writerWithDefaultPrettyPrinter().writeValue(stringWriter, newsNode);
                 log.debug("newsNode: \n{}\n", stringWriter.toString());
             }
-        } finally {
-            IOUtils.closeQuietly(reader);
-            IOUtils.closeQuietly(input);
         }
     }
 
