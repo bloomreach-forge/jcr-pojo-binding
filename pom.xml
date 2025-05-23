@@ -27,7 +27,7 @@
   <description>Hippo JCR POJO Binding</description>
   <groupId>org.onehippo.forge.hippo-pojo-bind</groupId>
   <artifactId>hippo-pojo-bind-jcr</artifactId>
-  <version>3.1.0</version>
+  <version>3.1.1-SNAPSHOT</version>
   <url>https://github.com/bloomreach-forge/jcr-pojo-binding</url>
 
   <properties>
