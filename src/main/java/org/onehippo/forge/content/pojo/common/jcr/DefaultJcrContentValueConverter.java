@@ -30,9 +30,9 @@ import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.VFS;
 import org.apache.jackrabbit.util.ISO8601;

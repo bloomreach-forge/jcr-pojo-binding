@@ -27,12 +27,12 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
 
-import org.apache.commons.collections.ListUtils;
-import org.apache.commons.collections.SetUtils;
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.jxpath.JXPathContext;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

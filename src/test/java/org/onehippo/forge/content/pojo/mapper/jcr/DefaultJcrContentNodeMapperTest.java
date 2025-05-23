@@ -26,8 +26,8 @@ import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Before;

@@ -24,7 +24,7 @@ import java.io.InputStream;
 import javax.jcr.Node;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.util.ISO8601;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
