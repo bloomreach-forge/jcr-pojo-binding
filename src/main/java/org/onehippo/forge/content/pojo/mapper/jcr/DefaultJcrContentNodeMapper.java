@@ -124,8 +124,17 @@ public class DefaultJcrContentNodeMapper implements ContentNodeMapper<Node, Item
         ContentProperty contentProp = null;
 
         ContentPropertyType type = ContentPropertyType.UNDEFINED;
-        final int jcrPropType = jcrProp.getType();
+        int jcrPropType = jcrProp.getType();
         final Node jcrNode = jcrProp.getParent();
+
+        // FORGE-561: For empty multiValue properties, try to get the type from the property definition
+        // instead of from the values, since empty arrays might have lost their type information.
+        if (jcrProp.isMultiple() && jcrProp.getValues().length == 0) {
+            int definedType = tryGetPropertyTypeFromDefinition(jcrProp);
+            if (definedType != PropertyType.UNDEFINED) {
+                jcrPropType = definedType;
+            }
+        }
 
         switch (jcrPropType) {
         case PropertyType.STRING: {
@@ -210,6 +219,24 @@ public class DefaultJcrContentNodeMapper implements ContentNodeMapper<Node, Item
         }
 
         return contentNode;
+    }
+
+    /**
+     * Try to get the property type from the property definition.
+     * This helps preserve type information for empty multiValue properties.
+     * @param jcrProp the JCR property
+     * @return the property type, or PropertyType.UNDEFINED if not found
+     */
+    private int tryGetPropertyTypeFromDefinition(final Property jcrProp) {
+        try {
+            int definedType = jcrProp.getDefinition().getRequiredType();
+            if (definedType != PropertyType.UNDEFINED) {
+                return definedType;
+            }
+        } catch (Exception ignore) {
+            // Property definition not available, will fall back to property's reported type
+        }
+        return PropertyType.UNDEFINED;
     }
 
 }
