@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-   Copyright 2015-2022 Hippo B.V. (http://www.onehippo.com)
+   Copyright 2015-2025 Hippo B.V. (http://www.onehippo.com)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -32,6 +32,10 @@
           </th>
         </tr>
         <tr>
+          <td>4.x</td>
+          <td>16.x</td>
+        </tr>
+        <tr>
           <td>3.x</td>
           <td>16.x</td>
         </tr>
@@ -46,6 +50,33 @@
       </table>
     </section>
     <section name="Release Notes">
+      <subsection name="4.0.0">
+        <p class="smallinfo">Release Date: January 2025</p>
+        <ul>
+          <li>
+            <strong>Bug Fix:</strong> Compound nodes are now matched by name instead of array index position.
+            Previously, when importing translated content, nodes could be matched to wrong targets if ordering
+            differed between source and target documents. Translation imports now correctly identify compound
+            nodes regardless of order.
+          </li>
+          <li>
+            <strong>Performance Improvement:</strong> Refactored <code>DefaultJcrContentNodeBinder</code> to use
+            name-based indexing, reducing complexity from O(C×J) to O(J+C). This provides up to 10x faster
+            binding for documents with many child nodes.
+          </li>
+          <li>
+            <strong>Breaking Changes - Removed Methods:</strong>
+            <ul>
+              <li><code>DefaultJcrContentNodeBinder#getCompoundNodeNames()</code></li>
+              <li><code>DefaultJcrContentNodeBinder#getContentNodeBindingTargetSelector()</code></li>
+              <li><code>DefaultJcrContentNodeBinder#setContentNodeBindingTargetSelector()</code></li>
+              <li><code>DefaultJcrContentNodeBinder#findChildNodesByNameAndType()</code></li>
+            </ul>
+            These methods were using index-based matching which caused the translation import bug.
+            The new implementation uses name-based indexing via <code>NodeIndex</code> helper class.
+          </li>
+        </ul>
+      </subsection>
       <subsection name="3.1.0">
         <p class="smallinfo">Release Date: 23 May 2025</p>
         <ul>
