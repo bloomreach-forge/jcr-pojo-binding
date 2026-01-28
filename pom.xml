@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2015-2024 Bloomreach
+  Copyright 2015-2025 Bloomreach
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -14,282 +14,285 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.onehippo.cms7</groupId>
-    <artifactId>hippo-cms7-project</artifactId>
-    <version>16.3.0</version>
-  </parent>
+    <parent>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms7-project</artifactId>
+        <version>16.6.5</version>
+    </parent>
 
-  <name>Hippo JCR POJO Binding</name>
-  <description>Hippo JCR POJO Binding</description>
-  <groupId>org.onehippo.forge.hippo-pojo-bind</groupId>
-  <artifactId>hippo-pojo-bind-jcr</artifactId>
-  <version>3.1.0</version>
-  <url>https://github.com/bloomreach-forge/jcr-pojo-binding</url>
+    <name>Hippo JCR POJO Binding</name>
+    <description>Hippo JCR POJO Binding</description>
+    <groupId>org.onehippo.forge.hippo-pojo-bind</groupId>
+    <artifactId>hippo-pojo-bind-jcr</artifactId>
+    <version>4.0.0</version>
+    <url>https://github.com/bloomreach-forge/jcr-pojo-binding</url>
 
-  <properties>
+    <properties>
+        <!-- Versions for deps not in parent's dependencyManagement -->
+        <commons-jxpath.version>1.4.0</commons-jxpath.version>
+        <commons-vfs2.version>2.10.0</commons-vfs2.version>
+        <jmh.version>1.37</jmh.version>
+    </properties>
 
-    <commons-jxpath.version>1.4.0</commons-jxpath.version>
-    <commons-vfs2.version>2.10.0</commons-vfs2.version>
-    <commons-collections4.version>4.5.0</commons-collections4.version>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
-  </properties>
+    <developers>
+        <developer>
+            <name>Woonsan Ko</name>
+            <id>wko</id>
+            <roles>
+                <role>Project Lead</role>
+                <role>Java Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Jeroen Hoffman</name>
+            <id>jhoffman</id>
+            <roles>
+                <role>Java Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Phillip Alejo</name>
+            <id>JunBau</id>
+            <roles>
+                <role>Java Developer</role>
+            </roles>
+        </developer>
+    </developers>
 
-  <licenses>
-    <license>
-      <name>The Apache Software License, Version 2.0</name>
-      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
+    <scm>
+        <connection>scm:git:git@github.com:bloomreach-forge/jcr-pojo-binding.git</connection>
+        <developerConnection>scm:git:git@github.com:bloomreach-forge/jcr-pojo-binding.git</developerConnection>
+        <url>https://github.com/bloomreach-forge/jcr-pojo-binding.git</url>
+        <tag>HEAD</tag>
+    </scm>
 
-  <developers>
-    <developer>
-      <name>Woonsan Ko</name>
-      <id>wko</id>
-      <roles>
-        <role>Project Lead</role>
-        <role>Java Developer</role>
-      </roles>
-    </developer>
-    <developer>
-      <name>Jeroen Hoffman</name>
-      <id>jhoffman</id>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-    </developer>
-  </developers>
+    <distributionManagement>
+        <repository>
+            <name>Bloomreach Maven 2 Forge Repository</name>
+            <id>bloomreach-maven2-forge</id>
+            <url>https://maven.bloomreach.com/content/repositories/forge-releases/</url>
+            <uniqueVersion>false</uniqueVersion>
+        </repository>
+    </distributionManagement>
 
-  <scm>
-    <connection>scm:git:git@github.com:bloomreach-forge/jcr-pojo-binding.git</connection>
-    <developerConnection>scm:git:git@github.com:bloomreach-forge/jcr-pojo-binding.git</developerConnection>
-    <url>https://github.com/bloomreach-forge/jcr-pojo-binding.git</url>
-    <tag>HEAD</tag>
-  </scm>
-
-  <distributionManagement>
-    <repository>
-      <name>Bloomreach Maven 2 Forge Repository</name>
-      <id>bloomreach-maven2-forge</id>
-      <url>https://maven.bloomreach.com/content/repositories/forge-releases/</url>
-      <uniqueVersion>false</uniqueVersion>
-    </repository>
-  </distributionManagement>
-
-  <issueManagement>
-    <system>Jira</system>
-    <url>https://issues.onehippo.com/browse/FORGE</url>
-  </issueManagement>
+    <issueManagement>
+        <system>Jira</system>
+        <url>https://issues.onehippo.com/browse/FORGE</url>
+    </issueManagement>
 
 
-  <repositories>
-    <repository>
-      <id>bloomreach</id>
-      <name>Bloomreach Maven 2 repository</name>
-      <url>https://maven.bloomreach.com/repository/maven2/</url>
-      <snapshots />
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <layout>default</layout>
-    </repository>
-  </repositories>
+    <repositories>
+        <repository>
+            <id>bloomreach</id>
+            <name>Bloomreach Maven 2 repository</name>
+            <url>https://maven.bloomreach.com/repository/maven2/</url>
+            <snapshots/>
+            <releases>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <layout>default</layout>
+        </repository>
+    </repositories>
 
-  <dependencies>
+    <dependencies>
 
-    <dependency>
-      <groupId>javax.jcr</groupId>
-      <artifactId>jcr</artifactId>
-      <version>${javax.jcr.version}</version>
-      <scope>provided</scope>
-    </dependency>
+        <dependency>
+            <groupId>javax.jcr</groupId>
+            <artifactId>jcr</artifactId>
+            <version>${javax.jcr.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.jackrabbit</groupId>
-      <artifactId>jackrabbit-jcr-commons</artifactId>
-      <scope>provided</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.jackrabbit</groupId>
+            <artifactId>jackrabbit-jcr-commons</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.tika</groupId>
-      <artifactId>tika-core</artifactId>
-      <scope>provided</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-api</artifactId>
-      <version>${hippo.release.version}</version>
-      <scope>provided</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.onehippo.cms7</groupId>
+            <artifactId>hippo-repository-api</artifactId>
+            <version>${hippo.release.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-builtin</artifactId>
-      <version>${hippo.release.version}</version>
-      <scope>provided</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.onehippo.cms7</groupId>
+            <artifactId>hippo-repository-builtin</artifactId>
+            <version>${hippo.release.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <scope>provided</scope>
-    </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>${commons-lang3.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-collections4</artifactId>
-      <version>${commons-collections4.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+        </dependency>
 
-    <dependency>
-      <groupId>commons-jxpath</groupId>
-      <artifactId>commons-jxpath</artifactId>
-      <version>${commons-jxpath.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+        <dependency>
+            <groupId>commons-jxpath</groupId>
+            <artifactId>commons-jxpath</artifactId>
+            <version>${commons-jxpath.version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-vfs2</artifactId>
-      <version>${commons-vfs2.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-vfs2</artifactId>
+            <version>${commons-vfs2.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>${commons-io.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
 
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>${slf4j.version}</version>
-      <scope>provided</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-    <!-- TEST DEPENDENCIES -->
+        <!-- TEST DEPENDENCIES -->
 
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-csv</artifactId>
-      <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-testutils</artifactId>
-      <version>${hippo.release.version}</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+        <dependency>
+            <groupId>org.onehippo.cms7</groupId>
+            <artifactId>hippo-repository-testutils</artifactId>
+            <version>${hippo.release.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
-      <version>${log4j2.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl-over-slf4j</artifactId>
-      <version>${slf4j.version}</version>
-      <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${log4j2.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-      <version>${log4j2.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <version>${log4j2.version}</version>
-      <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j2.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j2.version}</version>
+            <scope>test</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.easymock</groupId>
-      <artifactId>easymock</artifactId>
-      <version>${easymock.version}</version>
-      <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymock</artifactId>
+            <version>${easymock.version}</version>
+            <scope>test</scope>
+        </dependency>
 
-  </dependencies>
+        <!-- JMH Benchmarking -->
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-core</artifactId>
+            <version>${jmh.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-generator-annprocess</artifactId>
+            <version>${jmh.version}</version>
+            <scope>test</scope>
+        </dependency>
 
-  <build>
-    <defaultGoal>package</defaultGoal>
-  </build>
+    </dependencies>
 
-  <profiles>
-    <profile>
-      <!-- For generating/publishing GitHub Site Pages into /docs/ folder on master branch only -->
-      <id>github.pages</id>
-      <build>
+    <build>
+        <defaultGoal>package</defaultGoal>
         <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-site-plugin</artifactId>
-            <configuration>
-              <outputDirectory>docs</outputDirectory>
-            </configuration>
-          </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/*Benchmark.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
         </plugins>
-      </build>
-    </profile>
-  </profiles>
+    </build>
+
+    <profiles>
+        <profile>
+            <!-- For generating/publishing GitHub Site Pages into /docs/ folder on master branch only -->
+            <id>github.pages</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-site-plugin</artifactId>
+                        <configuration>
+                            <outputDirectory>docs</outputDirectory>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

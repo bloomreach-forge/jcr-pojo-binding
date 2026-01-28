@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2025 Bloomreach (https://www.bloomreach.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,9 +15,12 @@
  */
 package org.onehippo.forge.content.pojo.binder.jcr;
 
-import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.Node;
@@ -33,7 +36,6 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.forge.content.pojo.binder.ContentNodeBinder;
 import org.onehippo.forge.content.pojo.binder.ContentNodeBindingException;
 import org.onehippo.forge.content.pojo.binder.ContentNodeBindingItemFilter;
-import org.onehippo.forge.content.pojo.binder.ContentNodeBindingTargetSelector;
 import org.onehippo.forge.content.pojo.common.ContentValueConverter;
 import org.onehippo.forge.content.pojo.common.jcr.DefaultJcrContentValueConverter;
 import org.onehippo.forge.content.pojo.model.BinaryValue;
@@ -49,66 +51,26 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
 
     private static final long serialVersionUID = 1L;
 
-    // No constant in the product until 11.1
     private static final String NT_COMPOUND = "hippo:compound";
-
-    // No constant in the product until 12.3
     private static final String NT_IMAGE_LINK = "hippogallerypicker:imagelink";
 
-    /**
-     * Flag whether it should merge subnodes without removing any other existing subnodes.
-     * <p>
-     * The default value is {@code false}, meaning the default behavior is to remove all the existing subnodes
-     * beforehand and add all the subnodes from the {@link ContentNode} afterward, resulting any other subnodes
-     * that do not exist in the input {@link ContentNode} to be removed by default.
-     */
     private boolean subNodesMergingOnly;
+    private boolean fullOverwriteMode;
 
-    /**
-     * {@link ContentNodeBindingTargetSelector} to use when finding the target physical JCR subnodes when merging
-     * in {@link #mergeSubNodes(Node, ContentNode, ContentNodeBindingItemFilter, ContentValueConverter)}
-     * which is used only when {@link #isSubNodesMergingOnly()} returns {@code true}.
-     */
-    private ContentNodeBindingTargetSelector<Node> contentNodeBindingTargetSelector;
-
-    /**
-     * Default constructor.
-     */
-    public DefaultJcrContentNodeBinder() {
-        super();
-    }
-
-    /**
-     * Return true if it should merge subnodes without removing any other existing subnodes.
-     * <p>
-     * The default value is {@code false}, meaning the default behavior is to remove all the existing subnodes
-     * beforehand and add all the subnodes from the {@link ContentNode} afterward, resulting any other subnodes
-     * that do not exist in the input {@link ContentNode} to be removed by default.
-     * @return true if it should merge subnodes without removing any other existing subnodes
-     */
     public boolean isSubNodesMergingOnly() {
         return subNodesMergingOnly;
     }
 
-    /**
-     * Set flag whether it should merge subnodes without removing any other existing subnodes.
-     * @param subNodesMergingOnly
-     */
     public void setSubNodesMergingOnly(boolean subNodesMergingOnly) {
         this.subNodesMergingOnly = subNodesMergingOnly;
     }
 
-    public ContentNodeBindingTargetSelector<Node> getContentNodeBindingTargetSelector() {
-        if (contentNodeBindingTargetSelector == null) {
-            contentNodeBindingTargetSelector = new DefaultContentNodeBindingTargetNodeSelector();
-        }
-
-        return contentNodeBindingTargetSelector;
+    public boolean isFullOverwriteMode() {
+        return fullOverwriteMode;
     }
 
-    public void setContentNodeBindingTargetSelector(
-            ContentNodeBindingTargetSelector<Node> contentNodeBindingTargetSelector) {
-        this.contentNodeBindingTargetSelector = contentNodeBindingTargetSelector;
+    public void setFullOverwriteMode(boolean fullOverwriteMode) {
+        this.fullOverwriteMode = fullOverwriteMode;
     }
 
     @Override
@@ -126,241 +88,311 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
     public void bind(Node jcrDataNode, ContentNode contentNode, ContentNodeBindingItemFilter<ContentItem> itemFilter,
                      ContentValueConverter<Value> valueConverter) throws ContentNodeBindingException {
         try {
-            if (itemFilter == null) {
-                itemFilter = new DefaultContentNodeJcrBindingItemFilter();
-            }
+            ContentNodeBindingItemFilter<ContentItem> filter = resolveFilter(itemFilter);
+            ContentValueConverter<Value> converter = resolveConverter(jcrDataNode, valueConverter);
 
-            if (valueConverter == null) {
-                valueConverter = new DefaultJcrContentValueConverter(jcrDataNode.getSession());
-            }
-
-            if (StringUtils.isNotBlank(contentNode.getPrimaryType())
-                    && !jcrDataNode.getPrimaryNodeType().getName().equals(contentNode.getPrimaryType())) {
-                jcrDataNode.setPrimaryType(contentNode.getPrimaryType());
-            }
-
-            for (String mixinType : contentNode.getMixinTypes()) {
-                if (!jcrDataNode.isNodeType(mixinType)) {
-                    jcrDataNode.addMixin(mixinType);
-                }
-            }
-
-            bindProperties(jcrDataNode, contentNode, itemFilter, valueConverter);
-
-            if (!isSubNodesMergingOnly()) {
-                removeSubNodes(jcrDataNode, contentNode, itemFilter);
-                addSubNodes(jcrDataNode, contentNode, itemFilter, valueConverter);
-            } else {
-                mergeSubNodes(jcrDataNode, contentNode, itemFilter, valueConverter);
-            }
+            syncPrimaryType(jcrDataNode, contentNode);
+            syncMixinTypes(jcrDataNode, contentNode);
+            bindProperties(jcrDataNode, contentNode, filter, converter);
+            bindSubNodes(jcrDataNode, contentNode, filter, converter);
 
         } catch (RepositoryException e) {
             throw new ContentNodeBindingException(e.toString(), e);
         }
     }
 
-    /**
-     * Set the properties on the JCR node based on the POJO.
-     */
-    protected void bindProperties(final Node jcrDataNode, final ContentNode contentNode, final ContentNodeBindingItemFilter<ContentItem> itemFilter, final ContentValueConverter<Value> valueConverter) throws RepositoryException {
-        Value[] jcrValues;
-        Property existingJcrProp;
 
-        String propName;
-        String pathValue;
+    protected void bindProperties(Node jcrDataNode, ContentNode contentNode,
+                                  ContentNodeBindingItemFilter<ContentItem> itemFilter,
+                                  ContentValueConverter<Value> valueConverter) throws RepositoryException {
 
         for (ContentProperty contentProp : contentNode.getProperties()) {
-            propName = contentProp.getName();
-
-            if (itemFilter != null && !itemFilter.accept(contentProp)) {
+            if (!itemFilter.accept(contentProp)) {
                 continue;
             }
-
-            existingJcrProp = jcrDataNode.hasProperty(propName) ? jcrDataNode.getProperty(propName) : null;
-
-            if (existingJcrProp != null && isProtectedProperty(existingJcrProp)) {
+            if (isProtectedProperty(jcrDataNode, contentProp.getName())) {
                 continue;
             }
+            bindProperty(jcrDataNode, contentProp, valueConverter);
+        }
+    }
 
-            if (ContentPropertyType.PATH.equals(contentProp.getType())) {
-                pathValue = contentProp.getValue();
+    private void bindProperty(Node jcrDataNode, ContentProperty contentProp,
+                              ContentValueConverter<Value> valueConverter) throws RepositoryException {
 
-                if (StringUtils.isNotBlank(pathValue) && jcrDataNode.getSession().nodeExists(pathValue)) {
-                    jcrDataNode.setProperty(propName, jcrDataNode.getSession().getNode(pathValue));
-                }
+        if (ContentPropertyType.PATH.equals(contentProp.getType())) {
+            bindPathProperty(jcrDataNode, contentProp);
+        } else {
+            bindValueProperty(jcrDataNode, contentProp, valueConverter);
+        }
+    }
+
+    private void bindPathProperty(Node jcrDataNode, ContentProperty contentProp) throws RepositoryException {
+        String pathValue = contentProp.getValue();
+        if (StringUtils.isBlank(pathValue)) {
+            return;
+        }
+        if (!jcrDataNode.getSession().nodeExists(pathValue)) {
+            return;
+        }
+        jcrDataNode.setProperty(contentProp.getName(), jcrDataNode.getSession().getNode(pathValue));
+    }
+
+    private void bindValueProperty(Node jcrDataNode, ContentProperty contentProp,
+                                   ContentValueConverter<Value> valueConverter) throws RepositoryException {
+
+        Value[] jcrValues = createJcrValues(contentProp, valueConverter);
+        if (jcrValues.length == 0) {
+            if (contentProp.isMultiple()) {
+                int jcrType = ContentPropertyType.toJcrPropertyType(contentProp.getType());
+                jcrDataNode.setProperty(contentProp.getName(), new Value[0], jcrType);
+            }
+            return;
+        }
+
+        String propName = contentProp.getName();
+        if (contentProp.isMultiple()) {
+            setMultipleProperty(jcrDataNode, propName, jcrValues);
+        } else {
+            setSingleProperty(jcrDataNode, propName, jcrValues);
+        }
+    }
+
+    private void setMultipleProperty(Node jcrDataNode, String propName, Value[] jcrValues) throws RepositoryException {
+        try {
+            jcrDataNode.setProperty(propName, jcrValues);
+        } catch (ArrayIndexOutOfBoundsException ignore) {
+            // REPO-1428 workaround
+        }
+    }
+
+    private void setSingleProperty(Node jcrDataNode, String propName, Value[] jcrValues) throws RepositoryException {
+        try {
+            jcrDataNode.setProperty(propName, jcrValues[0]);
+        } catch (ValueFormatException e) {
+            // Property type changed from single to multiple - retry with array
+            jcrDataNode.setProperty(propName, jcrValues);
+        }
+    }
+
+
+    protected void bindSubNodes(Node jcrDataNode, ContentNode contentNode,
+                                ContentNodeBindingItemFilter<ContentItem> itemFilter,
+                                ContentValueConverter<Value> valueConverter) throws RepositoryException {
+
+        if (isFullOverwriteMode()) {
+            removeAllSubNodes(jcrDataNode);
+            addSubNodes(jcrDataNode, contentNode, itemFilter, valueConverter);
+        } else if (isSubNodesMergingOnly()) {
+            mergeSubNodes(jcrDataNode, contentNode, itemFilter, valueConverter);
+        } else {
+            removeSubNodes(jcrDataNode, contentNode, itemFilter);
+            addSubNodes(jcrDataNode, contentNode, itemFilter, valueConverter);
+        }
+    }
+
+    protected void removeAllSubNodes(Node jcrDataNode) throws RepositoryException {
+        NodeIterator children = jcrDataNode.getNodes();
+        while (children.hasNext()) {
+            children.nextNode().remove();
+        }
+    }
+
+    protected void removeSubNodes(Node jcrDataNode, ContentNode contentNode,
+                                  ContentNodeBindingItemFilter<ContentItem> itemFilter) throws RepositoryException {
+
+        NodeIndex<Node> index = indexJcrChildren(jcrDataNode);
+
+        for (Node node : index.getCompounds()) {
+            node.remove();
+        }
+
+        for (ContentNode child : contentNode.getNodes()) {
+            if (!itemFilter.accept(child)) {
+                continue;
+            }
+            for (Node node : index.get(child.getName(), child.getPrimaryType())) {
+                node.remove();
+            }
+        }
+    }
+
+    protected void addSubNodes(Node jcrDataNode, ContentNode contentNode,
+                               ContentNodeBindingItemFilter<ContentItem> itemFilter,
+                               ContentValueConverter<Value> valueConverter) throws RepositoryException {
+
+        for (ContentNode child : contentNode.getNodes()) {
+            if (!itemFilter.accept(child)) {
+                continue;
+            }
+            Node childJcrNode = jcrDataNode.addNode(child.getName(), child.getPrimaryType());
+            bind(childJcrNode, child, itemFilter, valueConverter);
+        }
+    }
+
+    protected void mergeSubNodes(Node jcrDataNode, ContentNode contentNode,
+                                 ContentNodeBindingItemFilter<ContentItem> itemFilter,
+                                 ContentValueConverter<Value> valueConverter) throws RepositoryException {
+
+        Map<String, Map<String, List<ContentNode>>> contentIndex = indexContentChildren(contentNode, itemFilter);
+        Set<String> contentNames = contentIndex.keySet();
+
+        NodeIndex<Node> jcrIndex = indexMergeableJcrChildren(jcrDataNode, contentNames);
+
+        Set<String> mergeableNames = new LinkedHashSet<>(jcrIndex.getNames());
+        mergeableNames.addAll(contentNames);
+
+        for (String name : mergeableNames) {
+            Map<String, List<Node>> jcrByType = jcrIndex.getByName(name);
+            Map<String, List<ContentNode>> contentByType = contentIndex.getOrDefault(name, Collections.emptyMap());
+            bindMatchingNodesByType(jcrDataNode, jcrByType, contentByType, itemFilter, valueConverter);
+        }
+    }
+
+    private void bindMatchingNodesByType(Node jcrParent,
+                                         Map<String, List<Node>> jcrNodesByType,
+                                         Map<String, List<ContentNode>> contentNodesByType,
+                                         ContentNodeBindingItemFilter<ContentItem> itemFilter,
+                                         ContentValueConverter<Value> valueConverter) throws RepositoryException {
+
+        for (Map.Entry<String, List<ContentNode>> entry : contentNodesByType.entrySet()) {
+            String nodeType = entry.getKey();
+            List<ContentNode> sourceNodes = entry.getValue();
+            List<Node> targetNodes = jcrNodesByType.getOrDefault(nodeType, Collections.emptyList());
+
+            for (int i = 0; i < sourceNodes.size(); i++) {
+                ContentNode source = sourceNodes.get(i);
+                Node target = (i < targetNodes.size())
+                        ? targetNodes.get(i)
+                        : jcrParent.addNode(source.getName(), source.getPrimaryType());
+                bind(target, source, itemFilter, valueConverter);
+            }
+        }
+    }
+
+    private NodeIndex<Node> indexJcrChildren(Node jcrDataNode) throws RepositoryException {
+        NodeIndex<Node> index = new NodeIndex<>();
+
+        for (NodeIterator it = jcrDataNode.getNodes(); it.hasNext(); ) {
+            Node child = it.nextNode();
+            String name = child.getName();
+            String type = child.getPrimaryNodeType().getName();
+
+            if (isCompoundType(child)) {
+                index.addCompound(child);
             } else {
-                jcrValues = createJcrValuesFromContentProperty(jcrDataNode, contentProp, valueConverter);
-
-                if (jcrValues != null) {
-                    if (contentProp.isMultiple()) {
-                        try {
-                            jcrDataNode.setProperty(propName, jcrValues);
-                        } catch (ArrayIndexOutOfBoundsException ignore) {
-                            // Due to REPO-1428, let's ignore this kind of exception for now...
-                        }
-                    } else if (jcrValues.length > 0) {
-                        try {
-                            jcrDataNode.setProperty(propName, jcrValues[0]);
-                        } catch (ValueFormatException e) {
-                            // In this case, the content node (from a file) has a property as single value.
-                            // However, if the relaxed document type has changed from single value to multiple values for a property,
-                            // and so if the prototype has changed to multiple values, while the exported content property
-                            // is still single property,
-                            // then this ValueFormatException may happen because the single value cannot be set
-                            // for a new multi-value property generated from the new prototype.
-                            // Therefore, try to set property with array again in this case.
-                            jcrDataNode.setProperty(propName, jcrValues);
-                        }
-                    }
-                }
+                index.add(name, type, child);
             }
         }
+        return index;
     }
 
-    /**
-     * Remove subnodes from the JCR node, when binding.
-     */
-    protected void removeSubNodes(final Node jcrDataNode, final ContentNode contentNode, final ContentNodeBindingItemFilter<ContentItem> itemFilter) throws RepositoryException {
-
-        // remove all compounds, to not leave some in case of a multiple, that has deletions in the POJO
-        final Set<String> subNodeNames = getCompoundNodeNames(jcrDataNode);
-        final String[] nameGlobs = subNodeNames.toArray(new String[subNodeNames.size()]);
-        for (NodeIterator nodeIt = jcrDataNode.getNodes(nameGlobs); nodeIt.hasNext(); ) {
-            nodeIt.nextNode().remove();
-        }
-
-        // remove subnodes based on the POJO's subnodes
-        for (ContentNode childContentNode : contentNode.getNodes()) {
-            if (itemFilter != null && !itemFilter.accept(childContentNode)) {
-                continue;
-            }
-
-            for (Node sameNameTypeChildNode : findChildNodesByNameAndType(jcrDataNode, childContentNode)) {
-                sameNameTypeChildNode.remove();
-            }
-        }
-    }
-
-    /**
-     * (Re)add subnodes to the JCR node, based on POJO.
-     */
-    protected void addSubNodes(final Node jcrDataNode, final ContentNode contentNode, final ContentNodeBindingItemFilter<ContentItem> itemFilter, final ContentValueConverter<Value> valueConverter) throws RepositoryException {
-
-        for (ContentNode childContentNode : contentNode.getNodes()) {
-            if (itemFilter != null && !itemFilter.accept(childContentNode)) {
-                continue;
-            }
-
-            final Node childJcrNode = jcrDataNode.addNode(childContentNode.getName(), childContentNode.getPrimaryType());
-
-            bind(childJcrNode, childContentNode, itemFilter, valueConverter);
-        }
-    }
-
-    /**
-     * Merge subnodes in the JCR node, based on POJO.
-     */
-    protected void mergeSubNodes(final Node jcrDataNode, final ContentNode contentNode,
-            final ContentNodeBindingItemFilter<ContentItem> itemFilter,
-            final ContentValueConverter<Value> valueConverter) throws RepositoryException {
-
-        Node childJcrNode;
-
-        for (ContentNode childContentNode : contentNode.getNodes()) {
-
-            if (itemFilter != null && !itemFilter.accept(childContentNode)) {
-                continue;
-            }
-
-            if (!jcrDataNode.hasNode(childContentNode.getName())) {
-                childJcrNode = jcrDataNode.addNode(childContentNode.getName(), childContentNode.getPrimaryType());
-            } else {
-                childJcrNode = getContentNodeBindingTargetSelector().select(childContentNode, jcrDataNode);
-
-                if (childJcrNode == null) {
-                    // Note: there is no target subnode to merge. Let's create a new subnode then.
-                    childJcrNode = jcrDataNode.addNode(childContentNode.getName(), childContentNode.getPrimaryType());
-                }
-            }
-
-            bind(childJcrNode, childContentNode, itemFilter, valueConverter);
-        }
-    }
-
-    protected Value[] createJcrValuesFromContentProperty(final Node jcrNode, final ContentProperty contentProp,
-                                                         final ContentValueConverter<Value> valueConverter)
+    private NodeIndex<Node> indexMergeableJcrChildren(Node jcrDataNode, Set<String> contentNames)
             throws RepositoryException {
-        List<Value> jcrValues = new LinkedList<>();
 
-        Value jcrValue;
+        NodeIndex<Node> index = new NodeIndex<>();
+
+        for (NodeIterator it = jcrDataNode.getNodes(); it.hasNext(); ) {
+            Node child = it.nextNode();
+            String name = child.getName();
+
+            if (isCompoundType(child) || contentNames.contains(name)) {
+                String type = child.getPrimaryNodeType().getName();
+                index.add(name, type, child);
+            }
+        }
+        return index;
+    }
+
+    private Map<String, Map<String, List<ContentNode>>> indexContentChildren(
+            ContentNode contentNode, ContentNodeBindingItemFilter<ContentItem> itemFilter) {
+
+        Map<String, Map<String, List<ContentNode>>> index = new LinkedHashMap<>();
+
+        for (ContentNode child : contentNode.getNodes()) {
+            if (!itemFilter.accept(child)) {
+                continue;
+            }
+            index.computeIfAbsent(child.getName(), k -> new LinkedHashMap<>())
+                 .computeIfAbsent(child.getPrimaryType(), k -> new ArrayList<>())
+                 .add(child);
+        }
+        return index;
+    }
+
+
+    private Value[] createJcrValues(ContentProperty contentProp,
+                                    ContentValueConverter<Value> valueConverter) throws RepositoryException {
+
+        List<Value> jcrValues = new ArrayList<>();
 
         if (ContentPropertyType.BINARY.equals(contentProp.getType())) {
             for (Object binaryValue : contentProp.getValuesAsObject()) {
-                jcrValue = valueConverter.toJcrValue((BinaryValue) binaryValue);
-
+                Value jcrValue = valueConverter.toJcrValue((BinaryValue) binaryValue);
                 if (jcrValue != null) {
                     jcrValues.add(jcrValue);
                 }
             }
         } else {
             for (String stringValue : contentProp.getValues()) {
-                jcrValue = valueConverter.toJcrValue(contentProp.getType().toString(), stringValue);
-
+                Value jcrValue = valueConverter.toJcrValue(contentProp.getType().toString(), stringValue);
                 if (jcrValue != null) {
                     jcrValues.add(jcrValue);
                 }
             }
         }
 
-        return jcrValues.toArray(new Value[jcrValues.size()]);
+        return jcrValues.toArray(new Value[0]);
     }
 
-    protected Set<String> getCompoundNodeNames(final Node jcrDataNode) throws RepositoryException {
-
-        final Set<String> compoundNodeNames = new HashSet<>();
-        final NodeIterator nodeIter = jcrDataNode.getNodes();
-        while (nodeIter.hasNext()) {
-            final Node subNode = nodeIter.nextNode();
-            if (isCompoundType(subNode)) {
-                compoundNodeNames.add(subNode.getName());
-            }
-        }
-
-        return compoundNodeNames;
+    protected boolean isCompoundType(Node node) throws RepositoryException {
+        return node.isNodeType(NT_COMPOUND)
+                || node.isNodeType(HippoNodeType.NT_MIRROR)
+                || node.isNodeType(HippoStdNodeType.NT_HTML)
+                || node.isNodeType(NT_IMAGE_LINK);
     }
 
-    /**
-     * Is a node a hippo:compound, or of some product type that is used as compound but does not extend from that.
-     */
-    protected boolean isCompoundType(final Node node) throws RepositoryException {
-        return node.isNodeType(NT_COMPOUND) ||
-                node.isNodeType(HippoNodeType.NT_MIRROR) ||
-                node.isNodeType(HippoStdNodeType.NT_HTML) ||
-                node.isNodeType(NT_IMAGE_LINK);
-
-    }
-
-    protected List<Node> findChildNodesByNameAndType(final Node base, final ContentNode contentNode)
-            throws RepositoryException {
-        final List<Node> childNodes = new LinkedList<>();
-
-        for (NodeIterator nodeIt = base.getNodes(contentNode.getName()); nodeIt.hasNext();) {
-            final Node childNode = nodeIt.nextNode();
-
-            if (childNode.getPrimaryNodeType().getName().equals(contentNode.getPrimaryType())) {
-                childNodes.add(childNode);
-            }
-        }
-
-        return childNodes;
-    }
-
-    protected boolean isProtectedProperty(final Property property) throws RepositoryException {
+    protected boolean isProtectedProperty(Property property) throws RepositoryException {
         try {
             return property.getDefinition().isProtected();
         } catch (UnsupportedOperationException ignore) {
+            return false;
         }
-
-        return false;
     }
+
+    private boolean isProtectedProperty(Node jcrDataNode, String propName) throws RepositoryException {
+        if (!jcrDataNode.hasProperty(propName)) {
+            return false;
+        }
+        return isProtectedProperty(jcrDataNode.getProperty(propName));
+    }
+
+    private ContentNodeBindingItemFilter<ContentItem> resolveFilter(ContentNodeBindingItemFilter<ContentItem> filter) {
+        return (filter != null) ? filter : new DefaultContentNodeJcrBindingItemFilter();
+    }
+
+    private ContentValueConverter<Value> resolveConverter(Node jcrDataNode, ContentValueConverter<Value> converter)
+            throws RepositoryException {
+        return (converter != null) ? converter : new DefaultJcrContentValueConverter(jcrDataNode.getSession());
+    }
+
+    private void syncPrimaryType(Node jcrDataNode, ContentNode contentNode) throws RepositoryException {
+        String targetType = contentNode.getPrimaryType();
+        if (StringUtils.isBlank(targetType)) {
+            return;
+        }
+        if (jcrDataNode.getPrimaryNodeType().getName().equals(targetType)) {
+            return;
+        }
+        jcrDataNode.setPrimaryType(targetType);
+    }
+
+    private void syncMixinTypes(Node jcrDataNode, ContentNode contentNode) throws RepositoryException {
+        for (String mixinType : contentNode.getMixinTypes()) {
+            if (!jcrDataNode.isNodeType(mixinType)) {
+                jcrDataNode.addMixin(mixinType);
+            }
+        }
+    }
+
 }
