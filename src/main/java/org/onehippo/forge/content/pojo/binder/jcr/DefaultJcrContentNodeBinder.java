@@ -142,7 +142,11 @@ public class DefaultJcrContentNodeBinder implements ContentNodeBinder<Node, Cont
                                    ContentValueConverter<Value> valueConverter) throws RepositoryException {
 
         Value[] jcrValues = createJcrValues(contentProp, valueConverter);
-        if (jcrValues == null || jcrValues.length == 0) {
+        if (jcrValues.length == 0) {
+            if (contentProp.isMultiple()) {
+                int jcrType = ContentPropertyType.toJcrPropertyType(contentProp.getType());
+                jcrDataNode.setProperty(contentProp.getName(), new Value[0], jcrType);
+            }
             return;
         }
 
