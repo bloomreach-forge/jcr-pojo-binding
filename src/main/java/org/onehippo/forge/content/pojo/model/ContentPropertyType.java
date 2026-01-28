@@ -15,6 +15,8 @@
  */
 package org.onehippo.forge.content.pojo.model;
 
+import javax.jcr.PropertyType;
+
 /**
  * Supported Content Property Types.
  */
@@ -30,4 +32,22 @@ public enum ContentPropertyType {
     PATH,
     UNDEFINED;
 
+    /**
+     * Converts this ContentPropertyType to the corresponding JCR PropertyType constant.
+     * @param type the ContentPropertyType to convert
+     * @return the JCR PropertyType constant
+     */
+    public static int toJcrPropertyType(ContentPropertyType type) {
+        return switch (type) {
+            case STRING -> PropertyType.STRING;
+            case BINARY -> PropertyType.BINARY;
+            case LONG -> PropertyType.LONG;
+            case DOUBLE -> PropertyType.DOUBLE;
+            case DATE -> PropertyType.DATE;
+            case BOOLEAN -> PropertyType.BOOLEAN;
+            case DECIMAL -> PropertyType.DECIMAL;
+            case PATH -> PropertyType.PATH;
+            default -> PropertyType.UNDEFINED;
+        };
+    }
 }

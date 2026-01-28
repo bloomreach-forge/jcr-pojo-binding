@@ -23,6 +23,8 @@ import java.io.InputStream;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Property;
+import javax.jcr.PropertyType;
 import javax.jcr.Value;
 
 import org.apache.commons.io.IOUtils;
@@ -39,6 +41,7 @@ import org.onehippo.forge.content.pojo.common.jcr.BaseHippoJcrContentNodeTest;
 import org.onehippo.forge.content.pojo.model.BinaryValue;
 import org.onehippo.forge.content.pojo.model.ContentItem;
 import org.onehippo.forge.content.pojo.model.ContentNode;
+import org.onehippo.forge.content.pojo.model.ContentProperty;
 import org.onehippo.forge.content.pojo.model.ContentPropertyType;
 import org.onehippo.repository.mock.MockNode;
 
@@ -1377,5 +1380,75 @@ public class DefaultJcrContentNodeBinderTest extends BaseHippoJcrContentNodeTest
 
         assertTrue(parentNode.hasNode("item"));
         assertFalse(parentNode.hasNode("filteredItem"));
+    }
+
+    // ==================== Empty Multi-Value Property Type Preservation Tests ====================
+
+    @Test
+    public void testBindEmptyMultiValueLongProperty_preservesType() throws Exception {
+        MockNode parentNode = getRootNode().addNode("testEmptyLong", "nt:unstructured");
+
+        ContentNode sourceNode = new ContentNode("testEmptyLong", "nt:unstructured");
+        ContentProperty longProp = new ContentProperty("ids", ContentPropertyType.LONG, true);
+        sourceNode.setProperty(longProp);
+
+        binder.bind(parentNode, sourceNode);
+
+        assertTrue(parentNode.hasProperty("ids"));
+        Property jcrProp = parentNode.getProperty("ids");
+        assertEquals(PropertyType.LONG, jcrProp.getType());
+        assertTrue(jcrProp.isMultiple());
+        assertEquals(0, jcrProp.getValues().length);
+    }
+
+    @Test
+    public void testBindEmptyMultiValueDoubleProperty_preservesType() throws Exception {
+        MockNode parentNode = getRootNode().addNode("testEmptyDouble", "nt:unstructured");
+
+        ContentNode sourceNode = new ContentNode("testEmptyDouble", "nt:unstructured");
+        ContentProperty doubleProp = new ContentProperty("scores", ContentPropertyType.DOUBLE, true);
+        sourceNode.setProperty(doubleProp);
+
+        binder.bind(parentNode, sourceNode);
+
+        assertTrue(parentNode.hasProperty("scores"));
+        Property jcrProp = parentNode.getProperty("scores");
+        assertEquals(PropertyType.DOUBLE, jcrProp.getType());
+        assertTrue(jcrProp.isMultiple());
+        assertEquals(0, jcrProp.getValues().length);
+    }
+
+    @Test
+    public void testBindEmptyMultiValueBooleanProperty_preservesType() throws Exception {
+        MockNode parentNode = getRootNode().addNode("testEmptyBoolean", "nt:unstructured");
+
+        ContentNode sourceNode = new ContentNode("testEmptyBoolean", "nt:unstructured");
+        ContentProperty boolProp = new ContentProperty("flags", ContentPropertyType.BOOLEAN, true);
+        sourceNode.setProperty(boolProp);
+
+        binder.bind(parentNode, sourceNode);
+
+        assertTrue(parentNode.hasProperty("flags"));
+        Property jcrProp = parentNode.getProperty("flags");
+        assertEquals(PropertyType.BOOLEAN, jcrProp.getType());
+        assertTrue(jcrProp.isMultiple());
+        assertEquals(0, jcrProp.getValues().length);
+    }
+
+    @Test
+    public void testBindEmptyMultiValueDateProperty_preservesType() throws Exception {
+        MockNode parentNode = getRootNode().addNode("testEmptyDate", "nt:unstructured");
+
+        ContentNode sourceNode = new ContentNode("testEmptyDate", "nt:unstructured");
+        ContentProperty dateProp = new ContentProperty("timestamps", ContentPropertyType.DATE, true);
+        sourceNode.setProperty(dateProp);
+
+        binder.bind(parentNode, sourceNode);
+
+        assertTrue(parentNode.hasProperty("timestamps"));
+        Property jcrProp = parentNode.getProperty("timestamps");
+        assertEquals(PropertyType.DATE, jcrProp.getType());
+        assertTrue(jcrProp.isMultiple());
+        assertEquals(0, jcrProp.getValues().length);
     }
 }
