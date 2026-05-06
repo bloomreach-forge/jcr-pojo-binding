@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-   Copyright 2015-2025 Hippo B.V. (http://www.onehippo.com)
+   Copyright 2015-2026 Bloomreach B.V. (https://www.bloomreach.com)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -32,6 +32,10 @@
           </th>
         </tr>
         <tr>
+          <td>5.x</td>
+          <td>17.x</td>
+        </tr>
+        <tr>
           <td>4.x</td>
           <td>16.x</td>
         </tr>
@@ -50,6 +54,15 @@
       </table>
     </section>
     <section name="Release Notes">
+      <subsection name="5.0.0">
+        <p class="smallinfo">Release Date: May 2026</p>
+        <ul>
+          <li>
+            <a href="https://bloomreach.atlassian.net/browse/FORGE-583">FORGE-583</a>:<br/>
+            Upgrade to Experience Manager 17, JDK 21. Switch SLF4J bridge to log4j-slf4j2-impl for SLF4J 2.x compatibility.
+          </li>
+        </ul>
+      </subsection>
       <subsection name="4.0.0">
         <p class="smallinfo">Release Date: January 2025</p>
         <ul>
